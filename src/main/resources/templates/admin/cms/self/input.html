@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+    <script th:inline="javascript">
+    // Insert
+    $("[name='add_btn']").click(function(){
+        $('#modal_name').text("新增公司");
+        $("[name='name']").val(null);
+        $("[name='phone']").val(null);
+        $("[name='address']").val(null);
+        $("[name='industries']").val(null);
+    });
+
+    // Update
+    function edit_btn(id, name, phone, address, url, industryIds) {
+        $('#modal_name').text("編輯角色");
+        $("[name='id']").val(id);
+        $("[name='name']").val(name);
+        $("[name='phone']").val(phone);
+        $("[name='address']").val(address);
+        $("[name='url']").val(url);
+        $("[name='industryIds']").val(industryIds);
+    };
+
+    // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+    var validator = FormValidation.formValidation(
+        form,
+        {
+            fields: {
+                'name': {
+                    validators: {
+                        notEmpty: {
+                            message: 'Company name is required'
+                        }
+                    }
+                },
+                'address': {
+                    validators: {
+                        notEmpty: {
+                            message: 'Address is required'
+                        }
+                    }
+                },
+            },
+
+            plugins: {
+                trigger: new FormValidation.plugins.Trigger(),
+                bootstrap: new FormValidation.plugins.Bootstrap5({
+                    rowSelector: '.fv-row',
+                    eleInvalidClass: '',
+                    eleValidClass: ''
+                })
+            }
+        }
+    );
+    </script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+<div th:fragment="input" class="modal fade" id="kt_modal_input" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-1000px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header">
+                <!--begin::Modal title-->
+                <h2 class="fw-bolder" id="modal_name">Company</h2>
+                <!--end::Modal title-->
+                <!--begin::Close-->
+                <div class="btn btn-icon btn-sm btn-active-icon-primary"
+                     data-kt-modal-action="close">
+                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+                    <span class="svg-icon svg-icon-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24" fill="none">
+                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2"
+                                  rx="1" transform="rotate(-45 6 17.3137)" fill="black"/>
+                            <rect x="7.41422" y="6" width="16" height="2" rx="1"
+                                  transform="rotate(45 7.41422 6)" fill="black"/>
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--end::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+                <!--begin::Form-->
+                <form id="kt_modal_input_form" class="form" action="#" th:action="@{/admin/cms/manage/company/save}" method="post" th:object="${company}" >
+                    <input type="hidden" name="id">
+                    <input type="hidden" name="cmsUserId" th:value="${entity.id}">
+                    <!--begin::Input group-->
+                    <div class="row fv-row mb-7">
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span class="required">公司名稱</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="必填"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a company name" name="name" />
+                            <!--end::Input-->
+                        </div>
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span>公司電話</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="未填寫，將顯示「暫不提供」"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a contact phone number" name="phone" />
+                            <!--end::Input-->
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="row fv-row mb-7">
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span class="required">公司地址</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="請注意填寫正確，會由系統自動產生經緯度（顯示於地圖上）"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a address" name="address" />
+                            <!--end::Input-->
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="row fv-row mb-7">
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span class="required">行業別</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="必填，最少擇一"></i>
+                            </label>
+                            <!--end::Label-->
+                            <th:block th:each="chunk : ${chunkedIndustries}">
+                                <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
+                                    <div class="col-md" th:each="industry : ${chunk}">
+                                        <input class="form-check-input" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" />
+                                        <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>
+                                    </div>
+                                </div>
+                            </th:block>
+
+<!--                            &lt;!&ndash;begin::Input&ndash;&gt;-->
+<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheckDefault_1" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_1">-->
+<!--                                        農、林、漁、牧業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="2" id="flexCheckDefault_2" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_2">-->
+<!--                                        礦業及土石採取業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="3" id="flexCheckDefault_3" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_3">-->
+<!--                                        製造業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="4" id="flexCheckDefault_4" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_4">-->
+<!--                                        電力及燃氣供應業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash;begin::Input&ndash;&gt;-->
+<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
+<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="5" id="flexCheckDefault_5" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_5">-->
+<!--                                        用水供應及污染政治業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="6" id="flexCheckDefault_6" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_6">-->
+<!--                                        營建工程業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="7" id="flexCheckDefault_7" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_7">-->
+<!--                                        批發及零售業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="8" id="flexCheckDefault_8" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_8">-->
+<!--                                        運輸及倉儲業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
+<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
+<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="9" id="flexCheckDefault_9" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_9">-->
+<!--                                        住宿及餐飲業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="10" id="flexCheckDefault_10" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_10">-->
+<!--                                        出版影音及資通訊業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="11" id="flexCheckDefault_11" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_11">-->
+<!--                                        金融及保險業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="12" id="flexCheckDefault_12" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_12">-->
+<!--                                        不動產業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
+<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
+<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="13" id="flexCheckDefault_13" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_13">-->
+<!--                                        專業、科學及技術服務業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="14" id="flexCheckDefault_14" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_14">-->
+<!--                                        支援服務業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="15" id="flexCheckDefault_15" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_15">-->
+<!--                                        藝術、娛樂及休閒服務業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="16" id="flexCheckDefault_16" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_16">-->
+<!--                                        教育業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
+<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
+<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
+<!--                                <div class="col-md-5">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="17" id="flexCheckDefault_17" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_17">-->
+<!--                                        公共行政及國防；強制性社會安全-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md-4">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="18" id="flexCheckDefault_18" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_18">-->
+<!--                                        醫療保健及社會工作服務業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="col-md">-->
+<!--                                    <input class="form-check-input" type="checkbox" value="19" id="flexCheckDefault_19" />-->
+<!--                                    <label class="form-check-label" for="flexCheckDefault_19">-->
+<!--                                        其他服務業-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+
+<!--                    <span class="bullet bg-primary me-3"></span>職業分類：生命禮儀</div>-->
+<!--            <div class="d-flex align-items-center py-2">-->
+<!--                <span class="bullet bg-primary me-3"></span>公司電話：暫不提供</div>-->
+<!--            <div class="d-flex align-items-center py-2">-->
+<!--                <span class="bullet bg-primary me-3"></span>公司地址：暫不提供</div>-->
+<!--            <div class="d-flex align-items-center py-2">-->
+<!--                <span class="bullet bg-primary me-3"></span>公司網址：暫不提供</div>-->
+                    <!--begin::Actions-->
+                    <div class="text-center pt-15">
+                        <button type="reset" class="btn btn-light me-3"
+                                data-kt-modal-action="cancel">Discard
+                        </button>
+                        <button type="submit" class="btn btn-primary" data-kt-modal-action="submit">
+                            <span class="indicator-label">Submit</span>
+                            <span class="indicator-progress">Please wait...
+							    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                        </button>
+                    </div>
+                    <!--end::Actions-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>

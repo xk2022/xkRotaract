@@ -1,0 +1,55 @@
+package com.xk.common.base;
+
+import com.xk.upms.model.po.UpmsPermission;
+import com.xk.upms.model.po.UpmsSystem;
+import com.xk.upms.service.UpmsPermissionService;
+import com.xk.upms.service.UpmsSystemService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
+/**
+ * Created by yuan on 2022/05/24
+ */
+@Controller
+public class BaseController {
+
+    public static final String DIR_INDEX = "/index";
+    public static final String ADMIN_INDEX = "/admin/index";
+    public static final String R_ADMIN_INDEX = "redirect:/admin/index"; // REDIRECT_ADDR
+    private static final String R_AUTH_LOGOUT = "redirect:/admin/logout";
+
+    @Autowired
+    private UpmsSystemService upmsSystemService;
+    @Autowired
+    private UpmsPermissionService upmsPermissionService;
+
+    public Model info(Model model, String path) {
+        /* find this page info private */
+        UpmsPermission info = upmsPermissionService.findOneByUri(path);
+        model.addAttribute("info", info);
+
+        model.addAttribute("header_breadcrumb", upmsPermissionService.findBreadcrumbUri(path));
+        String[] fragment = info.getPermissionValue().split(":");
+        model.addAttribute("fragmentSystem", fragment[0]);
+        model.addAttribute("fragmentPackage", fragment[1]);
+
+        /* Aside data setting */
+        model.addAttribute("aside_system", upmsSystemService.listActive());
+        UpmsSystem system = (UpmsSystem) upmsSystemService.findOneByName(fragment[0]);
+        model.addAttribute("system", system);
+
+        model.addAttribute("left_tree", upmsPermissionService.buildTree(upmsPermissionService.selectBySystemIdAndRole(system, 1)));
+
+
+
+        model.addAttribute("system_title", null);
+        model.addAttribute("system_list", null);
+        model.addAttribute("user_menus", null);
+        model.addAttribute("user", null);
+        model.addAttribute("menus", null);
+        return model;
+    }
+
+}
+

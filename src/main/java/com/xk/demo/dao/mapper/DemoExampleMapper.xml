@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xk.demo.dao.mapper.DemoExampleMapper">
+    <resultMap id="BaseResultMap" type="com.xk.demo.model.po.DemoExample">
+        <id column="exapmle_id" jdbcType="BIGINT" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <select id="queryById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select *
+        from Demo_Example
+        where exapmle_id = #{id,jdbcType=BIGINT}
+    </select>
+
+</mapper>

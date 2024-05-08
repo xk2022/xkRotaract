@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<th:block th:fragment="head">
+    <!--    <base href="">-->
+    <title>XKRotaract</title>
+    <meta charset="utf-8"/>
+    <!--    <meta name="description" content="Good admin dashboard live demo. Check out all the features of the admin panel. A large number of settings, additional services and widgets." />-->
+    <!--    <meta name="keywords" content="Good, bootstrap, bootstrap 5, admin themes, free admin themes, bootstrap admin, bootstrap dashboard, bootstrap dark mode" />-->
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!--    <meta property="og:locale" content="en_US" />-->
+    <!--    <meta property="og:type" content="article" />-->
+    <!--    <meta property="og:title" content="Good - Bootstrap 5 HTML Admin Dashboard Template" />-->
+    <!--    <meta property="og:url" content="https://themes.getbootstrap.com/product/good-bootstrap-5-admin-dashboard-template" />-->
+    <!--    <meta property="og:site_name" content="Keenthemes | Good" />-->
+    <!--    <link rel="canonical" href="https://preview.keenthemes.com/good" />-->
+    <link rel="shortcut icon" href="assets/media/logos/favicon.ico" th:href="@{/media/logos/favicon.ico}"/>
+    <!--begin::Fonts-->
+    <!--    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />-->
+    <link rel="stylesheet" th:href="@{/css/style.poppins.css}">
+    <!--end::Fonts-->
+    <!--begin::Global Stylesheets Bundle(used by all pages)-->
+    <link rel="stylesheet" type="text/css" href="assets/plugins/global/plugins.bundle.css" th:href="@{/plugins/global/plugins.bundle.css}"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/style.bundle.css" th:href="@{/css/style.bundle.css}"/>
+    <!--end::Global Stylesheets Bundle-->
+</th:block>
+<body>
+
+<!--nav導航-->
+<div th:fragment="aside" id="kt_aside" class="aside" data-kt-drawer="true" data-kt-drawer-name="aside"
+     data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true"
+     data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start"
+     data-kt-drawer-toggle="#kt_aside_mobile_toggle">
+    <!--begin::Aside toolbar-->
+    <div th:replace="admin/_fragments/_aside_toolbar :: _aside_toolbar"></div>
+    <!--end::Aside toolbar-->
+    <!--begin::Aside menu-->
+    <div th:replace="admin/_fragments/_aside_menu :: _aside_menu"></div>
+    <!--end::Aside menu-->
+<!--    <p>-->
+<!--        Is session empty?-->
+<!--        <th:block th:text="${session.isEmpty()} ? 'Yes' : 'No'">Yes</th:block>-->
+<!--    </p>-->
+    <!--begin::Footer-->
+    <div th:replace="admin/_fragments/_aside_footer :: _aside_footer"></div>
+    <!--end::Footer-->
+</div>
+<!--nav導航-->
+
+<!--header頂部-->
+<div th:fragment="header" id="kt_header" style="" class="header align-items-stretch">
+    <!--begin::Brand-->
+    <div th:replace="admin/_fragments/_header_brand :: _header_brand"></div>
+    <!--end::Brand-->
+    <!--begin::Topbar-->
+    <div th:replace="admin/_fragments/_header_topbar :: _header_topbar"></div>
+    <!--end::Topbar-->
+</div>
+<!--header頂部-->
+
+<!--footer底部-->
+<div th:fragment="footer" class="footer py-4 d-flex flex-lg-column" id="kt_footer">
+    <!--begin::Container-->
+    <div th:replace="admin/_fragments/_footer :: _footer"></div>
+    <!--end::Container-->
+</div>
+<!--footer底部-->
+
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+    <script>var hostUrl = "http://localhost:8000/xkRotaract";</script>
+    <!--begin::Global Javascript Bundle(used by all pages)-->
+    <script th:src="@{/plugins/global/plugins.bundle.js}"></script>
+    <script th:src="@{/js/scripts.bundle.js}"></script>
+    <!--end::Global Javascript Bundle-->
+    <script th:inline="javascript">
+        var baseUrl = window.location.pathname;
+
+        function redirectToSystem(selectElement) {
+            var selectedValue = selectElement.value;
+            if (selectedValue) {
+                window.location = selectedValue;
+            }
+        }
+    </script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+</body>
+</html>

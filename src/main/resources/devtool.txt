@@ -1,0 +1,21 @@
+https://blog.csdn.net/nklinsirui/article/details/109157719
+
+原因
+Spring Boot Devtools会监控类路径目录，如果类路径下的文件发生了变化（比如重新编译），则Spring Boot Devtools会重新加载和重启Spring Boot应用。
+
+而在Intellij中，默认不会自动编译（auto build），并且默认不会更新正在运行的应用。
+
+这就导致了在Intellj中修改代码后，Spring Boot应用不会重新加载新的类文件。
+
+解决方法
+方法一：手动触发构建
+修改代码后，选择 Build / Build project (Win/Linux: CTRL + F9， Mac: COMMAND + F9)，手工触发构建。
+
+方法二：开启自动构建，并允许更新正在运行的应用
+打开Intellij的Preferences菜单，找到"Build, Execution, Deployment"，选择Compiler，勾选“Build project automatically"。
+打开Help ／ Find Action（Win/Linux: CTRL + SHIFT + A， Mac: COMMAND + SHIFT + A)，然后输入Registry，打开“Registry…"页面。
+在打开的Registry页面，勾选“compiler.automake.allow.when.app.running"。
+重启Intellij。
+————————————————
+版权声明：本文为CSDN博主「nklinsirui」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/nklinsirui/article/details/109157719

@@ -1,0 +1,31 @@
+<div th:fragment="_aside_toolbar" class="aside-toolbar py-5" id="kt_aside_toolbar"
+     xmlns:th="http://www.w3.org/1999/xhtml">
+    <!--begin::Aside select-->
+    <div class="d-flex align-items-center flex-stack">
+        <!--begin::Select-->
+        <select class="form-select form-select-custom border-0 fw-bolder" onchange="redirectToSystem(this)"
+                data-control="select2" data-placeholder="Select Project" data-hide-search="true">
+            <option value="/admin/index" selected="selected">請選擇系統切換</option>
+            <option th:each="i : ${aside_system}" th:href="@{'/admin'+${i.basepath}+'/manage'}"
+                    th:value="@{'/admin' + ${i.basepath} + '/manage'}" th:text="${i.name} + ' - ' + ${i.title}" th:selected="${system} ? ${i.id==system.id} : false">
+                <a th:href="@{'/admin' + ${i.basepath} + '/manage'}" class="btn btn-light btn-active-primary my-1 me-2">Go System</a></option>
+        </select>
+        <!--end::Select-->
+        <!--begin::Button-->
+<!--        <a href="#" class="btn btn-icon btn-custom border-0 fw-bolder flex-shrink-0 ms-3" data-bs-toggle="modal"-->
+<!--           data-bs-target="#kt_modal_create_project">-->
+<!--            &lt;!&ndash;begin::Svg Icon | path: icons/duotune/arrows/arr087.svg&ndash;&gt;-->
+<!--            <span class="svg-icon svg-icon-2qx">-->
+<!--                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"-->
+<!--                     fill="none">-->
+<!--                    <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1"-->
+<!--                          transform="rotate(-90 11 18)" fill="black"/>-->
+<!--                    <rect x="6" y="11" width="12" height="2" rx="1" fill="black"/>-->
+<!--                </svg>-->
+<!--            </span>-->
+<!--            &lt;!&ndash;end::Svg Icon&ndash;&gt;-->
+<!--        </a>-->
+        <!--end::Button-->
+    </div>
+    <!--end::Aside select-->
+</div>

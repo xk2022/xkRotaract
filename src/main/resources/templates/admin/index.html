@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--begin::Head-->
+<head>
+    <!--/*/<th:block th:replace="admin/_fragments :: head">/*/-->
+    <!--/*/</th:block>/*/-->
+    <!--/*/<th:block th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: head">/*/-->
+    <!--/*/</th:block>/*/-->
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+<body id="kt_body" class="aside-enabled">
+<!--begin::Main-->
+<!--begin::Root-->
+<div class="d-flex flex-column flex-root">
+    <!--begin::Page-->
+    <div class="page d-flex flex-row flex-column-fluid">
+        <!--begin::Aside-->
+        <!--導航-->
+        <div th:replace="admin/_fragments :: aside"></div>
+        <!--end::Aside-->
+        <!--begin::Wrapper-->
+        <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
+            <!--begin::Header-->
+            <div th:replace="admin/_fragments :: header"></div>
+            <!--end::Header-->
+            <!--begin::Content-->
+            <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+                <!--begin::Container-->
+                <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: ${fragmentName}"></div>
+                <!--end::Container-->
+            </div>
+            <!--end::Content-->
+            <!--begin::Footer-->
+            <div th:replace="admin/_fragments :: footer"></div>
+            <!--end::Footer-->
+        </div>
+        <!--end::Wrapper-->
+    </div>
+    <!--end::Page-->
+</div>
+<!--end::Root-->
+<!--end::Main-->
+
+<!--begin::Javascript-->
+<!--/*/<th:block th:replace="admin/_fragments :: script">/*/-->
+<!--/*/</th:block>/*/-->
+<!--/*/<th:block th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: script">/*/-->
+<!--/*/</th:block>/*/-->
+<!--end::Javascript-->
+</body>
+<!--end::Body-->
+</html>

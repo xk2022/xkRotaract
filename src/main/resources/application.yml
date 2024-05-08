@@ -1,0 +1,60 @@
+server:
+  port: 8000
+  servlet:
+    context-path: /xkRotaract
+
+spring:
+  application:
+    name: xkRotaract
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver # 驅動類型(注意MySQL 8.0的值是com.mysql.cj.jdbc.Driver和之前不同)
+    url: jdbc:mysql://localhost:3306/rotaract?useSSL=false&useUnicode=yes&characterEncoding=UTF-8&characterSetResults=UTF-8 # 數據庫連接字符串
+    username: root # 數據庫用戶名
+    password: 1qaz@WSX # 數據庫密碼
+    type: com.alibaba.druid.pool.DruidDataSource
+  jpa:
+    show-sql: true # 默认false，在日志里显示执行的sql语句
+    database: mysql
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      #指定为update，每次启动项目检测表结构有变化的时候会新增字段，表不存在时会新建，如果指定create，则每次启动项目都会清空数据并删除表，再新建
+      ddl-auto: update #none:nothing, update:update new, create:rebootDB
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl #指定jpa的自动表生成策略，驼峰自动映射为下划线格式
+    #physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: true
+  thymeleaf:
+    cache: false #开发阶段，建议关闭thymeleaf的缓存
+    mode: HTML5 #使用遗留的html5以去掉对html标签的校验
+    check-template: true
+    servlet.content-type: text/html
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+  resources:
+    #用于告诉Spring Boot应该在何处查找静态资源文件,查找文件时会依赖于配置的先后顺序依次进行
+    static-locations: classpath:/static/,classpath:/view/,classpath:/public,classpath:/resources,classpath:/META-INF/resources
+
+
+# mybatis配置
+  mybatis:
+#    mapper-locations: classpath*:**/mapper/xml/**Mapper.xml    # mapper映射文件位置
+#    type-aliases-package: com.xk.**.model    # 实体类所在的位置
+    configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   #用于控制台打印sql语句
+      map-underscore-to-acmel-case: true    #開啟mybatis駝峰式命名規則自動轉換
+#  mybatis-plus:
+#    mapper-locations: classpath*:**/mapper/xml/**Mapper.xml    # mapper映射文件位置
+
+
+# ===== 自定義 swagger 配置 ===== #
+springfox:
+  documentation:
+    swagger-ui:
+      enabled : true
+
+logging:
+  level:
+    root: INFO
+    com.xk: DEBUG

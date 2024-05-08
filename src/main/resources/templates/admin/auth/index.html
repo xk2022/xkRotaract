@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--begin::Head-->
+<head>
+    <base href="../../">
+    <!--/*/<th:block th:replace="/admin/auth/_fragments :: head">/*/-->
+    <!--/*/</th:block>/*/-->
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+<body id="kt_body" class="auth-bg">
+<!--begin::Main-->
+<!--begin::Root-->
+<div class="d-flex flex-column flex-root">
+    <!--begin::Authentication - Sign-in -->
+    <div class="d-flex flex-column flex-lg-row flex-column-fluid">
+        <!--begin::Aside-->
+        <div th:replace="admin/auth/_fragments :: aside"></div>
+        <!--begin::Aside-->
+        <!--begin::Body-->
+        <div class="d-flex flex-column flex-lg-row-fluid py-10">
+            <!--begin::Content-->
+            <div class="d-flex flex-center flex-column flex-column-fluid">
+                <!--begin::Wrapper-->
+                <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: ${fragmentName}"></div>
+                <!--end::Wrapper-->
+            </div>
+            <!--end::Content-->
+            <!--begin::Footer-->
+            <div th:replace="admin/auth/_fragments :: footer"></div>
+            <!--end::Footer-->
+        </div>
+        <!--end::Body-->
+    </div>
+    <!--end::Authentication - Sign-in-->
+</div>
+<!--end::Root-->
+<!--end::Main-->
+
+<!--begin::Javascript-->
+<!--/*/<th:block th:replace="admin/auth/_fragments :: script">/*/-->
+<!--/*/</th:block>/*/-->
+<!--/*/<th:block th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: script">/*/-->
+<!--/*/</th:block>/*/-->
+<!--end::Javascript-->
+</body>
+<!--end::Body-->
+</html>
