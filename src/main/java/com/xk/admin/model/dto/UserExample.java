@@ -24,4 +24,6 @@ public class UserExample {
     private String phone;
 
     private Byte sex;
+
+    private long[] roleId;
 }

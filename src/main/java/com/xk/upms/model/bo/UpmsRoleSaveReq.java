@@ -7,4 +7,7 @@ import com.xk.upms.model.po.UpmsRole;
  * Created by yuan on 2022/06/24
  */
 public class UpmsRoleSaveReq extends UpmsRole {
+
+    String[] checkBoxValues;
+
 }

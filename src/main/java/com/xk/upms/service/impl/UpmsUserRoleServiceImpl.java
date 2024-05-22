@@ -1,6 +1,8 @@
 package com.xk.upms.service.impl;
 
+import com.xk.upms.dao.mapper.UpmsUserMapper;
 import com.xk.upms.dao.repository.UpmsUserRoleRepository;
+import com.xk.upms.model.dto.UpmsUserRoleExample;
 import com.xk.upms.model.po.UpmsUserRole;
 import com.xk.upms.service.UpmsUserRoleService;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * UpmsUserRoleService 實現
@@ -23,6 +27,25 @@ public class UpmsUserRoleServiceImpl implements UpmsUserRoleService {
 
     @Autowired
     private UpmsUserRoleRepository upmsUserRoleRepository;
+    @Autowired
+    private UpmsUserMapper upmsUserMapper;
+
+    @Override
+    public int role(long userId, String roleId) {
+        int result = 0;
+        // 删除旧记录
+        upmsUserRoleRepository.deleteByUserId(userId);
+        // 增加新记录
+
+        if (StringUtils.isBlank(roleId)) {
+            return 0;
+        }
+        UpmsUserRole entity = new UpmsUserRole();
+        entity.setUserId(userId);
+        entity.setRoleId(NumberUtils.toLong(roleId));
+        upmsUserRoleRepository.save(entity);
+        return 1;
+    }
 
     @Override
     public int role(long userId, String[] roleIds) {
@@ -43,6 +66,11 @@ public class UpmsUserRoleServiceImpl implements UpmsUserRoleService {
             }
         }
         return result;
+    }
+
+    @Override
+    public List<UpmsUserRoleExample> getUsers(long roleId) {
+        return upmsUserMapper.selectUsersByRole(roleId);
     }
 
 }

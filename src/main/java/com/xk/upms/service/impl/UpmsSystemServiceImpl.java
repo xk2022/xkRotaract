@@ -1,7 +1,10 @@
 package com.xk.upms.service.impl;
 
-import java.util.List;
-
+import com.xk.upms.dao.repository.UpmsSystemRepository;
+import com.xk.upms.model.bo.UpmsSystemSaveReq;
+import com.xk.upms.model.po.UpmsSystem;
+import com.xk.upms.model.vo.UpmsSystemSaveResp;
+import com.xk.upms.service.UpmsSystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -11,12 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.xk.upms.dao.repository.UpmsSystemRepository;
-import com.xk.upms.model.bo.UpmsSystemSaveReq;
-import com.xk.upms.model.dto.UpmsSystemExample;
-import com.xk.upms.model.po.UpmsSystem;
-import com.xk.upms.model.vo.UpmsSystemSaveResp;
-import com.xk.upms.service.UpmsSystemService;
+import java.util.List;
 
 /**
  * UpmsPermissionService 實現 Created by yuan on 2022/06/10
@@ -27,8 +25,6 @@ public class UpmsSystemServiceImpl implements UpmsSystemService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UpmsSystemServiceImpl.class);
 
-//    @Autowired
-//    private BaseRepostitory baseRepostitory;
 	@Autowired
 	private UpmsSystemRepository upmsSystemRepository;
 
@@ -44,11 +40,6 @@ public class UpmsSystemServiceImpl implements UpmsSystemService {
 		system.setOrders(null);
 		Example<UpmsSystem> example = Example.of(system);
 		return upmsSystemRepository.findAll(example, Sort.by(Sort.Direction.ASC, "orders"));
-	}
-
-	@Override
-	public List listBy(UpmsSystemExample resources) {
-		return null;
 	}
 
 	@Override

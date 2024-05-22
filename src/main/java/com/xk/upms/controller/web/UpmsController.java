@@ -108,7 +108,7 @@ public class UpmsController extends BaseController {
     @PostMapping("/permission/{id}")
     public Object permission(@PathVariable("id") long id, HttpServletRequest request) {
 //        JSONArray datas = JSONArray.parseArray(request.getParameter("datas"));
-        int result = upmsRolePermissionService.rolePermission(null, id);
+        upmsRolePermissionService.rolePermission(null, id);
 //        return new UpmsResult(UpmsResultConstant.SUCCESS, result);
         return REDIRECT_ADDR;
     }

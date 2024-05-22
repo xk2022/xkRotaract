@@ -23,7 +23,7 @@ import java.util.Date;
  */
 @RestController
 @Api("權限管理api")
-@RequestMapping("/api/manage/permission")
+@RequestMapping("/api/manage/")
 public class UpmsPermissionRestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsPermissionRestController.class);
@@ -57,32 +57,36 @@ public class UpmsPermissionRestController {
 
         UpmsPermissionSaveReq data = new UpmsPermissionSaveReq();
         data.setCreateTime(new Date());
-        data.setCreateBy("admin");
+        data.setCreateBy("system restAPI");
         data.setStatus(true);
         /**
          * /admin/index
          */
-        data.setName("系統選擇首頁");
+//        data.setSystemId((long) 1);
+        data.setPid(null);
+        data.setName("首頁");
         data.setType((byte) 0);
-        data.setPermissionValue("admin");
-        data.setUri("/admin");
-        data.setOrders((long) 1);
+        data.setPermissionValue(":_fragments");
+        data.setUri("/admin/index");
+        data.setOrders((long) 0);
         upmsPermissionService.create(data);
         /**
          * /admin/upms
          */
         findSystemEntity = (UpmsSystem) upmsSystemService.findOneByName("upms");
-        data.setSystemId((long) findSystemEntity.getId());
-        
+        data.setSystemId(findSystemEntity.getId());
+
+        data.setPid(null);
         data.setName("權限管理系統");
         data.setType((byte) 0);
-        data.setPermissionValue("upms:upms");
+        data.setPermissionValue("upms:manage");
         data.setUri("/admin/upms/manage");
-        data.setOrders((long) 1);
+        data.setOrders((long) 0);
         upmsPermissionService.create(data);
         /**
          * /admin/upms/po
          */
+        data.setPid(null);
         data.setName("系統組織管理");
         data.setType((byte) 1);
         data.setPermissionValue("upms:po");
@@ -90,26 +94,25 @@ public class UpmsPermissionRestController {
         data.setOrders((long) 1);
         upmsPermissionService.create(data);
 
-        findParentEntity = (UpmsPermission) upmsPermissionService.findOneByUri("/admin/upms/manage/po");
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/upms/manage/po");
         data.setPid(findParentEntity.getId());
         data.setType((byte) 2);
 
         data.setName("系統管理");
         data.setPermissionValue("upms:system");
         data.setUri("/admin/upms/manage/system");
-        data.setOrders((long) 2);
+        data.setOrders((long) 11);
         upmsPermissionService.create(data);
 
         data.setName("組織管理");
         data.setPermissionValue("upms:organization");
         data.setUri("/admin/upms/manage/organization");
-        data.setOrders((long) 3);
+        data.setOrders((long) 12);
         upmsPermissionService.create(data);
         /**
          * /admin/upms/ru
          */
         data.setPid(null);
-
         data.setName("角色用戶管理");
         data.setType((byte) 1);
         data.setPermissionValue("upms:ru");
@@ -117,26 +120,25 @@ public class UpmsPermissionRestController {
         data.setOrders((long) 2);
         upmsPermissionService.create(data);
 
-        findParentEntity = (UpmsPermission) upmsPermissionService.findOneByUri("/admin/upms/manage/ru");
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/upms/manage/ru");
         data.setPid(findParentEntity.getId());
         data.setType((byte) 2);
 
         data.setName("角色管理");
         data.setPermissionValue("upms:role");
         data.setUri("/admin/upms/manage/role");
-        data.setOrders((long) 1);
+        data.setOrders((long) 21);
         upmsPermissionService.create(data);
 
         data.setName("用戶管理");
         data.setPermissionValue("upms:user");
         data.setUri("/admin/upms/manage/user");
-        data.setOrders((long) 2);
+        data.setOrders((long) 22);
         upmsPermissionService.create(data);
         /**
          * /admin/upms/p
          */
         data.setPid(null);
-
         data.setName("權限資源管理");
         data.setType((byte) 1);
         data.setPermissionValue("upms:p");
@@ -144,14 +146,14 @@ public class UpmsPermissionRestController {
         data.setOrders((long) 3);
         upmsPermissionService.create(data);
 
-        findParentEntity = (UpmsPermission) upmsPermissionService.findOneByUri("/admin/upms/manage/p");
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/upms/manage/p");
         data.setPid(findParentEntity.getId());
         data.setType((byte) 2);
 
         data.setName("權限管理");
         data.setPermissionValue("upms:permission");
         data.setUri("/admin/upms/manage/permission");
-        data.setOrders((long) 1);
+        data.setOrders((long) 31);
         upmsPermissionService.create(data);
         /**
          * /admin/upms/o
@@ -165,44 +167,65 @@ public class UpmsPermissionRestController {
         data.setOrders((long) 4);
         upmsPermissionService.create(data);
 
-        findParentEntity = (UpmsPermission) upmsPermissionService.findOneByUri("/admin/upms/manage/o");
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/upms/manage/o");
         data.setPid(findParentEntity.getId());
         data.setType((byte) 2);
 
         data.setName("公用碼表");
         data.setPermissionValue("upms:comm");
         data.setUri("/admin/upms/manage/comm");
-        data.setOrders((long) 1);
+        data.setOrders((long) 41);
         upmsPermissionService.create(data);
 
         data.setName("會話管理");
         data.setPermissionValue("upms:session");
         data.setUri("/admin/upms/manage/session");
-        data.setOrders((long) 2);
+        data.setOrders((long) 42);
         upmsPermissionService.create(data);
 
         data.setName("日誌紀錄");
         data.setPermissionValue("upms:log");
         data.setUri("/admin/upms/manage/log");
-        data.setOrders((long) 3);
+        data.setOrders((long) 43);
         upmsPermissionService.create(data);
 
         data.setName("鍵值管理");
         data.setPermissionValue("upms:key");
         data.setUri("/admin/upms/manage/key");
-        data.setOrders((long) 4);
+        data.setOrders((long) 44);
         upmsPermissionService.create(data);
         /**
          * /admin/cms
          */
         findSystemEntity = (UpmsSystem) upmsSystemService.findOneByName("cms");
-        data.setSystemId((long) findSystemEntity.getId());
+        data.setSystemId(findSystemEntity.getId());
 
+        data.setPid(null);
         data.setName("內容管理系統");
         data.setType((byte) 0);
-        data.setPermissionValue("cms:cms");
+        data.setPermissionValue("cms:manage");
         data.setUri("/admin/cms/manage");
-        data.setOrders((long) 2);
+        data.setOrders((long) 0);
+        upmsPermissionService.create(data);
+        /**
+         * /admin/cms/u
+         */
+        data.setPid(null);
+        data.setName("個人內容管理");
+        data.setType((byte) 1);
+        data.setPermissionValue("cms:u");
+        data.setUri("/admin/cms/manage/u");
+        data.setOrders((long) 1);
+        upmsPermissionService.create(data);
+
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/cms/manage/u");
+        data.setPid(findParentEntity.getId());
+        data.setType((byte) 2);
+
+        data.setName("我的資料");
+        data.setPermissionValue("cms:self");
+        data.setUri("/admin/cms/manage/self");
+        data.setOrders((long) 11);
         upmsPermissionService.create(data);
 
         return "OK";

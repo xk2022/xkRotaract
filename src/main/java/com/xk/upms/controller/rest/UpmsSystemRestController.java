@@ -47,7 +47,7 @@ public class UpmsSystemRestController {
     public String init() {
         UpmsSystemSaveReq data = new UpmsSystemSaveReq();
         data.setStatus(true);
-        data.setCreateBy("admin");
+        data.setCreateBy("system restAPI");
 
         data.setTheme("權限管理系統");
         data.setBasepath("/upms");

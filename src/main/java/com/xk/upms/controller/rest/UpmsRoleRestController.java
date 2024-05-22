@@ -2,6 +2,10 @@ package com.xk.upms.controller.rest;
 
 import com.xk.common.base.BaseRepostitory;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
+import com.xk.upms.model.vo.UpmsPermissionResp;
+import com.xk.upms.model.vo.UpmsRoleResp;
+import com.xk.upms.service.UpmsPermissionService;
+import com.xk.upms.service.UpmsRolePermissionService;
 import com.xk.upms.service.UpmsRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 角色 RestController
@@ -29,6 +34,10 @@ public class UpmsRoleRestController {
     private BaseRepostitory baseRepostitory;
     @Autowired
     private UpmsRoleService upmsRoleService;
+    @Autowired
+    private UpmsPermissionService upmsPermissionService;
+    @Autowired
+    private UpmsRolePermissionService upmsRolePermissionService;
 
     @ApiOperation(value = "角色列表")
     @GetMapping("/cms_core")
@@ -49,35 +58,49 @@ public class UpmsRoleRestController {
     public String init() {
         UpmsRoleSaveReq data = new UpmsRoleSaveReq();
         data.setCreateTime(new Date());
-        data.setCreateBy("admin");
+        data.setCreateBy("system restAPI");
 
         data.setCode("admin");
         data.setTitle("系統管理員");
         data.setDescription("系統管理員");
+        data.setOrders((long) 1);
         upmsRoleService.create(data);
 
         data.setCode("sys");
         data.setTitle("管理員");
         data.setDescription("管理員");
+        data.setOrders((long) 2);
         upmsRoleService.create(data);
 
         data.setCode("club_sys");
         data.setTitle("社團主權限");
         data.setDescription("社團主權限");
+        data.setOrders((long) 3);
         upmsRoleService.create(data);
 
-        data.setCode("club_P");
-        data.setTitle("社長");
-        data.setDescription("社長");
-        upmsRoleService.create(data);
-
-        data.setCode("club_S");
-        data.setTitle("秘書");
-        data.setDescription("秘書");
+        data.setCode("member");
+        data.setTitle("社友");
+        data.setDescription("社友");
+        data.setOrders((long) 4);
         upmsRoleService.create(data);
 
         return "OK";
     }
 
+    /**
+     * permission()
+     */
+    @GetMapping("/permission")
+    public void permission() {
+        List<UpmsPermissionResp> permissions = upmsPermissionService.list();
+
+        // 将 id 转换为 String[]
+        String[] checkBoxValues = permissions.stream()
+                .map(UpmsPermissionResp::getId)
+                .map(String::valueOf) // 转换为字符串
+                .toArray(String[]::new);
+        UpmsRoleResp resp = upmsRoleService.selectByCode("admin");
+        upmsRolePermissionService.rolePermission(checkBoxValues, resp.getId());
+    }
 }
 

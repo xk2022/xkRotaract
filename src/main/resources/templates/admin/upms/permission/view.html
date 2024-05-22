@@ -13,6 +13,7 @@
     <!--begin::Page Vendors Javascript(used by this page)-->
     <!--General - DataTables-->
     <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
     <!--end::Page Vendors Javascript-->
     <!--begin::Page Custom Javascript(used by this page)-->
     <script th:src="@{/js/custom/datatables/table.js}"></script>
@@ -22,17 +23,11 @@
     <!--end::Page Custom Javascript-->
     <script th:inline="javascript">
         var deleteUrl = '/admin/upms/manage/permissions/delete/';
-window.onload = function() {
-        document.getElementById("selectMode_3").value = "1";
-  };
-// 在點擊事件中選取下拉選單的選項
-  $(document).ready(function(){
-    $("#selectMode_3").on("click", function() {
-      var selectedValue = "1"; // 獲取選取的值
-    });
-    $("#selectMode_3").trigger("click");
-  });
-
+        // 在點擊事件中選取下拉選單的選項
+        $(document).ready(function(){
+            // selectMode_3 with index selceted value
+            $('#kt_table').DataTable().columns(3).search(1).draw();
+        });
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->

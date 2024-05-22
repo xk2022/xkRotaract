@@ -12,6 +12,7 @@ import com.xk.upms.model.po.UpmsRole;
 import com.xk.upms.model.po.UpmsUser;
 import com.xk.upms.model.vo.UpmsUserDetailResp;
 import com.xk.upms.model.vo.UpmsUserIndexResp;
+import com.xk.upms.model.vo.UpmsUserResp;
 import com.xk.upms.model.vo.UpmsUserSaveResp;
 import com.xk.upms.service.UpmsUserService;
 import org.slf4j.Logger;
@@ -57,6 +58,18 @@ public class UpmsUserServiceImpl implements UpmsUserService {
         resultList = XkBeanUtils.copyListProperties(resultDtos, UpmsUserIndexResp::new);
 
         return resultList;
+    }
+
+    @Override
+    public UpmsUserResp findByUsername(UpmsUserReq resources) {
+        UpmsUserResp result = new UpmsUserResp();
+
+        UpmsUser req = new UpmsUser();
+        BeanUtils.copyProperties(resources, req);
+        UpmsUser entity = upmsUserRepository.findByUsername(resources.getUsername());
+
+        BeanUtils.copyProperties(entity, result);
+        return result;
     }
     
     @Override

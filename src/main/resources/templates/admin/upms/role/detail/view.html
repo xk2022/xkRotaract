@@ -4,7 +4,7 @@
 <th:block th:fragment="head"><!--<div>-->
     <!--begin::Page Vendor Stylesheets(used by this page)-->
     <!--General - DataTables-->
-    <link rel="stylesheet" type="text/css" th:href="@{/plugins/custom/datatables/datatables.bundle.css}"/>
+    <link th:href="@{/plugins/custom/datatables/datatables.bundle.css}" rel="stylesheet" type="text/css" />
     <!--end::Page Vendor Stylesheets-->
 </th:block><!--</div>-->
 <!--css資源引入-->
@@ -17,31 +17,11 @@
     <!--begin::Page Custom Javascript(used by this page)-->
     <script th:src="@{/js/custom/datatables/table.js}"></script>
     <script th:src="@{/js/custom/datatables/input.js}"></script>
-<!--    <script src="assets/js/custom/apps/user-management/users/view/view.js"></script>-->
-<!--    <script src="assets/js/custom/apps/user-management/users/view/update-details.js"></script>-->
-<!--    <script src="assets/js/custom/apps/user-management/users/view/add-schedule.js"></script>-->
-<!--    <script src="assets/js/custom/apps/user-management/users/view/add-task.js"></script>-->
-<!--    <script src="assets/js/custom/apps/user-management/users/view/update-email.js"></script>-->
-<!--    <script src="assets/js/custom/apps/user-management/users/view/update-password.js"></script>-->
-<!--    <script src="assets/js/custom/apps/user-management/users/view/update-role.js"></script>-->
-<!--    <script src="assets/js/custom/apps/user-management/users/view/add-auth-app.js"></script>-->
-<!--    <script src="assets/js/custom/apps/user-management/users/view/add-one-time-password.js"></script>-->
-<!--    <script src="assets/js/widgets.bundle.js"></script>-->
-<!--    <script src="assets/js/custom/widgets.js"></script>-->
-<!--    <script src="assets/js/custom/apps/chat/chat.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/create-project/type.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/create-project/budget.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/create-project/settings.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/create-project/team.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/create-project/targets.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/create-project/files.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/create-project/complete.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/create-project/main.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/upgrade-plan.js"></script>-->
-<!--    <script src="assets/js/custom/utilities/modals/users-search.js"></script>-->
+<!--    <script src="assets/js/custom/apps/user-management/roles/view/view.js"></script>-->
+<!--    <script src="assets/js/custom/apps/user-management/roles/view/update-role.js"></script>-->
     <!--end::Page Custom Javascript-->
-    <!--end::Page Custom Javascript-->
-    <!--/*/<th:block th:replace="'admin/'+${system}+'/'+${fragmentPackage}+'/input' :: script">/*/-->
+
+    <!--/*/<th:block th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: script">/*/-->
     <!--/*/</th:block>/*/-->
     <script th:inline="javascript">
         var deleteUrl = '/admin/upms/manage/role/delete/xxxxxxxxxxx';
@@ -62,7 +42,7 @@
                 <div class="card-header">
                     <!--begin::Card title-->
                     <div class="card-title">
-                        <h2 class="mb-0" th:text="${entity.name}">Developer</h2>
+                        <h2 class="mb-0" th:text="${role.title}">Developer</h2>
                     </div>
                     <!--end::Card title-->
                 </div>
@@ -70,7 +50,7 @@
                 <!--begin::Card body-->
                 <div class="card-body pt-0">
                     <!--begin::Permissions-->
-                    <div class="d-flex flex-column text-gray-600" th:text="${entity.description}">
+                    <div class="d-flex flex-column text-gray-600">
                         <div class="d-flex align-items-center py-2">
                             <span class="bullet bg-primary me-3"></span>Some Admin Controls</div>
                         <div class="d-flex align-items-center py-2">
@@ -91,11 +71,18 @@
                 <!--end::Card body-->
                 <!--begin::Card footer-->
                 <div class="card-footer pt-0">
-                    <button type="button" class="btn btn-light btn-active-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_input">Edit Role</button>
+                    <button type="button" class="btn btn-light btn-active-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_input"
+                            th:attr="onclick=|edit_btn('${role.id}', '${role.title}')|">
+                        編輯</button>
                 </div>
                 <!--end::Card footer-->
             </div>
             <!--end::Card-->
+            <!--begin::Modal-->
+            <!--begin::Modal - Update role-->
+            <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: input"></div>
+            <!--end::Modal - Update role-->
+            <!--end::Modal-->
         </div>
         <!--end::Sidebar-->
         <!--begin::Content-->
@@ -106,8 +93,9 @@
                 <div class="card-header pt-5">
                     <!--begin::Card title-->
                     <div class="card-title">
-                        <h2 class="d-flex align-items-center">Users Assigned
-                            <span class="text-gray-600 fs-6 ms-1">(14)</span></h2>
+                        <h2 class="d-flex align-items-center">配給使用者
+                            <span class="text-gray-600 fs-6 ms-1">(<th:block th:text="${role.countUser}"></th:block>)</span>
+                        </h2>
                     </div>
                     <!--end::Card title-->
                     <!--begin::Card toolbar-->
@@ -116,11 +104,11 @@
                         <div class="d-flex align-items-center position-relative my-1" data-kt-view-roles-table-toolbar="base">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
                             <span class="svg-icon svg-icon-1 position-absolute ms-6">
-														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-															<rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-															<path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
-														</svg>
-													</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                                    <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
+                                </svg>
+                            </span>
                             <!--end::Svg Icon-->
                             <input type="text" data-kt-roles-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search Users" />
                         </div>
@@ -142,76 +130,87 @@
                     <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_roles_view_table">
                         <!--begin::Table head-->
                         <thead>
-                        <!--begin::Table row-->
-                        <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                            <th class="w-10px pe-2">
-                                <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                                    <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_roles_view_table .form-check-input" value="1" />
-                                </div>
-                            </th>
-                            <th class="min-w-50px">ID</th>
-                            <th class="min-w-150px">User</th>
-                            <th class="min-w-125px">Joined Date</th>
-                            <th class="text-end min-w-100px">Actions</th>
-                        </tr>
-                        <!--end::Table row-->
+                            <!--begin::Table row-->
+                            <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                                <th class="w-10px pe-2">
+                                    <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
+                                        <input class="form-check-input" type="checkbox" data-kt-check="true"
+                                               data-kt-check-target="#kt_table .form-check-input" value="1" />
+                                    </div>
+                                </th>
+                                <th class="min-w-50px" th:text="ID">ID</th>
+                                <th class="min-w-150px" th:text="使用者">User</th>
+                                <th class="min-w-125px" th:text="加入日期">Joined Date</th>
+                                <th class="text-end min-w-100px" th:text="動作">Actions</th>
+                            </tr>
+                            <!--end::Table row-->
                         </thead>
                         <!--end::Table head-->
                         <!--begin::Table body-->
                         <tbody class="fw-bold text-gray-600">
-                        <tr th:each="data : ${users}">
-                            <td>
-                                <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="checkbox" value="1" />
-                                </div>
-                            </td>
-                            <td th:text="'ID-'+${data.id}"></td>
-                            <td class="d-flex align-items-center">
-                                <!--begin:: Avatar -->
-                                <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                    <a th:href="@{'/admin/upms/manage/user/'+${data.id}}">
-                                        <div class="symbol-label">
-                                            <img th:src="@{/media/avatars/300-6.jpg}" alt="Emma Smith" class="w-100" />
-                                        </div>
+                            <tr th:each="data : ${page_list}">
+                                <!--begin::Checkbox-->
+                                <td>
+                                    <div class="form-check form-check-sm form-check-custom form-check-solid">
+                                        <input class="form-check-input" type="checkbox" value="1" />
+                                    </div>
+                                </td>
+                                <!--end::Checkbox-->
+                                <!--begin::ID-->
+                                <td th:text="${data.id}">ID1584</td>
+                                <!--begin::ID-->
+                                <!--begin::User=-->
+                                <td class="d-flex align-items-center">
+                                    <!--begin:: Avatar -->
+                                    <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                                        <a th:href="@{'/admin/upms/manage/user/'+${data.id}}">
+                                            <div class="symbol-label">
+                                                <img th:src="@{/media/avatars/300-1.jpg}" alt="Sean Bean" class="w-100" />
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <!--end::Avatar-->
+                                    <!--begin::User details-->
+                                    <div class="d-flex flex-column">
+                                        <a th:href="@{'/admin/upms/manage/user/'+${data.id}}" class="text-gray-800 text-hover-primary mb-1" th:text="${data.username}">Sean Bean</a>
+                                        <span th:text="${data.email}">sean@dellito.com</span>
+                                    </div>
+                                    <!--begin::User details-->
+                                </td>
+                                <!--end::user=-->
+                                <!--begin::Joined date=-->
+                                <td>
+                                    <div class="badge badge-light fw-bolder" th:text="${#dates.format(data.createTime, 'dd-MMM-yyyy, HH:mm a')}">5 hours ago</div>
+                                </td>
+                                <!--end::Joined date=-->
+                                <!--begin::Action=-->
+                                <td class="text-end">
+                                    <a href="#" class="btn btn-sm btn-light btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
+                                        <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
+                                        <span class="svg-icon svg-icon-5 m-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black" />
+                                            </svg>
+                                        </span>
+                                        <!--end::Svg Icon-->
                                     </a>
-                                </div>
-                                <!--end::Avatar-->
-                                <!--begin::User details-->
-                                <div class="d-flex flex-column">
-                                    <a th:href="@{'/admin/upms/manage/user/'+${data.id}}" class="text-gray-800 text-hover-primary mb-1" th:text="${data.realname}">Sean Bean</a>
-                                    <span th:text="${data.email}">sean@dellito.com</span>
-                                </div>
-                                <!--begin::User details-->
-                            </td>
-                            <!--begin::Joined date=-->
-                            <td th:text="${data.createTime}"></td>
-                            <!--begin::Action=-->
-                            <td class="text-end">
-                                <a href="#" class="btn btn-sm btn-light btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
-                                    <span class="svg-icon svg-icon-5 m-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black" />
-                                        </svg>
-                                    </span>
-                                    <!--end::Svg Icon--></a>
-                                <!--begin::Menu-->
-                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a th:href="@{'/admin/upms/manage/user/'+${data.id}}" class="menu-link px-3">View</a>
+                                    <!--begin::Menu-->
+                                    <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
+                                        <!--begin::Menu item-->
+                                        <div class="menu-item px-3">
+                                            <a th:href="@{'/admin/upms/manage/user/'+${data.id}}" class="menu-link px-3">View</a>
+                                        </div>
+                                        <!--end::Menu item-->
+                                        <!--begin::Menu item-->
+                                        <div class="menu-item px-3">
+                                            <a th:href="@{'/admin/upms/manage/role/delAssign/'+${data.id}}" class="menu-link px-3" data-kt-roles-table-filter="delete_row">Delete</a>
+                                        </div>
+                                        <!--end::Menu item-->
                                     </div>
-                                    <!--end::Menu item-->
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a href="#" class="menu-link px-3" data-kt-roles-table-filter="delete_row">Delete</a>
-                                    </div>
-                                    <!--end::Menu item-->
-                                </div>
-                                <!--end::Menu-->
-                            </td>
-                            <!--end::Action=-->
-                        </tr>
+                                    <!--end::Menu-->
+                                </td>
+                                <!--end::Action=-->
+                            </tr>
                         </tbody>
                         <!--end::Table body-->
                     </table>
@@ -226,7 +225,7 @@
     <!--end::Layout-->
 
     <!--begin::Modal - Add task-->
-    <div th:replace="'admin/'+${system}+'/'+${fragmentPackage}+'/input' :: input"></div>
+    <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: input"></div>
     <!--end::Modal - Add task-->
 </div>
 

@@ -1,5 +1,6 @@
 package com.xk.admin.controller.web;
 
+import com.xk.admin.service.AuthService;
 import com.xk.common.base.BaseController;
 import com.xk.upms.service.UpmsSystemService;
 import com.xk.upms.service.UpmsUserService;
@@ -25,19 +26,20 @@ public class AdminIndexController extends BaseController {
     private UpmsUserService userService;
     @Autowired
     private UpmsSystemService upmsSystemService;
+    @Autowired
+    private AuthService authService;
 
-//    @GetMapping
-//    public String loginPage() {
-//        return INDEX;
-//    }
-
+    /**
+     * /admin/index
+     * @param model
+     * @return
+     */
     @GetMapping()
     public String index(Model model) {
-//        model.addAttribute("fragmentSystem", "");
-//        model.addAttribute("fragmentPackage", "_fragments");
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
 
-        model.addAttribute("page_list", upmsSystemService.listActive());
+//        model.addAttribute("page_list", upmsSystemService.listActive());
+        model.addAttribute("page_list", authService.listSystem());
         return ADMIN_INDEX;
     }
 

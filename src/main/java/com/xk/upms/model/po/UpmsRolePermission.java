@@ -34,5 +34,13 @@ public class UpmsRolePermission extends BaseEntity implements Serializable {
      * 权限编号
      */
     private Long permissionId;
+    /**
+     * 權限種類
+     */
+    private String action;
+    /**
+     * 权限開關
+     */
+    private Boolean active;
 
 }

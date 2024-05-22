@@ -1,14 +1,15 @@
 package com.xk.upms.dao.mapper;
 
-import java.util.List;
-
+import com.xk.upms.model.dto.UpmsUserRoleExample;
 import org.apache.ibatis.annotations.Mapper;
 
-import com.xk.upms.model.dto.UpmsUserRoleExample;
+import java.util.List;
 
 @Mapper
 public interface UpmsUserMapper {
 
-	public List<UpmsUserRoleExample> selectAllwithRole();
+	List<UpmsUserRoleExample> selectAllwithRole();
+
+	List<UpmsUserRoleExample> selectUsersByRole(long roleId);
 
 }

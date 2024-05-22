@@ -1,5 +1,6 @@
 package com.xk.upms.controller.web;
 
+import com.xk.admin.service.AuthService;
 import com.xk.common.base.BaseController;
 import com.xk.common.base.BaseRepostitory;
 import com.xk.upms.model.bo.UpmsSystemSaveReq;
@@ -41,6 +42,8 @@ public class UpmsSystemController extends BaseController {
     private BaseRepostitory baseRepostitory;
     @Autowired
     private UpmsSystemService upmsSystemService;
+    @Autowired
+    private AuthService authService;
 
     /**
      * 查詢 系統 首頁

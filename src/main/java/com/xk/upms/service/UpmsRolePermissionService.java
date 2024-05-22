@@ -1,6 +1,6 @@
 package com.xk.upms.service;
 
-import org.json.JSONArray;
+import java.util.List;
 
 /**
  * UpmsRolePermissionService 接口
@@ -8,6 +8,6 @@ import org.json.JSONArray;
  */
 public interface UpmsRolePermissionService {
 
-    int rolePermission(JSONArray datas, long id);
+    List rolePermission(String[] datas, long id);
 
 }

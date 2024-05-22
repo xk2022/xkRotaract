@@ -4,6 +4,7 @@ import com.xk.upms.model.bo.UpmsUserReq;
 import com.xk.upms.model.bo.UpmsUserSaveReq;
 import com.xk.upms.model.po.UpmsUser;
 import com.xk.upms.model.vo.UpmsUserDetailResp;
+import com.xk.upms.model.vo.UpmsUserResp;
 import com.xk.upms.model.vo.UpmsUserSaveResp;
 
 import java.util.List;
@@ -16,6 +17,8 @@ import java.util.Optional;
 public interface UpmsUserService {
 
     List list(UpmsUserReq resources);
+
+    UpmsUserResp findByUsername(UpmsUserReq resources);
     
     UpmsUserDetailResp selectDeatilById(long id);
 

@@ -8,9 +8,4 @@ import com.xk.upms.model.po.UpmsPermission;
  */
 public class UpmsPermissionSaveReq extends UpmsPermission {
 
-    /**
-     * 所屬系統
-     */
-    private Long systemId;
-
 }

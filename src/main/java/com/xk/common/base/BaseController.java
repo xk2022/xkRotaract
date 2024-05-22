@@ -1,5 +1,6 @@
 package com.xk.common.base;
 
+import com.xk.admin.service.AuthService;
 import com.xk.upms.model.po.UpmsPermission;
 import com.xk.upms.model.po.UpmsSystem;
 import com.xk.upms.service.UpmsPermissionService;
@@ -23,6 +24,8 @@ public class BaseController {
     private UpmsSystemService upmsSystemService;
     @Autowired
     private UpmsPermissionService upmsPermissionService;
+    @Autowired
+    private AuthService authService;
 
     public Model info(Model model, String path) {
         /* find this page info private */
@@ -34,14 +37,16 @@ public class BaseController {
         model.addAttribute("fragmentSystem", fragment[0]);
         model.addAttribute("fragmentPackage", fragment[1]);
 
-        /* Aside data setting */
-        model.addAttribute("aside_system", upmsSystemService.listActive());
+        /* Aside data Setting */
+//        model.addAttribute("aside_system", upmsSystemService.listActive());
+        model.addAttribute("aside_system", authService.listSystem());
         UpmsSystem system = (UpmsSystem) upmsSystemService.findOneByName(fragment[0]);
         model.addAttribute("system", system);
 
-        model.addAttribute("left_tree", upmsPermissionService.buildTree(upmsPermissionService.selectBySystemIdAndRole(system, 1)));
-
-
+//        model.addAttribute("left_tree", upmsPermissionService.buildTree(upmsPermissionService.selectBySystemIdAndRole(system, 1)));
+        if (system != null) {
+            model.addAttribute("left_tree", upmsPermissionService.buildTree(authService.listPermission(system.getId())));
+        }
 
         model.addAttribute("system_title", null);
         model.addAttribute("system_list", null);

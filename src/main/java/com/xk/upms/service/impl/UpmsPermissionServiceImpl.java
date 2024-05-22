@@ -144,7 +144,7 @@ public class UpmsPermissionServiceImpl implements UpmsPermissionService {
 //        List<Long> permissionIds = new ArrayList<>();
 //        // 查詢所有
 //        return upmsPermissionRepository.findBySystemIdAndIdIn(systemId, permissionIds);
-        return upmsPermissionRepository.findBySystemId(systemId);
+        return upmsPermissionRepository.findBySystemIdAndStatus(systemId, true);
     }
 
     @Override

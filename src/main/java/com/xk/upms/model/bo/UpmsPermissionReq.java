@@ -14,4 +14,9 @@ public class UpmsPermissionReq {
      */
     private Long systemId;
 
+    /**
+     * 類型(1:目錄,2:菜單,3:按鈕)
+     */
+    private Byte type;
+
 }

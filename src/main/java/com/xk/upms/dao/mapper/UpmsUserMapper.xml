@@ -18,5 +18,12 @@
             LEFT JOIN upms_user_role ur ON user.user_id = ur.user_id
             LEFT JOIN upms_role role ON role.role_id = ur.role_id
     </select>
+    <select id="selectUsersByRole" resultMap="urDto">
+        SELECT uur.user_id, uur.username, cur.realname, cur.avatar, uur.email, uur.create_time
+        FROM upms_user uur
+        LEFT JOIN cms_user cur ON uur.user_id = cur.fk_upms_user_id
+        LEFT JOIN upms_user_role uure ON uur.user_id = uure.user_id
+        WHERE uure.role_id = #{roleId}
+    </select>
 
 </mapper>

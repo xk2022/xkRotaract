@@ -1,5 +1,6 @@
 package com.xk.upms.service.impl;
 
+import com.xk.upms.dao.repository.UpmsRolePermissionRepository;
 import com.xk.upms.dao.repository.UpmsRoleRepository;
 import com.xk.upms.dao.repository.UpmsUserRoleRepository;
 import com.xk.upms.model.bo.UpmsRoleReq;
@@ -34,6 +35,8 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
     private UpmsRoleRepository upmsRoleRepository;
     @Autowired
     private UpmsUserRoleRepository upmsUserRoleRepository;
+    @Autowired
+    private UpmsRolePermissionRepository upmsRolePermissionRepository;
 
     @Override
     public List list(UpmsRoleReq resources) {
@@ -77,6 +80,8 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
         BeanUtils.copyProperties(resources, req);
         UpmsRole entity = upmsRoleRepository.save(req);
 
+//        upmsRolePermissionRepository.saveAll()
+
         BeanUtils.copyProperties(entity, result);
         return result;
     }
@@ -101,8 +106,25 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
     }
 
     @Override
-    public UpmsRole selectByCode(String code) {
-        return upmsRoleRepository.findByCode(code);
+    public UpmsRoleResp selectByCode(String code) {
+        UpmsRoleResp resp = new UpmsRoleResp();
+
+        UpmsRole entity = upmsRoleRepository.findByCode(code);
+        BeanUtils.copyProperties(entity, resp);
+        return resp;
+    }
+
+    @Override
+    public UpmsRoleResp findById(Long id) {
+        UpmsRoleResp resp = new UpmsRoleResp();
+
+        UpmsRole entity = upmsRoleRepository.getOne(id);
+
+        Long cntUser = upmsUserRoleRepository.countByRoleId(entity.getId());
+        BeanUtils.copyProperties(entity, resp);
+        resp.setCountUser(cntUser);
+
+        return resp;
     }
 
 }

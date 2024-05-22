@@ -12,11 +12,10 @@
 <th:block th:fragment="script"><!--<div>-->
     <!--begin::Page Vendors Javascript(used by this page)-->
     <!--General - DataTables-->
-    <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}"></script>
+    <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}" defer></script>
     <!--end::Page Vendors Javascript-->
     <!--begin::Page Custom Javascript(used by this page)-->
-    <script th:src="@{/js/custom/datatables/table.js}"></script>
-    <script th:src="@{/js/custom/datatables/input.js}"></script>
+    <script th:src="@{/js/custom/datatables/input.js}" defer></script>
     <!--end::Page Custom Javascript-->
     <script th:inline="javascript">
 
@@ -44,14 +43,20 @@
                 <!--begin::Card body-->
                 <div class="card-body pt-1">
                     <!--begin::Users-->
-                    <div th:text="${data.name}" class="fw-bolder text-gray-600 mb-5">Total users with this role: 5</div>
+                    <div class="fw-bolder text-gray-600 mb-5">
+                        <th:block th:text="${data.name}"></th:block>
+                    </div>
                     <!--end::Users-->
                     <!--begin::Permissions-->
                     <div class="d-flex flex-column text-gray-600">
-                        <div th:text="${data.theme}" class="d-flex align-items-center py-2">
-                            <span class="bullet bg-primary me-3"></span>All Admin Controls</div>
-                        <div th:text="${data.description}" class="d-flex align-items-center py-2">
-                            <span class="bullet bg-primary me-3"></span>View and Edit Financial Summaries</div>
+                        <div class="d-flex align-items-center py-2">
+                            <span class="bullet bg-primary me-3"></span>
+                            <th:block th:text="${data.theme}"></th:block>
+                        </div>
+                        <div class="d-flex align-items-center py-2">
+                            <span class="bullet bg-primary me-3"></span>
+                            <th:block th:text="${data.description}"></th:block>
+                        </div>
                     </div>
                     <!--end::Permissions-->
                 </div>

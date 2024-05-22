@@ -1,12 +1,12 @@
 package com.xk.upms.controller.web;
 
 import com.xk.common.base.BaseController;
+import com.xk.upms.model.bo.UpmsPermissionReq;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
 import com.xk.upms.model.po.UpmsRole;
+import com.xk.upms.model.po.UpmsRolePermission;
 import com.xk.upms.model.vo.UpmsRoleSaveResp;
-import com.xk.upms.service.UpmsPermissionService;
-import com.xk.upms.service.UpmsRolePermissionService;
-import com.xk.upms.service.UpmsRoleService;
+import com.xk.upms.service.*;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +39,10 @@ public class UpmsRoleController extends BaseController {
     @Autowired
     private UpmsRoleService upmsRoleService;
     @Autowired
+    private UpmsUserService upmsUserService;
+    @Autowired
+    private UpmsUserRoleService upmsUserRoleService;
+    @Autowired
     private UpmsPermissionService upmsPermissionService;
     @Autowired
     private UpmsRolePermissionService upmsRolePermissionService;
@@ -53,17 +57,24 @@ public class UpmsRoleController extends BaseController {
 
         model.addAttribute("page_list", upmsRoleService.list(null));
         model.addAttribute("entity", new UpmsRole());
-        model.addAttribute("checkbox_menus", upmsPermissionService.buildTree(upmsPermissionService.findAllMenuLevel()));
+//        model.addAttribute("checkbox_menus", upmsPermissionService.buildTree(upmsPermissionService.findAllMenuLevel()));
         return ADMIN_INDEX;
     }
 
     @GetMapping("/{id}")
     public String list(@PathVariable Long id, Model model) {
-        this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
-//        model.addAttribute("role", roleService.findById(id));
-//        model.addAttribute("list", userService.list());
+        this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]+"/detail");
+
+        model.addAttribute("role", upmsRoleService.findById(id));
+        model.addAttribute("page_list", upmsUserRoleService.getUsers(id));
+//        model.addAttribute("list", upmsUserService.list(null));
 //        model.addAttribute("menus", menuService.buildTree(menuService.listWithoutType0()));
-        return DIR_INDEX + "view";
+
+        model.addAttribute("entity", new UpmsRolePermission());
+        UpmsPermissionReq resources = new UpmsPermissionReq();
+        resources.setType(new Byte("1"));
+        model.addAttribute("permissions", upmsPermissionService.listBy(resources));
+        return ADMIN_INDEX;
     }
 
     /**
@@ -112,10 +123,12 @@ public class UpmsRoleController extends BaseController {
 //    @RequiresPermissions("upms:role:permission")
     @PostMapping("/permission/{id}")
     public Object permission(@PathVariable("id") long id, HttpServletRequest request) {
+
+        String[] checkBoxValues = request.getParameterValues("checkBox");
 //        JSONArray datas = JSONArray.parseArray(request.getParameter("datas"));
-        int result = upmsRolePermissionService.rolePermission(null, id);
+        upmsRolePermissionService.rolePermission(checkBoxValues, id);
 //        return new UpmsResult(UpmsResultConstant.SUCCESS, result);
-        return REDIRECT_ADDR;
+        return REDIRECT_ADDR + "/" + id;
     }
 
 }

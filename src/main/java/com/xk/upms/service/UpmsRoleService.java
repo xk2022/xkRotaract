@@ -3,6 +3,7 @@ package com.xk.upms.service;
 import com.xk.upms.model.bo.UpmsRoleReq;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
 import com.xk.upms.model.po.UpmsRole;
+import com.xk.upms.model.vo.UpmsRoleResp;
 import com.xk.upms.model.vo.UpmsRoleSaveResp;
 
 import java.util.List;
@@ -26,5 +27,7 @@ public interface UpmsRoleService {
 
     Optional<UpmsRole> selectByPrimaryKey(long id);
 
-    UpmsRole selectByCode(String code);
+    UpmsRoleResp selectByCode(String code);
+
+    UpmsRoleResp findById(Long id);
 }

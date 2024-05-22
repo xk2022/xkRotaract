@@ -1,7 +1,6 @@
 package com.xk.upms.service;
 
 import com.xk.upms.model.bo.UpmsSystemSaveReq;
-import com.xk.upms.model.dto.UpmsSystemExample;
 import com.xk.upms.model.vo.UpmsSystemSaveResp;
 
 import java.util.List;
@@ -15,8 +14,6 @@ public interface UpmsSystemService {
     List list();
 
     List listActive();
-
-    List listBy(UpmsSystemExample resources);
 
     UpmsSystemSaveResp create(UpmsSystemSaveReq resources);
 
