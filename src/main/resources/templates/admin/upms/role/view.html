@@ -12,7 +12,7 @@
 <th:block th:fragment="script"><!--<div>-->
     <!--begin::Page Vendors Javascript(used by this page)-->
     <!--General - DataTables-->
-    <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}" defer async></script>
+    <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}"></script>
     <!--end::Page Vendors Javascript-->
     <!--begin::Page Custom Javascript(used by this page)-->
     <script th:src="@{/js/custom/datatables/input.js}" defer></script>
@@ -21,6 +21,8 @@
     <!--end::Page Custom Javascript-->
     <script th:inline="javascript">
         var deleteUrl = '/admin/upms/manage/system/delete/';
+
+
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->
@@ -108,7 +110,7 @@
     <!--end::Row-->
 
     <!--begin::Modal - Add task-->
-    <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: input"></div>
+    <div th:replace="admin/_fragments/input_basic :: basic"></div>
     <!--end::Modal - Add task-->
 </div>
 

@@ -135,6 +135,12 @@ public class UpmsPermissionRestController {
         data.setUri("/admin/upms/manage/user");
         data.setOrders((long) 22);
         upmsPermissionService.create(data);
+
+        data.setName("角色權限");
+        data.setPermissionValue("upms:role/detail");
+        data.setUri("/admin/upms/manage/role/detail");
+        data.setOrders((long) 21);
+        upmsPermissionService.create(data);
         /**
          * /admin/upms/p
          */

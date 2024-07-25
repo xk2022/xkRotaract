@@ -27,16 +27,32 @@ public class UpmsOrganization extends BaseEntity implements Serializable {
     @NotNull(groups = Update.class)
     private Long id;
     /**
-     * 所属上级
+     * 所属上層
      */
-    private Integer pid;
+    private Long pid;
     /**
-     * 组织名称
+     * 組織名稱（地區or社名）
      */
     private String name;
+    /**
+     * 組織代碼
+     */
+    private String code;
+    /**
+     * 類型(1:地區,2:社名)
+     */
+    private Byte type;
     /**
      * 组织描述
      */
     private String description;
+    /**
+     * 狀態(0:禁止,1:正常)
+     */
+    private Boolean status;
+    /**
+     * 排序
+     */
+    private Long orders;
 
 }

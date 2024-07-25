@@ -12,7 +12,7 @@ import com.xk.common.base.BaseController;
 import io.swagger.annotations.Api;
 
 /**
- * 角色 Controller Created by yuan on 2023/12/27
+ * 資本資料管理系統 Controller Created by yuan on 2023/12/27
  */
 @Api(value = "CMS管理")
 @Controller

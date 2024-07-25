@@ -30,9 +30,6 @@ public class UpmsOrganizationController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsOrganizationController.class);
 
-    //    private static final String DIR_INDEX = "truck/apps/user-management/permissions/";
-//    private static final String INDEX = DIR_INDEX + "permission";
-//    private static final String COMPILER = DIR_INDEX + "permission_add";
     private static final String REDIRECT_ADDR = "redirect:/admin/upms/manage/organization";
     private static final int PAGE_SIZE = 8;
 
@@ -42,12 +39,10 @@ public class UpmsOrganizationController extends BaseController {
     /**
      * 查詢 組織 首頁
      */
-//    @RequiresPermissions("upms:organization:read")
     @GetMapping()
     public String index(Model model) {
-        model.addAttribute("fragmentSystem", "upms");
-        model.addAttribute("fragmentPackage", "organization");
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
+        model.addAttribute("fragmentName", "list");
 
         model.addAttribute("page_list", upmsOrganizationService.list(null));
         model.addAttribute("entity", new UpmsRole());

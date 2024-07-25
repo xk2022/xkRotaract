@@ -32,9 +32,6 @@ public class UpmsSystemController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsSystemController.class);
 
-//    private static final String DIR_INDEX = "truck/apps/user-management/permissions/";
-//    private static final String INDEX = DIR_INDEX + "permission";
-//    private static final String COMPILER = DIR_INDEX + "permission_add";
     private static final String REDIRECT_ADDR = "redirect:/admin/upms/manage/system";
     private static final int PAGE_SIZE = 8;
 

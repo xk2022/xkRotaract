@@ -34,8 +34,6 @@ public class UpmsPermissionController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsPermissionController.class);
 
-    private static final String DIR_INDEX = "/admin/upms/manage/permission";
-    private static final String INDEX = DIR_INDEX + "permission";
     private static final String REDIRECT_ADDR = "redirect:/admin/upms/manage/permission";
     private static final int PAGE_SIZE = 8;
 
@@ -51,7 +49,7 @@ public class UpmsPermissionController extends BaseController {
     @GetMapping()
     public String index(UpmsPermissionReq resources, Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
-        model.addAttribute("fragmentName", "view");
+        model.addAttribute("fragmentName", "list");
 
         model.addAttribute("page_list", upmsPermissionService.buildTree(upmsPermissionService.listBy(resources)));
         model.addAttribute("entity", new UpmsPermission());

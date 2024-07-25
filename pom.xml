@@ -7,9 +7,9 @@
     <groupId>com.xk</groupId>
     <artifactId>xkRotaract</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <!--    <packaging>jar</packaging>-->
-
+    <!--項目名稱，maven生成文擋時使用-->
     <name>xkRotaract</name>
+    <packaging>war</packaging>
     <description>Demo project for Spring Boot</description>
 
     <parent>
@@ -36,6 +36,20 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 移除嵌入式tomcat插件（因為要使用外部tomcat） -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 移除之後會報錯，加入下面這個依賴 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <!-- 只有在編譯的時候有效，打包時，不打包這個依賴 -->
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -110,6 +124,9 @@
     </dependencies>
 
     <build>
+        <!-- 打包後的名字，打包後需要帶上工程名去訪問．這就是打包後的工程名-->
+        <finalName>xkRotaract</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -117,6 +134,11 @@
                 <configuration>
                     <fork>true</fork> <!-- spring-boot-devtools -->
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
             </plugin>
         </plugins>
         <!-- 打包时拷贝MyBatis的映射文件 -->

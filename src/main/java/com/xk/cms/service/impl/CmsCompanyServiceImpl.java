@@ -106,6 +106,15 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
         return result;
     }
 
+    @Override
+    public void deleteByPrimaryKeys(String ids) {
+        String[] idArray = ids.split("-");
+        for (String idStr : idArray) {
+            Long id = Long.valueOf(idStr);
+            cmsCompanyRepository.deleteById(id);
+        }
+    }
+
     private String remixIndustryIds(List<Long> ids) {
         return ids.toString().replace("[", "").replace("]", "").replace(" ", "");
     }

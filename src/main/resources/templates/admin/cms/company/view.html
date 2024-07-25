@@ -21,7 +21,7 @@
     <!--/*/</th:block>/*/-->
     <!--end::Page Custom Javascript-->
     <script th:inline="javascript">
-        var deleteUrl = '/admin/upms/manage/system/delete/';
+        var deleteUrl = '/admin/cms/manage/company/delete/';
 
 
     </script>
@@ -55,13 +55,11 @@
                 <!--                            <th class="min-w-125px" th:text="${data}" th:classappend="${isAdmin} ? display:none : userclass">系統描述</th>-->
                 <!--                        </th:block>-->
                 <th class="min-w-5px" style="display:none">ID</th>
-                <th class="min-w-125px">系統名稱</th>
-                <th class="min-w-125px">系統標題</th>
-                <th class="min-w-125px">系統根目錄</th>
-                <th class="min-w-125px">系統描述</th>
-                <th class="min-w-125px">狀態</th>
-                <th class="min-w-5px init_order" id="order_6">排序</th>
-                <th class="text-end min-w-125px">創建時間</th>
+                <th class="min-w-125px">公司名稱</th>
+                <th class="min-w-125px">公司電話</th>
+                <th class="min-w-125px">公司地址</th>
+                <th class="min-w-125px">公司網址</th>
+                <th class="min-w-125px">產業別</th>
                 <th class="text-end min-w-100px">Actions</th>
             </tr>
             <!--end::Table row-->
@@ -78,23 +76,10 @@
                 </td>
                 <td style="display:none" th:text="${data.id}"></td>
                 <td th:text="${data.name}"></td>
-                <td th:text="${data.title}"></td>
-                <td th:text="${data.basepath}"></td>
-                <td th:text="${data.description}"></td>
-                <!--                    <td th:text="${data.status}"></td>-->
-                <td>
-                    <div class="badge fw-bolder" th:text="${data.status==true ? '啟用' : '禁用'}"
-                         th:classappend="${data.status==true ? 'badge-light-success' : 'badge-light-danger'}">
-                        Enabled
-                    </div>
-                </td>
-                <td class="text-end" th:text="${data.orders}"></td>
-                <!--                    <td th:text="${data.createTime}"></td>-->
-                <td class="text-end">
-                    <div class="badge badge-light fw-bolder"
-                         th:text="${#dates.format(data.createTime, 'dd-MMM-yyyy, HH:mm a')}">5 hours ago
-                    </div>
-                </td>
+                <td th:text="${data.phone}"></td>
+                <td th:text="${data.address}"></td>
+                <td th:text="${data.url}"></td>
+                <td th:text="${data.industries}"></td>
                 <!--begin::Action=-->
                 <td class="text-end">
                     <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>

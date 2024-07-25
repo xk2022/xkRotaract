@@ -54,6 +54,7 @@ public class UpmsRoleController extends BaseController {
     @GetMapping()
     public String index(Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
+        model.addAttribute("fragmentName", "list");
 
         model.addAttribute("page_list", upmsRoleService.list(null));
         model.addAttribute("entity", new UpmsRole());
@@ -64,6 +65,7 @@ public class UpmsRoleController extends BaseController {
     @GetMapping("/{id}")
     public String list(@PathVariable Long id, Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]+"/detail");
+        model.addAttribute("fragmentName", "detail");
 
         model.addAttribute("role", upmsRoleService.findById(id));
         model.addAttribute("page_list", upmsUserRoleService.getUsers(id));

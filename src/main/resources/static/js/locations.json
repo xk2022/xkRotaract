@@ -1,0 +1,202 @@
+{
+    "type1": [
+        {
+            "name": "Location 1",
+            "description": "This is the first location. It is a great place!",
+            "lat": 25.0388757642149,
+            "lng": 121.49988671099742
+        },
+        {
+            "name": "Location 2",
+            "description": "This is the second location. It has a nice vew.",
+            "lat": 25.03050532850446,
+            "lng": 121.53539667191568
+        },
+        {
+            "name": "Location 3",
+            "description": "This is the third location. A peaceful spot.",
+            "lat": 23.029997454264947,
+            "lng": 121.43430406067098
+        },
+        {
+            "name": "Location 4",
+            "description": "This is the first location. It is a great place!",
+            "lat": 22.0588757642149,
+            "lng": 121.49988671099742
+        }
+    ],
+    "type2": [
+        {
+            "name": "Location 5",
+            "description": "This is the second location. It has a nice vew.",
+            "lat": 22.063532850446,
+            "lng": 121.53539667191568
+        },
+        {
+            "name": "Location 6",
+            "description": "This is the third location. A peaceful spot.",
+            "lat": 22.16797454264947,
+            "lng": 121.43430406067098
+        },
+        {
+            "name": "Location 7",
+            "description": "This is the first location. It is a great place!",
+            "lat": 23.899757642149,
+            "lng": 121.49988671099742
+        },
+        {
+            "name": "Location 8",
+            "description": "This is the second location. It has a nice vew.",
+            "lat": 22.07730532850446,
+            "lng": 121.53539667191568
+        },
+        {
+            "name": "Location 9",
+            "description": "This is the third location. A peaceful spot.",
+            "lat": 25.16397454264947,
+            "lng": 121.43430406067098
+        },
+        {
+            "name": "Location 10",
+            "description": "This is the first location. It is a great place!",
+            "lat": 24.0336757642149,
+            "lng": 121.49988671099742
+        },
+        {
+            "name": "Location 11",
+            "description": "This is the second location. It has a nice vew.",
+            "lat": 23.03099532850446,
+            "lng": 121.53539667191568
+        },
+        {
+            "name": "Location 12",
+            "description": "This is the third location. A peaceful spot.",
+            "lat": 23.267454264947,
+            "lng": 121.43430406067098
+        }
+    ],
+    "type3": [
+        {
+            "name": "Location 13",
+            "description": "This is the first location. It is a great place!",
+            "lat": 24.799708,
+            "lng": 120.993935
+        },
+        {
+            "name": "Location 14",
+            "description": "This is the second location. It has a nice view.",
+            "lat": 25.108989,
+            "lng": 121.540944
+        },
+        {
+            "name": "Location 15",
+            "description": "This is the third location. A peaceful spot.",
+            "lat": 24.146547,
+            "lng": 120.683362
+        },
+        {
+            "name": "Location 16",
+            "description": "This is the fourth location. It is a beautiful place!",
+            "lat": 24.971131,
+            "lng": 121.345313
+        },
+        {
+            "name": "Location 17",
+            "description": "This is the fifth location. It has an amazing scenery.",
+            "lat": 23.69781,
+            "lng": 120.960515
+        },
+        {
+            "name": "Location 18",
+            "description": "This is the sixth location. A serene environment.",
+            "lat": 24.755091,
+            "lng": 121.753739
+        },
+        {
+            "name": "Location 19",
+            "description": "This is the seventh location. A hidden gem.",
+            "lat": 22.627278,
+            "lng": 120.301435
+        },
+        {
+            "name": "Location 20",
+            "description": "This is the eighth location. Perfect for relaxation.",
+            "lat": 23.573183,
+            "lng": 120.358125
+        },
+        {
+            "name": "Location 21",
+            "description": "This is the ninth location. A charming place.",
+            "lat": 24.419951,
+            "lng": 118.355476
+        },
+        {
+            "name": "Location 22",
+            "description": "This is the tenth location. Rich in culture and history.",
+            "lat": 23.972259,
+            "lng": 120.967148
+        }
+    ],
+    "type4": [
+        {
+            "name": "Location 23",
+            "description": "This is the first location. It is a great place!",
+            "lat": 24.759432,
+            "lng": 120.941793
+        },
+        {
+            "name": "Location 24",
+            "description": "This is the second location. It has a nice view.",
+            "lat": 25.127417,
+            "lng": 121.740517
+        },
+        {
+            "name": "Location 25",
+            "description": "This is the third location. A peaceful spot.",
+            "lat": 23.971502,
+            "lng": 121.58867
+        },
+        {
+            "name": "Location 26",
+            "description": "This is the fourth location. It is a beautiful place!",
+            "lat": 24.46315,
+            "lng": 120.74852
+        },
+        {
+            "name": "Location 27",
+            "description": "This is the fifth location. It has an amazing scenery.",
+            "lat": 24.85319,
+            "lng": 121.220862
+        },
+        {
+            "name": "Location 28",
+            "description": "This is the sixth location. A serene environment.",
+            "lat": 24.4326,
+            "lng": 120.79445
+        },
+        {
+            "name": "Location 29",
+            "description": "This is the seventh location. A hidden gem.",
+            "lat": 22.73782,
+            "lng": 121.08009
+        },
+        {
+            "name": "Location 30",
+            "description": "This is the eighth location. Perfect for relaxation.",
+            "lat": 23.7369,
+            "lng": 120.714
+        },
+        {
+            "name": "Location 31",
+            "description": "This is the ninth location. A charming place.",
+            "lat": 23.56591,
+            "lng": 121.19388
+        },
+        {
+            "name": "Location 32",
+            "description": "This is the tenth location. Rich in culture and history.",
+            "lat": 22.99491,
+            "lng": 120.20108
+        }
+    ]
+}

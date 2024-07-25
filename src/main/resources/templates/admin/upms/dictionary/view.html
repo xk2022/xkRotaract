@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--css資源引入-->
+<th:block th:fragment="head"><!--<div>-->
+    <!--begin::Page Vendor Stylesheets(used by this page)-->
+    <!--General - DataTables-->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/custom/datatables/datatables.bundle.css}"/>
+    <!--end::Page Vendor Stylesheets-->
+</th:block><!--</div>-->
+<!--css資源引入-->
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+    <!--begin::Page Vendors Javascript(used by this page)-->
+    <!--General - DataTables-->
+    <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}" defer async></script>
+    <!--end::Page Vendors Javascript-->
+    <!--begin::Page Custom Javascript(used by this page)-->
+    <script th:src="@{/js/custom/datatables/table.js}"></script>
+    <script th:src="@{/js/custom/datatables/input.js}"></script>
+    <!--/*/<th:block th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: script">/*/-->
+    <!--/*/</th:block>/*/-->
+    <!--end::Page Custom Javascript-->
+    <script th:inline="javascript">
+        var deleteUrl = '/admin/upms/manage/dictionary/delete/';
+        var secTableBody = document.querySelector('#kt_sec_table tbody');
+
+        $('.clickable-row').click(function () {
+            var code = $(this).find('td:nth-child(2)').text(); // 获取行的第二个<td>的文本内容（假设是code）
+            console.log('Row clicked - Code:', code);
+
+            // 发送 AJAX 请求
+            $.ajax({
+                url: '/xkRotaract/api/manage/dictionary/listDictionaryData',
+                method: 'POST',
+                data: JSON.stringify({ 'code': code }), // 将数据转换为 JSON 格式
+                processData: false,  // 禁止 jQuery 处理数据
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log('AJAX 请求成功：', response);
+                    // 在这里执行其他操作
+                    secTableBody.innerHTML = '';
+                    $('#kt_sec_table_addrow').show();
+                    $('#kt_sec_table_submit').show();
+
+                    if (response) {
+                        // 将HTML代码作为文本字符串添加到表格中（使用innerHTML属性）
+                        secTableBody.innerHTML += '<tr><td style="display:none">1</td><td><input type="text" class="form-control form-control-solid" id="row-1-code" name="row-1-code" value="1"/></td><td><input type="text" class="form-control form-control-solid" id="row-1-description" name="row-1-description" value="男"/></td></tr>';
+
+                        // 或者使用insertAdjacentHTML()方法
+                        secTableBody.insertAdjacentHTML('beforeend', '<tr><td style="display:none">1</td><td><input type="text" class="form-control form-control-solid" id="row-1-code" name="row-1-code" value="1"/></td><td><input type="text" class="form-control form-control-solid" id="row-1-description" name="row-1-description" value="男"/></td></tr>');
+                        // $('#kt_sec_table').append(response);
+                    } else {
+                        $('#kt_sec_table_addrow').click();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX 请求失败：', error);
+                }
+            });
+        });
+
+        $("#kt_sec_table_addrow").click(function() {
+            // 或者使用insertAdjacentHTML()方法
+            secTableBody.insertAdjacentHTML('beforeend', '<tr><td style="display:none"></td><td><input type="text" class="form-control form-control-solid" id="row-1-code" name="row-1-code" value=""/></td><td><input type="text" class="form-control form-control-solid" id="row-1-description" name="row-1-description" value=""/></td></tr>');
+        });
+
+        $('#kt_sec_table_clear').click(function () {
+            $('#kt_sec_table_addrow').hide();
+            $('#kt_sec_table_submit').hide();
+            secTableBody.innerHTML = '';
+        });
+
+        var table = document.querySelector('#kt_sec_table');
+        document.getElementById('kt_sec_table_submit').addEventListener('click', function() {
+            var inputs = table.querySelectorAll('input, select');
+<!--            var data = "";-->
+<!--            inputs.forEach(function(input) {-->
+<!--                data += input.name + "=" + encodeURIComponent(input.value) + "&";-->
+<!--            });-->
+<!--            // 去掉最后一个 '&' 符号-->
+<!--            data = data.slice(0, -1);-->
+
+<!--            alert(-->
+<!--                "The following data would have been submitted to the server: \n\n" +-->
+<!--                data.substr(0, 120) + "..."-->
+<!--            );-->
+            // Simulate form submission. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+            setTimeout(function () {
+                // Remove loading indication
+                submitButton.removeAttribute('data-kt-indicator');
+
+                // Enable button
+                submitButton.disabled = false;
+
+                // Show popup confirmation
+                Swal.fire({
+                    text: "Form has been successfully submitted!",
+                    icon: "success",
+                    buttonsStyling: false,
+                    confirmButtonText: "Ok, got it!",
+                    customClass: {
+                        confirmButton: "btn btn-primary"
+                    }
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        form.submit();
+                        modal.hide();
+                    }
+                });
+
+                //form.submit(); // Submit form
+            }, 2000);
+            return false;
+        });
+
+    </script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+
+<div th:fragment="list" id="kt_content_container" class="container-fluid">
+    <!--begin::Row-->
+    <div class="row g-5">
+        <!--begin::Col-->
+        <div class="col-md-6">
+            <!--begin::Card-->
+            <div class="card card-stretch card-bordered mb-5">
+                <!--begin::Card header-->
+                <div class="card-header border-0 pt-6">
+                    <!--begin::Card title-->
+                    <div class="card-title">
+                        <th:block th:replace="admin/_fragments/table_basic :: btn_search"></th:block>
+                    </div>
+                    <!--begin::Card title-->
+                    <!--begin::Card toolbar-->
+                    <div th:replace="admin/_fragments/table_basic :: Card_toolbar"></div>
+                    <div class="card-toolbar">
+                        <button type="button" class="btn btn-sm btn-light">
+                            KEY
+                        </button>
+                    </div>
+                    <!--end::Card toolbar-->
+                </div>
+                <!--end::Card header-->
+                <!--begin::Card body-->
+                <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: table_key"></div>
+                <!--end::Card body-->
+            </div>
+            <!--end::Card-->
+        </div>
+        <!--end::Col-->
+        <!--begin::Col-->
+        <div class="col-md-6">
+            <!--begin::Card-->
+            <div class="card card-stretch card-bordered mb-5">
+                <!--begin::Card header-->
+                <div class="card-header border-0 pt-6">
+                    <!--begin::Card title-->
+                    <div class="card-title">
+                        <!--begin::Add-->
+                        <div class="pb-10">
+                            <button class="btn btn-primary" id="kt_sec_table_addrow" style="display: none;">Add New Row</button>
+                        </div>
+                        <!--end::Add-->
+                        <!--begin::Submit-->
+                        <div class="pb-10">
+                            <button class="btn btn-primary" id="kt_sec_table_submit" style="display: none;">Submit Form</button>
+                        </div>
+                        <!--end::Submit-->
+                    </div>
+                    <!--begin::Card title-->
+                    <!--begin::Card toolbar-->
+                    <div class="card-toolbar">
+                        <!--begin::Submit-->
+                        <div class="pb-10">
+                            <button class="btn btn-primary" id="kt_sec_table_clear">Clear Form</button>
+                        </div>
+                        <!--end::Submit-->
+                        <button type="button" class="btn btn-sm btn-light">
+                            VALUE
+                        </button>
+                    </div>
+                    <!--end::Card toolbar-->
+                </div>
+                <!--end::Card header-->
+                <!--begin::Card body-->
+                <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: table_value"></div>
+                <!--end::Card body-->
+            </div>
+            <!--end::Card-->
+        </div>
+        <!--end::Col-->
+    </div>
+    <!--end::Row-->
+
+    <!--begin::Modal - Add task-->
+    <div th:replace="admin/_fragments/input_basic :: basic"></div>
+    <!--end::Modal - Add task-->
+</div>
+
+<!--begin::Card body-->
+<div th:fragment="table_key" class="card-body py-4">
+    <!--begin::Table-->
+    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table">
+        <!--begin::Table head-->
+        <thead>
+            <!--begin::Table row-->
+            <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                <th class="min-w-5px" style="display:none">ID</th>
+                <th class="min-w-125px">Code</th>
+                <th class="min-w-125px">description</th>
+                <th class="text-end min-w-100px">Actions</th>
+            </tr>
+            <!--end::Table row-->
+        </thead>
+        <!--end::Table head-->
+        <!--begin::Table body-->
+        <tbody class="text-gray-600 fw-bold">
+        <!--begin::Table row-->
+        <tr th:each="data : ${page_list}" class="clickable-row">
+            <td style="display:none" th:text="${data.id}"></td>
+            <td th:text="${data.code}"></td>
+            <td th:text="${data.description}"></td>
+            <!--begin::Action=-->
+            <td class="text-end">
+                <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
+                <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
+            </td>
+            <!--end::Action=-->
+        </tr>
+        <!--end::Table row-->
+        </tbody>
+        <!--end::Table body-->
+    </table>
+    <!--end::Table-->
+</div>
+<!--end::Card body-->
+
+
+<!--begin::Card body-->
+<div th:fragment="table_value" class="card-body py-4">
+    <!--begin::Table-->
+    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_sec_table">
+        <!--begin::Table head-->
+        <thead>
+        <!--begin::Table row-->
+        <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+            <th class="min-w-5px" style="display:none">ID</th>
+            <th class="min-w-125px">Code</th>
+            <th class="min-w-125px">description</th>
+        </tr>
+        <!--end::Table row-->
+        </thead>
+        <!--end::Table head-->
+        <!--begin::Table body-->
+        <tbody class="text-gray-600 fw-bold">
+            <!--begin::Table row-->
+            <!--end::Table row-->
+        </tbody>
+        <!--end::Table body-->
+    </table>
+    <!--end::Table-->
+</div>
+<!--end::Card body-->
+
+</html>

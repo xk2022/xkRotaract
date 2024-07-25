@@ -103,7 +103,7 @@ public class AuthorizationController extends BaseController {
         resources.setCreateBy("signUp by self");
         result = upmsUserService.create(resources);
         LOGGER.info("新增用户，主键：userId={}", result.getId());
-        UpmsRole role = upmsRoleService.selectByCode("rookie");
+        UpmsRole role = upmsRoleService.selectByCode("member");
         if (role == null) {
             // 如果角色不存在，可以處理相應邏輯
             attributes.addFlashAttribute("message", "操作失敗，系統角色有誤，通知管理員");

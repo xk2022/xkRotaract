@@ -19,4 +19,6 @@ public interface CmsCompanyService {
 
     CmsCompanySaveResp update(Long id, CmsCompanySaveReq resources);
 
+    void deleteByPrimaryKeys(String ids);
+
 }

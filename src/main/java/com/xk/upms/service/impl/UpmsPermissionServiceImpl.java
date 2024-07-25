@@ -202,7 +202,7 @@ public class UpmsPermissionServiceImpl implements UpmsPermissionService {
     public List<UpmsPermission> findBreadcrumbUri(String uri) {
         List<UpmsPermission> breadcrumb = new ArrayList<>();
         UpmsPermission lastBreadcrumb = upmsPermissionRepository.findByUri(uri);
-        if (lastBreadcrumb.getPid() != null) {
+        if (lastBreadcrumb != null && lastBreadcrumb.getPid() != null) {
             Optional<UpmsPermission> secBreadcrumb = upmsPermissionRepository.findById(lastBreadcrumb.getPid());
             breadcrumb.add(secBreadcrumb.get());
         }

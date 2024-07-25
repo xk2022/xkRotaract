@@ -3,57 +3,45 @@
 <!--js資源引入-->
 <th:block th:fragment="script"><!--<div>-->
     <script th:inline="javascript">
-    // Insert
-    $("[name='add_btn']").click(function(){
-        $('#modal_name').text("新增使用者");
-        $("[name='id']").val(null);
-        $("[name='username']").val(null);
-        $("[name='avatar']").val(null);
-        $("[name='email']").val(null);
-        $("[name='role']").val(null);
-    });
+        // Insert
+        $("[name='add_btn']").click(function(){
+            $('#modal_name').text("新增使用者");
+            $("[name='id']").val(null);
+            $("[name='username']").val(null);
+            $("[name='avatar']").val(null);
+            $("[name='email']").val(null);
+            $("[name='role']").val(null);
+        });
 
-    // Update
-    var readyToEdit = function(row) {
-        $('#modal_name').text("更新使用者");
-        $("[name='id']").val(row[1].innerText);
-        $("[name='username']").val(row[2].innerText);
-        $("[name='avatar']").val(row[0].innerText);
-        $("[name='email']").val(row[7].innerText);
-        $("[name='password']").val(null);
-    }
-
-    // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
-    var validator = FormValidation.formValidation(
-        form,
-        {
-            fields: {
-                'username': {
-                    validators: {
-                        notEmpty: {
-                            message: 'Username is required'
-                        }
-                    }
-                },
-                'email': {
-                    validators: {
-                        notEmpty: {
-                            message: 'Email is required'
-                        }
-                    }
-                },
-            },
-
-            plugins: {
-                trigger: new FormValidation.plugins.Trigger(),
-                bootstrap: new FormValidation.plugins.Bootstrap5({
-                    rowSelector: '.fv-row',
-                    eleInvalidClass: '',
-                    eleValidClass: ''
-                })
-            }
+        // Update
+        var readyToEdit = function(row) {
+            $('#modal_name').text("更新使用者");
+            $("[name='id']").val(row[1].innerText);
+            $("[name='username']").val(row[2].innerText);
+            $("[name='avatar']").val(row[0].innerText);
+            $("[name='email']").val(row[7].innerText);
+            $("[name='password']").val(null);
         }
-    );
+
+        // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+        var validator = FormValidation.formValidation( form,
+            {
+                fields: {
+                    'username': { validators: { notEmpty: {
+                                message: 'Username is required' } } },
+                    'email': { validators: { notEmpty: {
+                                message: 'Email is required' } } },
+                },
+                plugins: {
+                    trigger: new FormValidation.plugins.Trigger(),
+                    bootstrap: new FormValidation.plugins.Bootstrap5({
+                        rowSelector: '.fv-row',
+                        eleInvalidClass: '',
+                        eleValidClass: ''
+                    })
+                }
+            }
+        );
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->

@@ -12,19 +12,17 @@
 <th:block th:fragment="script"><!--<div>-->
     <!--begin::Page Vendors Javascript(used by this page)-->
     <!--General - DataTables-->
-    <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}"></script>
+    <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}" defer async></script>
     <!--end::Page Vendors Javascript-->
     <!--begin::Page Custom Javascript(used by this page)-->
-    <script th:src="@{/js/custom/datatables/table.js}"></script>
+    <script th:src="@{/js/custom/datatables/table.js}" defer></script>
     <script th:src="@{/js/custom/datatables/input.js}"></script>
-<!--    <script src="assets/js/custom/apps/user-management/roles/view/view.js"></script>-->
-<!--    <script src="assets/js/custom/apps/user-management/roles/view/update-role.js"></script>-->
-    <!--end::Page Custom Javascript-->
-
     <!--/*/<th:block th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: script">/*/-->
     <!--/*/</th:block>/*/-->
+    <!--end::Page Custom Javascript-->
     <script th:inline="javascript">
         var deleteUrl = '/admin/upms/manage/role/delete/xxxxxxxxxxx';
+
 
     </script>
 </th:block><!--</div>-->
@@ -78,11 +76,6 @@
                 <!--end::Card footer-->
             </div>
             <!--end::Card-->
-            <!--begin::Modal-->
-            <!--begin::Modal - Update role-->
-            <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: input"></div>
-            <!--end::Modal - Update role-->
-            <!--end::Modal-->
         </div>
         <!--end::Sidebar-->
         <!--begin::Content-->
@@ -225,7 +218,7 @@
     <!--end::Layout-->
 
     <!--begin::Modal - Add task-->
-    <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: input"></div>
+    <div th:replace="admin/_fragments/input_basic :: basic"></div>
     <!--end::Modal - Add task-->
 </div>
 

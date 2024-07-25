@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+    <script th:inline="javascript">
+    // Insert
+    $("[name='add_btn']").click(function(){
+        $('#modal_name').text("新增分類");
+        $("[name='id']").val(null);
+        $("[name='code']").val(null);
+        $("[name='description']").val(null);
+    });
+
+    // Update
+    var readyToEdit = function(row) {
+        $('#modal_name').text("更新分類");
+        $("[name='id']").val(row[0].innerText);
+        $("[name='code']").val(row[1].innerText);
+        $("[name='description']").val(row[2].innerText);
+    }
+
+    // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+    var validator = FormValidation.formValidation(
+        form,
+        {
+            fields: {
+                'code': {
+                    validators: {
+                        notEmpty: {
+                            message: 'Permission name is required'
+                        }
+                    }
+                },
+                'description': {
+                    validators: {
+                        notEmpty: {
+                            message: 'Permission name is required'
+                        }
+                    }
+                },
+            },
+
+            plugins: {
+                trigger: new FormValidation.plugins.Trigger(),
+                bootstrap: new FormValidation.plugins.Bootstrap5({
+                    rowSelector: '.fv-row',
+                    eleInvalidClass: '',
+                    eleValidClass: ''
+                })
+            }
+        }
+    );
+    </script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+<!--begin::Modal body-->
+<div th:fragment="form" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+    <!--begin::Form-->
+    <form id="kt_modal_input_form" class="form" th:action="@{/admin/upms/manage/dictionary/save}" method="post" th:object="${entity}">
+        <input type="hidden" name="id">
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <!--begin::Label-->
+            <label class="fs-6 fw-bold form-label mb-2">
+                <span class="required">分類代號</span>
+                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                   data-bs-trigger="hover" data-bs-html="true"
+                   data-bs-content="分類代號必須是唯一的。"></i>
+            </label>
+            <!--end::Label-->
+            <!--begin::Input-->
+            <input class="form-control form-control-solid" placeholder="Enter a code" name="code" id="code"/>
+            <!--end::Input-->
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <!--begin::Label-->
+            <label class="fs-6 fw-bold form-label mb-2">
+                <span class="required">說明</span>
+                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                   data-bs-trigger="hover" data-bs-html="true"
+                   data-bs-content="必填"></i>
+            </label>
+            <!--end::Label-->
+            <!--begin::Input-->
+            <input class="form-control form-control-solid" placeholder="Enter a description" name="description" id="description"/>
+            <!--end::Input-->
+        </div>
+        <!--end::Input group-->
+        <!--begin::Actions-->
+        <div th:replace="admin/_fragments/input_basic :: Actions"></div>
+        <!--end::Actions-->
+    </form>
+    <!--end::Form-->
+</div>
+<!--end::Modal body-->
+
+</html>
