@@ -27,7 +27,7 @@ public interface UpmsDictionaryService {
 
     UpmsDictionaryDataResp createData(UpmsDictionaryDataReq resources);
 
-    UpmsDictionaryDataResp updateData(Long id, UpmsDictionaryDataReq resources);
+    List updateData(Long categoryId, List<UpmsDictionaryDataReq> resources);
 
     void deleteData(Long id);
 

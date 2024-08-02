@@ -4,6 +4,7 @@ import com.xk.cms.model.bo.CmsCompanySaveReq;
 import com.xk.cms.model.vo.CmsCompanySaveResp;
 import com.xk.cms.service.CmsCompanyService;
 import com.xk.common.base.BaseController;
+import com.xk.common.util.GoogleApiGeocode;
 import com.xk.upms.model.dto.UpmsSystemExample;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class CmsCompanyController extends BaseController {
     }
 
     /**
-     * 新增/修改 用户 Create/Update
+     * 新增/修改 公司 Create/Update
      */
 //    @RequiresPermissions("upms:user:create")
 //    @RequiresPermissions("upms:user:update")
@@ -69,6 +70,8 @@ public class CmsCompanyController extends BaseController {
         if (result == null) {
             attributes.addFlashAttribute("message", "操作失敗");
         } else {
+            // 打入
+            GoogleApiGeocode.main("123");
             attributes.addFlashAttribute("message", "操作成功");
         }
         return "redirect:/admin/cms/manage/self";

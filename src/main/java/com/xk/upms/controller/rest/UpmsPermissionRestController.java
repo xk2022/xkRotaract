@@ -23,7 +23,7 @@ import java.util.Date;
  */
 @RestController
 @Api("權限管理api")
-@RequestMapping("/api/manage/")
+@RequestMapping("/api/manage/permission")
 public class UpmsPermissionRestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsPermissionRestController.class);
@@ -136,6 +136,8 @@ public class UpmsPermissionRestController {
         data.setOrders((long) 22);
         upmsPermissionService.create(data);
 
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/upms/manage/role");
+        data.setPid(findParentEntity.getId());
         data.setName("角色權限");
         data.setPermissionValue("upms:role/detail");
         data.setUri("/admin/upms/manage/role/detail");
@@ -198,6 +200,12 @@ public class UpmsPermissionRestController {
         data.setName("鍵值管理");
         data.setPermissionValue("upms:key");
         data.setUri("/admin/upms/manage/key");
+        data.setOrders((long) 44);
+        upmsPermissionService.create(data);
+
+        data.setName("公司行號");
+        data.setPermissionValue("cms:company");
+        data.setUri("/admin/cms/manage/company");
         data.setOrders((long) 44);
         upmsPermissionService.create(data);
         /**

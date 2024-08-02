@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 字典 RestController
@@ -30,7 +31,8 @@ public class UpmsDictionaryRestController {
 
     @ApiOperation(value = "字典子列表")
     @PostMapping("/listDictionaryData")
-    public List listDictionaryData(@RequestParam(value = "code", required = false) String code) {
+    public List listDictionaryData(@RequestBody Map<String, Object> requestBody) {
+        String code = (String) requestBody.get("code");
         return upmsDictionaryService.listDDbyDC(code);
     }
 

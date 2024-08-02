@@ -5,6 +5,7 @@ import com.xk.upms.dao.repository.UpmsDictionaryDataRepository;
 import com.xk.upms.model.bo.UpmsDictionaryCategoryReq;
 import com.xk.upms.model.bo.UpmsDictionaryDataReq;
 import com.xk.upms.model.po.UpmsDictionaryCategory;
+import com.xk.upms.model.po.UpmsDictionaryData;
 import com.xk.upms.model.vo.UpmsDictionaryCategoryResp;
 import com.xk.upms.model.vo.UpmsDictionaryDataResp;
 import com.xk.upms.service.UpmsDictionaryService;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -90,8 +92,21 @@ public class UpmsDictionaryServiceImpl implements UpmsDictionaryService {
 	}
 
 	@Override
-	public UpmsDictionaryDataResp updateData(Long id, UpmsDictionaryDataReq resources) {
-		return null;
+	public List<UpmsDictionaryDataResp> updateData(Long categoryId, List<UpmsDictionaryDataReq> resources) {
+    	List<UpmsDictionaryDataResp> resultList = new ArrayList<>();
+
+    	for (UpmsDictionaryDataReq resource : resources) {
+    		UpmsDictionaryDataResp result = new UpmsDictionaryDataResp();
+
+			UpmsDictionaryData req = new UpmsDictionaryData();
+			BeanUtils.copyProperties(resource, req);
+			req.setParentId(categoryId);
+			UpmsDictionaryData entity = upmsDictionaryDataRepository.save(req);
+
+			BeanUtils.copyProperties(entity, result);
+			resultList.add(result);
+		}
+		return resultList;
 	}
 
 	@Override

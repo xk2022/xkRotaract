@@ -22,6 +22,14 @@
     <link rel="stylesheet" type="text/css" href="assets/plugins/global/plugins.bundle.css" th:href="@{/plugins/global/plugins.bundle.css}"/>
     <link rel="stylesheet" type="text/css" href="assets/css/style.bundle.css" th:href="@{/css/style.bundle.css}"/>
     <!--end::Global Stylesheets Bundle-->
+
+    <style>
+        .responsive-size {
+            max-width: 100%; /* 最大宽度为容器的宽度 */
+            max-height: 600px; /* 最大高度 */
+            height: auto; /* 根据宽度自动调整高度 */
+        }
+    </style>
 </th:block>
 
 <body>
@@ -55,10 +63,134 @@
 
 <div th:fragment="footer" id="kt_auth_footer" class="d-flex flex-center flex-wrap fs-6 p-5 pb-0">
     <!--begin::Links-->
+<!--    <div class="d-flex flex-center fw-bold fs-6">-->
+<!--        <a href="https://keenthemes.com" class="text-muted text-hover-primary px-2" target="_blank">關於</a>-->
+<!--        <a href="https://devs.keenthemes.com" class="text-muted text-hover-primary px-2" target="_blank">支援</a>-->
+<!--        <a href="https://themes.getbootstrap.com/product/good-bootstrap-5-admin-dashboard-template" class="text-muted text-hover-primary px-2" target="_blank">購買</a>-->
+<!--    </div>-->
+    <!--end::Links-->
+    <!--begin::Links-->
     <div class="d-flex flex-center fw-bold fs-6">
-        <a href="https://keenthemes.com" class="text-muted text-hover-primary px-2" target="_blank">關於</a>
-        <a href="https://devs.keenthemes.com" class="text-muted text-hover-primary px-2" target="_blank">支援</a>
-        <a href="https://themes.getbootstrap.com/product/good-bootstrap-5-admin-dashboard-template" class="text-muted text-hover-primary px-2" target="_blank">購買</a>
+        <button type="button" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#kt_modal_1">
+            如何加入
+        </button>
+        <!--begin::Modal - Add task-->
+        <div class="modal fade" id="kt_modal_1" tabindex="-1" aria-hidden="true">
+            <!--begin::Modal dialog-->
+            <div class="modal-dialog modal-dialog-centered mw-650px">
+                <!--begin::Modal content-->
+                <div class="modal-content">
+                    <!--begin::Modal header-->
+                    <div class="modal-header">
+                        <!--begin::Close-->
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                            <span class="svg-icon svg-icon-2x"></span>
+                        </div>
+                        <!--end::Close-->
+                    </div>
+                    <!--end::Modal header-->
+                    <!--begin::Modal body-->
+                    <div class="modal-body">
+                        <img th:src="@{/media/signInfo/infoToBeMember.png}" alt="" src="assets/media/logos/default.svg" class="responsive-size"/>
+                    </div>
+                    <!--end::Modal body-->
+                </div>
+                <!--end::Modal content-->
+            </div>
+            <!--end::Modal dialog-->
+        </div>
+        <!--end::Modal - Add task-->
+
+        <button type="button" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#kt_modal_2">
+            註冊會員
+        </button>
+        <!--begin::Modal - Add task-->
+        <div class="modal fade" id="kt_modal_2" tabindex="-1" aria-hidden="true">
+            <!--begin::Modal dialog-->
+            <div class="modal-dialog modal-dialog-centered mw-650px">
+                <!--begin::Modal content-->
+                <div class="modal-content">
+                    <!--begin::Modal header-->
+                    <div class="modal-header">
+                        <!--begin::Close-->
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                            <span class="svg-icon svg-icon-2x"></span>
+                        </div>
+                        <!--end::Close-->
+                    </div>
+                    <!--end::Modal header-->
+                    <!--begin::Modal body-->
+                    <div class="modal-body">
+                        <img th:src="@{/media/signInfo/infoRegister.png}" alt="" src="assets/media/logos/default.svg" class="responsive-size"/>
+                    </div>
+                    <!--end::Modal body-->
+                </div>
+                <!--end::Modal content-->
+            </div>
+            <!--end::Modal dialog-->
+        </div>
+        <!--end::Modal - Add task-->
+
+        <button type="button" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#kt_modal_3">
+            登記公司
+        </button>
+        <!--begin::Modal - Add task-->
+        <div class="modal fade" id="kt_modal_3" tabindex="-1" aria-hidden="true">
+            <!--begin::Modal dialog-->
+            <div class="modal-dialog modal-dialog-centered mw-650px">
+                <!--begin::Modal content-->
+                <div class="modal-content">
+                    <!--begin::Modal header-->
+                    <div class="modal-header">
+                        <!--begin::Close-->
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                            <span class="svg-icon svg-icon-2x"></span>
+                        </div>
+                        <!--end::Close-->
+                    </div>
+                    <!--end::Modal header-->
+                    <!--begin::Modal body-->
+                    <div class="modal-body">
+                        <img th:src="@{/media/signInfo/infoShowOnMap.png}" alt="" src="assets/media/logos/default.svg" class="responsive-size"/>
+                    </div>
+                    <!--end::Modal body-->
+                </div>
+                <!--end::Modal content-->
+            </div>
+            <!--end::Modal dialog-->
+        </div>
+        <!--end::Modal - Add task-->
+
+
+        <button type="button" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#kt_modal_4">
+            付費呈現資訊
+        </button>
+        <!--begin::Modal - Add task-->
+        <div class="modal fade" id="kt_modal_4" tabindex="-1" aria-hidden="true">
+            <!--begin::Modal dialog-->
+            <div class="modal-dialog modal-dialog-centered mw-650px">
+                <!--begin::Modal content-->
+                <div class="modal-content">
+                    <!--begin::Modal header-->
+                    <div class="modal-header">
+                        <!--begin::Close-->
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                            <span class="svg-icon svg-icon-2x"></span>
+                        </div>
+                        <!--end::Close-->
+                    </div>
+                    <!--end::Modal header-->
+                    <!--begin::Modal body-->
+                    <div class="modal-body">
+                        <img th:src="@{/media/signInfo/infoPayForMap.png}" alt="" src="assets/media/logos/default.svg" class="responsive-size"/>
+                    </div>
+                    <!--end::Modal body-->
+                </div>
+                <!--end::Modal content-->
+            </div>
+            <!--end::Modal dialog-->
+        </div>
+        <!--end::Modal - Add task-->
     </div>
     <!--end::Links-->
 </div>

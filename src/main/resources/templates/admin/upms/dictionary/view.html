@@ -23,9 +23,16 @@
     <script th:inline="javascript">
         var deleteUrl = '/admin/upms/manage/dictionary/delete/';
         var secTableBody = document.querySelector('#kt_sec_table tbody');
+        var cntDictionaryDataRow;
 
         $('.clickable-row').click(function () {
+            // 获取 category_id 和 code
+            var categoryId = $(this).find('td:nth-child(1)').text();
             var code = $(this).find('td:nth-child(2)').text(); // 获取行的第二个<td>的文本内容（假设是code）
+
+            // 更新隐藏字段值
+            $('#category_id').val(categoryId);
+
             console.log('Row clicked - Code:', code);
 
             // 发送 AJAX 请求
@@ -34,22 +41,39 @@
                 method: 'POST',
                 data: JSON.stringify({ 'code': code }), // 将数据转换为 JSON 格式
                 processData: false,  // 禁止 jQuery 处理数据
-                contentType: 'application/json',
+                contentType: 'application/json', // 设置内容类型为 JSON
                 success: function (response) {
                     console.log('AJAX 请求成功：', response);
-                    // 在这里执行其他操作
-                    secTableBody.innerHTML = '';
+
+                    secTableBody.innerHTML = ''; // 清空表格内容
+                    cntDictionaryDataRow = -1; // 初始化cntDictionaryDataRow
+
+                    // 显示添加行和提交按钮
                     $('#kt_sec_table_addrow').show();
                     $('#kt_sec_table_submit').show();
 
-                    if (response) {
-                        // 将HTML代码作为文本字符串添加到表格中（使用innerHTML属性）
-                        secTableBody.innerHTML += '<tr><td style="display:none">1</td><td><input type="text" class="form-control form-control-solid" id="row-1-code" name="row-1-code" value="1"/></td><td><input type="text" class="form-control form-control-solid" id="row-1-description" name="row-1-description" value="男"/></td></tr>';
-
-                        // 或者使用insertAdjacentHTML()方法
-                        secTableBody.insertAdjacentHTML('beforeend', '<tr><td style="display:none">1</td><td><input type="text" class="form-control form-control-solid" id="row-1-code" name="row-1-code" value="1"/></td><td><input type="text" class="form-control form-control-solid" id="row-1-description" name="row-1-description" value="男"/></td></tr>');
-                        // $('#kt_sec_table').append(response);
+                    // 检查响应是否存在
+                    if (response && response.length > 0) {
+                        // 遍历响应数据并添加到表格中
+                        response.forEach(function(item, index) {
+                            // 使用 insertAdjacentHTML 添加新行
+                            secTableBody.insertAdjacentHTML('beforeend', `
+                                <tr>
+                                    <td style="display:none">
+                                        <input type="hidden" name="rows[${index}].id" value="${item.id}">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control form-control-solid" name="rows[${index}].code" value="${item.code}">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control form-control-solid" name="rows[${index}].description" value="${item.description}">
+                                    </td>
+                                </tr>
+                            `);
+                            cntDictionaryDataRow++; // 每次添加行时增加计数器
+                        });
                     } else {
+                        // 如果没有响应数据，则触发添加新行按钮的点击事件
                         $('#kt_sec_table_addrow').click();
                     }
                 },
@@ -57,11 +81,30 @@
                     console.error('AJAX 请求失败：', error);
                 }
             });
+
         });
 
+        // 处理添加行按钮点击事件
         $("#kt_sec_table_addrow").click(function() {
-            // 或者使用insertAdjacentHTML()方法
-            secTableBody.insertAdjacentHTML('beforeend', '<tr><td style="display:none"></td><td><input type="text" class="form-control form-control-solid" id="row-1-code" name="row-1-code" value=""/></td><td><input type="text" class="form-control form-control-solid" id="row-1-description" name="row-1-description" value=""/></td></tr>');
+            cntDictionaryDataRow++; // 每次添加行时增加计数器
+
+            // 构建新行的 HTML 代码
+            var newRowHtml = `
+                <tr>
+                    <td style="display:none">
+                        <input type="hidden" name="rows[${cntDictionaryDataRow}].id" value="">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control form-control-solid" name="rows[${cntDictionaryDataRow}].code" value="">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control form-control-solid" name="rows[${cntDictionaryDataRow}].description" value="">
+                    </td>
+                </tr>
+            `;
+
+            // 使用insertAdjacentHTML()方法
+            secTableBody.insertAdjacentHTML('beforeend', newRowHtml);
         });
 
         $('#kt_sec_table_clear').click(function () {
@@ -113,6 +156,19 @@
             return false;
         });
 
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('kt_sec_table_submit').addEventListener('click', function () {
+                // 獲取表單
+                var kt_sec_form = document.getElementById('kt_sec_form');
+
+                // 可能需要檢查和處理表單數據（例如驗證）
+
+                // 提交表單
+                kt_sec_form.submit();
+            });
+        });
+
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->
@@ -122,7 +178,7 @@
     <!--begin::Row-->
     <div class="row g-5">
         <!--begin::Col-->
-        <div class="col-md-6">
+        <div class="col-md-5">
             <!--begin::Card-->
             <div class="card card-stretch card-bordered mb-5">
                 <!--begin::Card header-->
@@ -150,7 +206,7 @@
         </div>
         <!--end::Col-->
         <!--begin::Col-->
-        <div class="col-md-6">
+        <div class="col-md-7">
             <!--begin::Card-->
             <div class="card card-stretch card-bordered mb-5">
                 <!--begin::Card header-->
@@ -162,11 +218,6 @@
                             <button class="btn btn-primary" id="kt_sec_table_addrow" style="display: none;">Add New Row</button>
                         </div>
                         <!--end::Add-->
-                        <!--begin::Submit-->
-                        <div class="pb-10">
-                            <button class="btn btn-primary" id="kt_sec_table_submit" style="display: none;">Submit Form</button>
-                        </div>
-                        <!--end::Submit-->
                     </div>
                     <!--begin::Card title-->
                     <!--begin::Card toolbar-->
@@ -236,30 +287,57 @@
 </div>
 <!--end::Card body-->
 
-
 <!--begin::Card body-->
 <div th:fragment="table_value" class="card-body py-4">
-    <!--begin::Table-->
-    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_sec_table">
-        <!--begin::Table head-->
-        <thead>
-        <!--begin::Table row-->
-        <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-            <th class="min-w-5px" style="display:none">ID</th>
-            <th class="min-w-125px">Code</th>
-            <th class="min-w-125px">description</th>
-        </tr>
-        <!--end::Table row-->
-        </thead>
-        <!--end::Table head-->
-        <!--begin::Table body-->
-        <tbody class="text-gray-600 fw-bold">
+    <form id="kt_sec_table_form" class="form" th:action="@{/admin/upms/manage/dictionary/data/save}" method="post">
+        <!-- Hidden field for category_id -->
+        <input type="hidden" name="category_id" id="category_id" value=""> <!-- Replace with the actual category ID -->
+
+        <!--begin::Table-->
+        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_sec_table">
+            <!--begin::Table head-->
+            <thead>
             <!--begin::Table row-->
+            <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                <th class="min-w-5px" style="display:none">ID</th>
+                <th class="min-w-125px">Code</th>
+                <th class="min-w-125px">description</th>
+            </tr>
             <!--end::Table row-->
-        </tbody>
-        <!--end::Table body-->
-    </table>
-    <!--end::Table-->
+            </thead>
+            <!--end::Table head-->
+            <!--begin::Table body-->
+            <tbody class="text-gray-600 fw-bold">
+            <!--begin::Table row-->
+<!--                &lt;!&ndash; Example Row &ndash;&gt;-->
+<!--                <tr>-->
+<!--                    <td style="display:none">-->
+<!--                        <input type="hidden" name="rows[0].id" value="1">-->
+<!--                    </td>-->
+<!--                    <td><input type="text" name="rows[0].code" value="Example Code 1"></td>-->
+<!--                    <td><input type="text" name="rows[0].description" value="Example Description 1"></td>-->
+<!--                </tr>-->
+<!--                &lt;!&ndash; Add more rows as needed &ndash;&gt;-->
+<!--                &lt;!&ndash; Example Row 2 &ndash;&gt;-->
+<!--                <tr>-->
+<!--                    <td style="display:none">-->
+<!--                        <input type="hidden" name="rows[1].id" value="2">-->
+<!--                    </td>-->
+<!--                    <td><input type="text" name="rows[1].code" value="Example Code 2"></td>-->
+<!--                    <td><input type="text" name="rows[1].description" value="Example Description 2"></td>-->
+<!--                </tr>-->
+            <!--end::Table row-->
+            </tbody>
+            <!--end::Table body-->
+        </table>
+        <!--end::Table-->
+        <!-- Add hidden fields or other form inputs if necessary -->
+        <!--begin::Submit-->
+        <div class="pb-10">
+            <button class="btn btn-primary" id="kt_sec_table_submit" style="display: none;">Submit Form</button>
+        </div>
+        <!--end::Submit-->
+    </form>
 </div>
 <!--end::Card body-->
 

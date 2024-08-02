@@ -138,10 +138,18 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public List listPermission(Long systemId) {
-        Set<Long> permissionIds = (Set<Long>) userPermissions();
-        // 查询所有权限
-        List<UpmsPermission> permissions = upmsPermissionRepository.findBySystemIdAndStatusAndIdInOrPidIn(systemId, true, new ArrayList<>(permissionIds), new ArrayList<>(permissionIds));
-        return permissions;
+        // 获取用户权限 ID 集合
+        Set<Long> permissionIds = (Set<Long>) userPermissions(); // 确保 userPermissions() 返回的是 Set<Long>
+
+        // 查找所有活动的权限
+        List<UpmsPermission> allActivePermissions = upmsPermissionRepository.findBySystemIdAndStatus(systemId, true);
+
+        // 从所有活动权限中筛选出用户拥有的权限
+        List<UpmsPermission> activePermissions = allActivePermissions.stream()
+                .filter(permission -> permissionIds.contains(permission.getId()))
+                .collect(Collectors.toList());
+
+        return activePermissions;
     }
 
     private Collection<? extends Serializable> userPermissions() {

@@ -47,8 +47,8 @@ public class CmsSelfController extends BaseController {
 //    @RequiresPermissions("upms:user:read")
     @GetMapping()
     public String index(Model model, HttpSession session) {
-        model.addAttribute("fragmentName", "input");
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
+        model.addAttribute("fragmentName", "view");
 
         UserExample user = (UserExample) session.getAttribute("user");
         CmsUserSaveResp entity = new CmsUserSaveResp();

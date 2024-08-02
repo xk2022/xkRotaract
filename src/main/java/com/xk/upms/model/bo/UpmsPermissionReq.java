@@ -19,4 +19,9 @@ public class UpmsPermissionReq {
      */
     private Byte type;
 
+    /**
+     * 狀態(0:禁止,1:正常)
+     */
+    private Boolean status;
+
 }

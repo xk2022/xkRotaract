@@ -8,6 +8,7 @@ import com.xk.cms.model.po.CmsUserCompany;
 import com.xk.cms.model.vo.CmsCompanySaveResp;
 import com.xk.cms.service.CmsCompanyService;
 import com.xk.common.json.Industry;
+import com.xk.common.util.GoogleApiGeocode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +35,8 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
     private CmsCompanyRepository cmsCompanyRepository;
     @Autowired
     private CmsUserCompanyRepository cmsUserCompanyRepository;
+    @Autowired
+    private GoogleApiGeocode googleApiGeocode;
 
     @Override
     public List list() {
@@ -80,6 +83,9 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
         if (resources.getIndustryIds() != null) {
             req.setIndustries(remixIndustryIds(resources.getIndustryIds()));
         }
+        if (resources.getAddress() != null) {
+            req.setLatlng(googleApiGeocode.code(resources.getAddress()));
+        }
         CmsCompany entity = cmsCompanyRepository.save(req);
 
         CmsUserCompany fkEntity = new CmsUserCompany();
@@ -99,6 +105,9 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
         BeanUtils.copyProperties(resources, req);
         if (resources.getIndustryIds() != null) {
             req.setIndustries(remixIndustryIds(resources.getIndustryIds()));
+        }
+        if (resources.getAddress() != null) {
+            req.setLatlng(googleApiGeocode.code(resources.getAddress()));
         }
         CmsCompany entity = cmsCompanyRepository.save(req);
 

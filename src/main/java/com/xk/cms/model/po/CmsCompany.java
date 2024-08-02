@@ -43,4 +43,7 @@ public class CmsCompany extends BaseEntity implements Serializable {
     @Comment("05_產業別")
     private String industries;
 
+    @Comment("06_經緯度")
+    private String latlng;
+
 }
