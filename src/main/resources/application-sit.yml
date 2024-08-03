@@ -1,0 +1,34 @@
+server:
+  port: 8000
+
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver # 驅動類型(注意MySQL 8.0的值是com.mysql.cj.jdbc.Driver和之前不同)
+    url: jdbc:mysql://localhost:3306/rotaract?useSSL=false&useUnicode=yes&characterEncoding=UTF-8&characterSetResults=UTF-8 # 數據庫連接字符串
+    username: root # 數據庫用戶名
+    password: 1qaz@WSX # 數據庫密碼
+    type: com.alibaba.druid.pool.DruidDataSource
+  jpa:
+    show-sql: true # 默认false，在日志里显示执行的sql语句
+    database: mysql
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      #指定为update，每次启动项目检测表结构有变化的时候会新增字段，表不存在时会新建，如果指定create，则每次启动项目都会清空数据并删除表，再新建
+      ddl-auto: update #none:nothing, update:update new, create:rebootDB
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl #指定jpa的自动表生成策略，驼峰自动映射为下划线格式
+    #physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: true
+
+# ===== 自定義 swagger 配置 ===== #
+springfox:
+  documentation:
+    swagger-ui:
+      enabled : true
+
+logging:
+  level:
+    root: INFO
+    com.xk: DEBUG
+  file: log/log-pro.log

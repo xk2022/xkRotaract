@@ -32,4 +32,5 @@ public interface UpmsUserService {
 
     Optional<UpmsUser> selectByPrimaryKey(long id);
 
+    boolean checkReferralCode(String referralCode);
 }

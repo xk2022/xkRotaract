@@ -16,7 +16,7 @@ function initMap() {
 
     map = new google.maps.Map(document.getElementById('map'), {
         center: TaiwanLocation,
-        zoom: 8.5
+        zoom: 8
     });
 
     customIcon = {

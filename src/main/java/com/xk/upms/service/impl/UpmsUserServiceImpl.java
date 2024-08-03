@@ -15,6 +15,7 @@ import com.xk.upms.model.vo.UpmsUserIndexResp;
 import com.xk.upms.model.vo.UpmsUserResp;
 import com.xk.upms.model.vo.UpmsUserSaveResp;
 import com.xk.upms.service.UpmsUserService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -143,6 +144,19 @@ public class UpmsUserServiceImpl implements UpmsUserService {
     @Override
     public Optional<UpmsUser> selectByPrimaryKey(long id) {
         return upmsUserRepository.findById(id);
+    }
+
+    @Override
+    public boolean checkReferralCode(String referralCode) {
+        boolean isReferralCodeActive = false;
+
+        if (StringUtils.isNotBlank(referralCode)) {
+            List<UpmsUser> entities = upmsUserRepository.findByCellPhoneLike(referralCode);
+            if (entities.size() > 0) {
+                isReferralCodeActive = true;
+            }
+        }
+        return isReferralCodeActive;
     }
 
 }

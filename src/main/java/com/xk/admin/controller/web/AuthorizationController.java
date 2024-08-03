@@ -67,8 +67,13 @@ public class AuthorizationController extends BaseController {
 
         if (user != null) {
             session.setAttribute("user", user);
-//            session.setAttribute("left_tree", menuService.buildTree(menuService.list()));
-//            session.setAttribute("left_tree", menuService.buildTree(menuService.list(user)));
+            /** TODO
+             * 20240804 讓角色繞過畫面，直接進入個人資料填寫
+             */
+            if (user.getRoleId()[0] == 4) {
+                return "redirect:/admin/cms/manage/self";
+            }
+
             return R_ADMIN_INDEX;
         } else {
             attributes.addFlashAttribute("message", "用戶名和密碼錯誤");
@@ -99,6 +104,14 @@ public class AuthorizationController extends BaseController {
     @PostMapping("/signUp")
     public String signUp(UpmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) {
         UpmsUserSaveResp result;
+
+        // check referral Code first
+        boolean isReferralCodeActive = upmsUserService.checkReferralCode(resources.getReferralCode());
+        if (!isReferralCodeActive) {
+            // 如果角色不存在，可以處理相應邏輯
+            attributes.addFlashAttribute("message", "推薦碼有誤，請重新取得");
+            return R_AUTH_SIGNUP;
+        }
 
         resources.setCreateBy("signUp by self");
         result = upmsUserService.create(resources);

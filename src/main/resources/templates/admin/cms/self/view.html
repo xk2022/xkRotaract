@@ -43,11 +43,13 @@
                         rotaractSelect.append('<option value="0">請選擇</option>');
 
                         // 遍历响应数据并添加到下拉选单中
-                        response.forEach(function(district) {
-                            rotaractSelect.append(
-                                `<option value="${district.code}">${district.description}</option>`
-                            );
-                        });
+                        if(response) {
+                            response.forEach(function(district) {
+                                rotaractSelect.append(
+                                    `<option value="${district.code}">${district.description}</option>`
+                                );
+                            });
+                        }
 
                         // 设置默认选中项
                         var selectedDistrictId = $('input[name="district_id"]').val();
@@ -80,11 +82,13 @@
                         clubSelectElement.append('<option value="0">請選擇</option>');
 
                         // 遍历响应数据并添加到下拉选单中
-                        response.forEach(function(club) {
-                            clubSelectElement.append(
-                                `<option value="${club.code}">${club.description}</option>`
-                            );
-                        });
+                        if(response) {
+                            response.forEach(function(club) {
+                                clubSelectElement.append(
+                                    `<option value="${club.code}">${club.description}</option>`
+                                );
+                            });
+                        }
 
                         // 设置默认选中项
                         var selectedRotaractId = $('input[name="rotaract_id"]').val();
@@ -161,6 +165,7 @@
                 <!--end::Label-->
                 <!--begin::Select-->
                 <select class="form-select form-control form-control-solid" id="inputGroupSelect_district">
+                    <option value="0">請選擇</option>
                 </select>
                 <!--end::Select-->
             </div>
@@ -172,6 +177,7 @@
                 <!--end::Label-->
                 <!--begin::Select-->
                 <select class="form-select form-control form-control-solid" id="inputGroupSelect_club">
+                    <option value="0">請選擇</option>
                 </select>
                 <!--end::Select-->
             </div>
@@ -226,22 +232,25 @@
             <!--end::Col-->
         </div>
         <!--end::Input group-->
-        <!--                    &lt;!&ndash;begin::Input group&ndash;&gt;-->
-        <!--                    <div class="d-flex flex-column mb-5 fv-row">-->
-        <!--                        &lt;!&ndash;begin::Label&ndash;&gt;-->
-        <!--                        <label class="fs-5 fw-bold mb-2">Subject</label>-->
-        <!--                        &lt;!&ndash;end::Label&ndash;&gt;-->
-        <!--                        &lt;!&ndash;begin::Input&ndash;&gt;-->
-        <!--                        <input class="form-control form-control-solid" placeholder="" name="subject" />-->
-        <!--                        &lt;!&ndash;end::Input&ndash;&gt;-->
-        <!--                    </div>-->
-        <!--                    &lt;!&ndash;end::Input group&ndash;&gt;-->
-        <!--                    &lt;!&ndash;begin::Input group&ndash;&gt;-->
-        <!--                    <div class="d-flex flex-column mb-10 fv-row">-->
-        <!--                        <label class="fs-6 fw-bold mb-2">Message</label>-->
-        <!--                        <textarea class="form-control form-control-solid" rows="6" name="message" placeholder=""></textarea>-->
-        <!--                    </div>-->
-        <!--                    &lt;!&ndash;end::Input group&ndash;&gt;-->
+        <!--begin::Input group-->
+        <div class="row mb-5">
+            <!--begin::Col-->
+            <div class="col-md-6 fv-row">
+                <!--begin::Label-->
+                <label class="fs-5 fw-bold mb-2">推薦碼(自動生成：手機號碼後六碼)</label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <!-- 表示從第4個字符（索引為3）到第10個字符（索引為9）的子字符串 -->
+                <input type="text" class="form-control form-control-solid" placeholder="XXXXXX" name="referralCode" th:value="${#strings.substring(entity.phone, 4, 10)}" readonly />
+                <!--end::Input-->
+            </div>
+            <!--end::Col-->
+            <!--begin::Col-->
+            <div class="col-md-6 fv-row">
+            </div>
+            <!--end::Col-->
+        </div>
+        <!--end::Input group-->
         <!--begin::Submit-->
         <button type="submit" class="btn btn-primary" id="kt_contact_submit_button">
             <!--begin::Indicator-->
