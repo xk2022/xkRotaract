@@ -76,26 +76,61 @@ function initMap() {
       // 设置地图显示的类型为自定义地图类型
       map.setMapTypeId('custom_style');
 
-    fetch('js/locations.json')
-    .then(response => response.json())
-    .then(data => {
-        globalData = data; // 将数据存储在全局变量中
-        // 遍历类型数组
-        Object.values(data).forEach(function (locations) {
-        // 遍历每个位置对象
-            locations.forEach(function (location) {
-                const marker = new google.maps.Marker({
-                    position: { lat: location.lat, lng: location.lng },
-                    map: map,
-                    title: location.name,
-                    icon: customIcon
+//    fetch('js/locations.json')
+//    .then(response => response.json())
+//    .then(data => {
+//        globalData = data; // 将数据存储在全局变量中
+//        // 遍历类型数组
+//        Object.values(data).forEach(function (locations) {
+//        // 遍历每个位置对象
+//            locations.forEach(function (location) {
+//                const marker = new google.maps.Marker({
+//                    position: { lat: location.lat, lng: location.lng },
+//                    map: map,
+//                    title: location.name,
+//                    icon: customIcon
+//                });
+//                information(location.name, location.description, marker);
+//                markers.push(marker);
+//            });
+//        });
+//    })
+//    .catch(error => console.error('Error fetching locations:', error));
+
+//    /api/manage/index/locationCompany
+
+//        .catch(error => console.error('Error fetching locations:', error));
+
+    $.ajax({
+        url: '/xkRotaract/api/manage/index/locationCompany',
+        method: 'GET',
+        data: '', // 修改为适合你的代码
+        processData: false,
+        contentType: 'application/json',
+        success: function(response) {
+            console.log('AJAX 请求成功：', response);
+
+            var data = response.locations;
+            globalData = data; // 将数据存储在全局变量中
+            // 遍历类型数组
+            Object.values(data).forEach(function (locations) {
+            // 遍历每个位置对象
+                locations.forEach(function (location) {
+                    const marker = new google.maps.Marker({
+                        position: { lat: Number(location.lat), lng: Number(location.lng) },
+                        map: map,
+                        title: location.name,
+                        icon: customIcon
+                    });
+                    information(location.name, location.description, marker);
+                    markers.push(marker);
                 });
-                information(location.name, location.description, marker);
-                markers.push(marker);
-            });
-        });
-    })
-    .catch(error => console.error('Error fetching locations:', error));
+            });// 获取下拉选单元素
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX 请求失败：', error);
+        }
+    });
 
 }
 

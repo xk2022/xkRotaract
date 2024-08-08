@@ -32,5 +32,5 @@ public interface UpmsUserService {
 
     Optional<UpmsUser> selectByPrimaryKey(long id);
 
-    boolean checkReferralCode(String referralCode);
+    boolean checkField(String columnName, String checkValue);
 }

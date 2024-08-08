@@ -64,7 +64,7 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
                 String[] industry = resp.getIndustries().split(",");
                 for(String id : industry) {
                     industryIds.add(Long.valueOf(id));
-                    industries += Industry.getNameByKey(Integer.valueOf(id))+", ";
+                    industries += Industry.getNameByKey(Integer.valueOf(id)).toString()+", ";
                 }
                 resp.setIndustryIds(industryIds);
                 resp.setIndustriesChinese(industries);
@@ -89,7 +89,7 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
         CmsCompany entity = cmsCompanyRepository.save(req);
 
         CmsUserCompany fkEntity = new CmsUserCompany();
-        fkEntity.setFkCmsUserId(resources.getCmsUserId());
+        fkEntity.setFkCmsUserId(Long.parseLong(resources.getCmsUserId()));
         fkEntity.setFkCmsCompanyId(entity.getId());
         cmsUserCompanyRepository.save(fkEntity);
 
@@ -124,7 +124,7 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
         }
     }
 
-    private String remixIndustryIds(List<Long> ids) {
+    private String remixIndustryIds(String ids) {
         return ids.toString().replace("[", "").replace("]", "").replace(" ", "");
     }
 

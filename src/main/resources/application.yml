@@ -4,10 +4,10 @@ server:
 
 spring:
   profiles:
-    active: sit
+#    active: sit
 #    active: dev
 #    active: uat
-#    active: prod
+    active: prod
   application:
     name: xkRotaract
   thymeleaf:

@@ -95,13 +95,6 @@ public class UpmsUserServiceImpl implements UpmsUserService {
 
         UpmsUser req = new UpmsUser();
         BeanUtils.copyProperties(resources, req);
-
-        UpmsUser checkUser = new UpmsUser();
-        checkUser = upmsUserRepository.findByUsername(req.getUsername());
-        if (null != checkUser) {
-            throw new NotFoundException("帳號名已存在！");
-        }
-
 //        String salt = UUID.randomUUID().toString().replaceAll("-", "");
 //        req.setSalt(salt);
 //        req.setPassword(MD5Utils.code(req.getPassword() + req.getSalt()));
@@ -147,16 +140,25 @@ public class UpmsUserServiceImpl implements UpmsUserService {
     }
 
     @Override
-    public boolean checkReferralCode(String referralCode) {
-        boolean isReferralCodeActive = false;
+    public boolean checkField(String columnName, String checkValue) {
+        boolean isExist = false;
 
-        if (StringUtils.isNotBlank(referralCode)) {
-            List<UpmsUser> entities = upmsUserRepository.findByCellPhoneLike(referralCode);
-            if (entities.size() > 0) {
-                isReferralCodeActive = true;
-            }
+        switch (columnName) {
+            case "referralCode":
+                List<UpmsUser> entities = upmsUserRepository.findByCellPhoneLike(checkValue);
+                if (entities.size() > 0) {
+                    isExist = true;
+                }
+                break;
+            case "email":
+                UpmsUser entity = upmsUserRepository.findByEmail(checkValue);
+                if (entity != null) {
+                    isExist = true;
+                }
+                break;
         }
-        return isReferralCodeActive;
+
+        return isExist;
     }
 
 }

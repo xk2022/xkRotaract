@@ -54,8 +54,6 @@ public class CmsCompanyController extends BaseController {
     /**
      * 新增/修改 公司 Create/Update
      */
-//    @RequiresPermissions("upms:user:create")
-//    @RequiresPermissions("upms:user:update")
     @PostMapping("/save")
     public String post(CmsCompanySaveReq resources, RedirectAttributes attributes, HttpSession session) {
         CmsCompanySaveResp result;

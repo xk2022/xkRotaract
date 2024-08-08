@@ -44,7 +44,7 @@ public class UpmsDictionaryServiceImpl implements UpmsDictionaryService {
 		if (category == null) {
 			return null;
 		}
-		return upmsDictionaryDataRepository.findByParentId(category.getId());
+		return upmsDictionaryDataRepository.findByParentIdOrderByCode(category.getId());
 	}
 
 	@Override

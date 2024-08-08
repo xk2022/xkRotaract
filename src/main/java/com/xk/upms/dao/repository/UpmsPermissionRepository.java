@@ -13,6 +13,8 @@ public interface UpmsPermissionRepository extends JpaRepository<UpmsPermission, 
     List findBySystemId(Long systemId);
 
     List findBySystemIdAndStatus(Long systemId, Boolean status);
+    List findBySystemIdAndStatusAndType(Long systemId, Boolean status, Byte type);
+    List findByStatusAndType(Boolean status, Byte type);
 
     List findBySystemIdAndStatusTrueAndIdInOrPidIn(Long systemId, List<Long> ids, List<Long> pids);
     List findByStatusAndIdInOrPidIn(Boolean status, List<Long> ids, List<Long> pids);
@@ -20,4 +22,6 @@ public interface UpmsPermissionRepository extends JpaRepository<UpmsPermission, 
     List findByType(Byte type);
 
     UpmsPermission findByUri(String uri);
+
+    List findByPid(Long pid);
 }

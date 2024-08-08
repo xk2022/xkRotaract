@@ -13,6 +13,7 @@ public interface UpmsUserRepository extends JpaRepository<UpmsUser, Long>, Seria
     UpmsUser findByUsername(String name);
 
     UpmsUser findByEmailAndPassword(String email, String code);
+    UpmsUser findByCellPhoneAndPassword(String cellPhone, String code);
 
     UpmsUser findByEmail(String email);
 

@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface AuthService {
 
-    UserExample checkUser(String email, String password);
+    UserExample checkUser(String account, String password);
 
     Boolean checkUser(String email);
 
@@ -19,4 +19,6 @@ public interface AuthService {
     List listSystem();
 
     List listPermission(Long systemId);
+
+    List checkPermissionType2();
 }

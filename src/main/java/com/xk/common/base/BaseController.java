@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
+import java.util.List;
+
 /**
  * Created by yuan on 2022/05/24
  */
@@ -46,6 +48,16 @@ public class BaseController {
 //        model.addAttribute("left_tree", upmsPermissionService.buildTree(upmsPermissionService.selectBySystemIdAndRole(system, 1)));
         if (system != null) {
             model.addAttribute("left_tree", upmsPermissionService.buildTree(authService.listPermission(system.getId())));
+        }
+        /**TODO
+         * 單功能快速進入管道
+         */
+        List<UpmsPermission> permissions = authService.checkPermissionType2();
+        if (permissions.size() == 1 ) {
+            UpmsPermission onlyPermissionType2 = permissions.get(0);
+            model.addAttribute("tree_only", onlyPermissionType2.getUri());
+        } else {
+            model.addAttribute("tree_only", null);
         }
 
         model.addAttribute("system_title", null);

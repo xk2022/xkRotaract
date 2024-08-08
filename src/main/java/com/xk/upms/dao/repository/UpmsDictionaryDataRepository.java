@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface UpmsDictionaryDataRepository extends JpaRepository<UpmsDictionaryData, Long>, Serializable {
 
-    List findByParentId(Long parentId);
+    List findByParentIdOrderByCode(Long parentId);
 
 }

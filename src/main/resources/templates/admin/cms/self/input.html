@@ -9,7 +9,6 @@
         $("[name='name']").val(null);
         $("[name='phone']").val(null);
         $("[name='address']").val(null);
-        $("[name='industries']").val(null);
     });
 
     // Update
@@ -20,7 +19,13 @@
         $("[name='phone']").val(phone);
         $("[name='address']").val(address);
         $("[name='url']").val(url);
-        $("[name='industryIds']").val(industryIds);
+//        $("[name='industryIds']").val(industryIds);
+        $("[name='industryIds']").prop('checked', false);
+        var iids = industryIds.replace("[", '').replace("]", '').replace(" ", '').split(",");
+        for (var i = 0; i < iids.length; i++) {
+            var checkboxId = '#flexCheckDefault_' + iids[i].trim();
+            $(checkboxId).prop('checked', true);
+        }
     };
 
     // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
@@ -158,141 +163,6 @@
                                     </div>
                                 </div>
                             </th:block>
-
-<!--                            &lt;!&ndash;begin::Input&ndash;&gt;-->
-<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheckDefault_1" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_1">-->
-<!--                                        農、林、漁、牧業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="2" id="flexCheckDefault_2" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_2">-->
-<!--                                        礦業及土石採取業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="3" id="flexCheckDefault_3" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_3">-->
-<!--                                        製造業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="4" id="flexCheckDefault_4" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_4">-->
-<!--                                        電力及燃氣供應業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash;begin::Input&ndash;&gt;-->
-<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
-<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="5" id="flexCheckDefault_5" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_5">-->
-<!--                                        用水供應及污染政治業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="6" id="flexCheckDefault_6" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_6">-->
-<!--                                        營建工程業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="7" id="flexCheckDefault_7" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_7">-->
-<!--                                        批發及零售業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="8" id="flexCheckDefault_8" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_8">-->
-<!--                                        運輸及倉儲業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
-<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
-<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="9" id="flexCheckDefault_9" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_9">-->
-<!--                                        住宿及餐飲業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="10" id="flexCheckDefault_10" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_10">-->
-<!--                                        出版影音及資通訊業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="11" id="flexCheckDefault_11" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_11">-->
-<!--                                        金融及保險業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="12" id="flexCheckDefault_12" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_12">-->
-<!--                                        不動產業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
-<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
-<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="13" id="flexCheckDefault_13" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_13">-->
-<!--                                        專業、科學及技術服務業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="14" id="flexCheckDefault_14" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_14">-->
-<!--                                        支援服務業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="15" id="flexCheckDefault_15" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_15">-->
-<!--                                        藝術、娛樂及休閒服務業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="16" id="flexCheckDefault_16" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_16">-->
-<!--                                        教育業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
-<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
-<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
-<!--                                <div class="col-md-5">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="17" id="flexCheckDefault_17" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_17">-->
-<!--                                        公共行政及國防；強制性社會安全-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md-4">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="18" id="flexCheckDefault_18" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_18">-->
-<!--                                        醫療保健及社會工作服務業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                                <div class="col-md">-->
-<!--                                    <input class="form-check-input" type="checkbox" value="19" id="flexCheckDefault_19" />-->
-<!--                                    <label class="form-check-label" for="flexCheckDefault_19">-->
-<!--                                        其他服務業-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
                         </div>
                     </div>
                     <!--end::Input group-->

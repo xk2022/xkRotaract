@@ -16,10 +16,11 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 @EnableAspectJAutoProxy // 相當xml配置
 //@ComponentScan({"com.xk.**.dao.mapper"})
 @MapperScan(basePackages = { "com.xk.**.dao.mapper" }) // 掃描該包下相應的 class ，主要是 MyBatis 持久化類
-public class BaseApplication implements TransactionManagementConfigurer {
+public class BaseApplication implements TransactionManagementConfigurer  {
 
     public static void main(String[] args) {
         SpringApplication.run(BaseApplication.class, args);
+        System.out.println("項目啟動成功。。。。。。");
     }
 
     @Override

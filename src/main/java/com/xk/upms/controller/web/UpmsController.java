@@ -55,6 +55,9 @@ public class UpmsController extends BaseController {
 //        model.addAttribute("fragmentPackage", "/manage");
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
 
+        if (model.getAttribute("tree_only") != null) {
+            return "redirect:" + model.getAttribute("tree_only");
+        }
 //        model.addAttribute("page_list", upmsRoleService.list(null));
 //        model.addAttribute("entity", new UpmsRole());
 //        model.addAttribute("checkbox_menus", upmsPermissionService.buildTree(upmsPermissionService.findAllMenuLevel()));

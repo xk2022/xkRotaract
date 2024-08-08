@@ -67,12 +67,6 @@ public class AuthorizationController extends BaseController {
 
         if (user != null) {
             session.setAttribute("user", user);
-            /** TODO
-             * 20240804 讓角色繞過畫面，直接進入個人資料填寫
-             */
-            if (user.getRoleId()[0] == 4) {
-                return "redirect:/admin/cms/manage/self";
-            }
 
             return R_ADMIN_INDEX;
         } else {
@@ -105,11 +99,18 @@ public class AuthorizationController extends BaseController {
     public String signUp(UpmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) {
         UpmsUserSaveResp result;
 
-        // check referral Code first
-        boolean isReferralCodeActive = upmsUserService.checkReferralCode(resources.getReferralCode());
-        if (!isReferralCodeActive) {
+        // 01. check referral Code first
+        boolean isReferralCodeExist = upmsUserService.checkField("referralCode", resources.getReferralCode());
+        if (!isReferralCodeExist) {
             // 如果角色不存在，可以處理相應邏輯
             attributes.addFlashAttribute("message", "推薦碼有誤，請重新取得");
+            return R_AUTH_SIGNUP;
+        }
+        // 02. check email first
+        boolean isEmailExist = upmsUserService.checkField("email", resources.getEmail());
+        if (isEmailExist) {
+            // 如果email已經存在
+            attributes.addFlashAttribute("message", "電子郵件，先前已註冊使用中。請返回登入頁面");
             return R_AUTH_SIGNUP;
         }
 

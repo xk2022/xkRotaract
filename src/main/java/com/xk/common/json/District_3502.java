@@ -10,7 +10,8 @@ public enum District_3502 {
     District_3502_6(6, "八德陽德扶青社"),
     District_3502_7(7, "桃園蘆竹扶青社"),
     District_3502_8(8, "桃園自強扶青社"),
-    District_3502_9(9, "桃園ROTEX扶青社");
+    District_3502_9(9, "桃園ROTEX扶青社"),
+    District_3502_10(10, "桃園智德開南扶青社");
 
     private int key;
     private String name;

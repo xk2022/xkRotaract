@@ -1,5 +1,8 @@
 package com.xk.common.json;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * 中華民國統計資訊網
  * https://www.stat.gov.tw/standardindustrialclassification.aspx?n=3144&sms=0&rid=11
@@ -26,15 +29,15 @@ public enum Industry {
     Industry_18(18, "醫療保健及社會工作服務業"),
     Industry_19(19, "其他服務業");
 
-    private int key;
+    private Integer key;
     private String name;
 
-    Industry(int key, String name) {
+    Industry(Integer key, String name) {
         this.key = key;
         this.name = name;
     }
 
-    public int getKey() {
+    public Integer getKey() {
         return key;
     }
 
@@ -43,12 +46,15 @@ public enum Industry {
         return name;
     }
 
-    public static String getNameByKey(int key) {
-        for (Industry industry : Industry.values()) {
-            if (industry.getKey() == key) {
-                return industry.getName();
-            }
-        }
-        return null; // 如果没有找到对应的名称，则返回 null 或者其他默认值
+    public static Optional<String> getNameByKey(Integer key) {
+        return Arrays.stream(Industry.values())
+                .filter(industry -> industry.getKey() == key)
+                .map(Industry::getName)
+                .findFirst();
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

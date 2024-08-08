@@ -53,13 +53,18 @@ public class AuthServiceImpl implements AuthService {
     private UpmsPermissionRepository upmsPermissionRepository;
 
     @Override
-    public UserExample checkUser(String email, String password) {
+    public UserExample checkUser(String account, String password) {
         UserExample result = new UserExample();
-//        T_User user = userRepository.findByUsernameAndPassword(username, MD5Utils.code(password));
         // 改由 js 前端md5加密
-        UpmsUser upmsUser = upmsUserRepository.findByEmailAndPassword(email, password);
+//        T_User user = userRepository.findByUsernameAndPassword(username, MD5Utils.code(password));
+        // account as email
+        UpmsUser upmsUser = upmsUserRepository.findByEmailAndPassword(account, password);
         if (upmsUser == null) {
-            return null;
+            // account as cellPhone
+            upmsUser = upmsUserRepository.findByCellPhoneAndPassword(account, password);
+            if (upmsUser == null) {
+                return null;
+            }
         }
         BeanUtils.copyProperties(upmsUser, result);
 
@@ -152,6 +157,22 @@ public class AuthServiceImpl implements AuthService {
         return activePermissions;
     }
 
+    @Override
+    public List checkPermissionType2() {
+        // 获取用户权限 ID 集合
+        Set<Long> permissionIds = (Set<Long>) userPermissions(); // 确保 userPermissions() 返回的是 Set<Long>
+
+        // 查找所有活动的权限
+        List<UpmsPermission> allActivePermissions = upmsPermissionRepository.findByStatusAndType(true, (byte) 2);
+
+        // 从所有活动权限中筛选出用户拥有的权限
+        List<UpmsPermission> activePermissions = allActivePermissions.stream()
+                .filter(permission -> permissionIds.contains(permission.getId()))
+                .collect(Collectors.toList());
+
+        return activePermissions;
+    }
+
     private Collection<? extends Serializable> userPermissions() {
         // 从 HttpSession 中获取用户信息
         HttpSession session = request.getSession();
@@ -172,6 +193,7 @@ public class AuthServiceImpl implements AuthService {
 //
 //        return permissions;
     }
+
 
 
 

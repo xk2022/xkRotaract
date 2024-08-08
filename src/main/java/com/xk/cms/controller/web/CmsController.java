@@ -32,6 +32,9 @@ public class CmsController extends BaseController {
 	public String index(Model model) {
 		this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
 
+		if (model.getAttribute("tree_only") != null) {
+			return "redirect:" + model.getAttribute("tree_only");
+		}
 //        model.addAttribute("page_list", upmsRoleService.list(null));
 //        model.addAttribute("entity", new UpmsRole());
 //        model.addAttribute("checkbox_menus", upmsPermissionService.buildTree(upmsPermissionService.findAllMenuLevel()));
