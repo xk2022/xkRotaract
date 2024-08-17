@@ -55,6 +55,7 @@ public class IndexCompanyServiceImpl implements IndexCompanyService {
                         })
                         .map(company -> {
                             CompanyLoc.Location location = new CompanyLoc.Location();
+                            location.setLocId(String.valueOf( company.getId()));
                             location.setName(company.getName());
                             location.setDescription(company.getAddress());
                             String[] latLng = company.getLatlng().split(",");

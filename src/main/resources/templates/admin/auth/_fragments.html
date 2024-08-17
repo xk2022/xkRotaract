@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <th:block th:fragment="head">
     <!--    <base href="">-->
-    <title>XKRotaract</title>
+    <title>Rotaract Kaleidoscope</title>
     <meta charset="utf-8"/>
     <!--    <meta name="description" content="Good admin dashboard live demo. Check out all the features of the admin panel. A large number of settings, additional services and widgets." />-->
     <!--    <meta name="keywords" content="Good, bootstrap, bootstrap 5, admin themes, free admin themes, bootstrap admin, bootstrap dashboard, bootstrap dark mode" />-->
@@ -41,12 +41,12 @@
         <!--begin::Header-->
         <div class="d-flex flex-row-fluid flex-column text-center p-10 pt-lg-20">
             <!--begin::Logo-->
-            <a th:href="@{/admin/signIn}" href="../dist/index.html" class="py-9 pt-lg-20">
-                <img th:src="@{/media/logos/default.png}" alt="Logo" src="assets/media/logos/default.svg" class="h-120px" />
+            <a th:href="@{/}" href="../dist/index.html" class="py-20 pt-lg-20">
+                <img th:src="@{/media/logos/default.png}" alt="Logo" src="assets/media/logos/default.svg" class="h-75" />
             </a>
             <!--end::Logo-->
             <!--begin::Title-->
-            <h1 class="fw-bolder text-white fs-2qx pb-5 pb-md-10">歡迎來到 Rotaract Insights</h1>
+            <h1 class="fw-bolder text-white fs-2qx pb-5 pb-md-10">歡迎來到 Rotaract Kaleidoscope</h1>
             <!--end::Title-->
             <!--begin::Description-->
             <p class="fw-bold fs-2 text-white">建立扶青社友連結、職業網、行事曆</p>
@@ -54,7 +54,7 @@
         </div>
         <!--end::Header-->
         <!--begin::Illustration-->
-        <div class="d-flex flex-row-auto bgi-no-repeat bgi-position-x-center bgi-size-contain bgi-position-y-bottom min-h-100px min-h-lg-350px"
+        <div class="d-none d-sm-block d-flex flex-row-auto bgi-no-repeat bgi-position-x-center bgi-size-contain bgi-position-y-bottom min-h-100px min-h-lg-350px"
              style="background-image: url(assets/media/illustrations/sketchy-1/2.png)" th:style="'background:url(' + @{(''=='' ? '/media/illustrations/sketchy-1/2.png' : ${collect.webLogo})} + ')'"></div>
         <!--end::Illustration-->
     </div>

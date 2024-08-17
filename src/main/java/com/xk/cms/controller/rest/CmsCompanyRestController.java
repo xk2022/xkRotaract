@@ -1,17 +1,16 @@
 package com.xk.cms.controller.rest;
 
+import com.xk.cms.model.vo.CmsCompanyWithUserResp;
 import com.xk.cms.service.CmsCompanyService;
 import com.xk.common.base.BaseRepostitory;
-import com.xk.upms.model.bo.UpmsSystemSaveReq;
-import com.xk.upms.service.UpmsSystemService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * 公司 RestController
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Api("公司管管理api")
-@RequestMapping("/api/manage/xxxxxxxxxx")
+@RequestMapping("/api/manage/company")
 public class CmsCompanyRestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CmsCompanyRestController.class);
@@ -39,6 +38,13 @@ public class CmsCompanyRestController {
     @GetMapping("/page_head")
     public Object page_head() {
         return baseRepostitory.queryTableComent("cms_company");
+    }
+
+    @ApiOperation(value = "公司詳情")
+    @PostMapping("/findInfo")
+    public CmsCompanyWithUserResp findCompanyAllInfo(@RequestBody Map<String, Object> requestBody) {
+        String companyId = (String) requestBody.get("id");
+        return cmsCompanyService.findOneWithPersonalByCompanyId(Long.valueOf(companyId));
     }
 
     /**

@@ -45,7 +45,7 @@ public class AdminIndexController extends BaseController {
             return "redirect:" + model.getAttribute("tree_only");
         }
 //        model.addAttribute("page_list", upmsSystemService.listActive());
-        model.addAttribute("page_list", authService.listSystem());
+        model.addAttribute("page_list", authService.listSystemByAuth());
         return ADMIN_INDEX;
     }
 

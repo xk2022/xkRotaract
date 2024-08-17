@@ -17,7 +17,8 @@ import java.util.List;
 @Controller
 public class BaseController {
 
-    public static final String DIR_INDEX = "/index";
+    public static final String DIR_INDEX = "/index/index";
+    public static final String DIR_MAP_INDEX = "/bizmap/index";
     public static final String ADMIN_INDEX = "/admin/index";
     public static final String R_ADMIN_INDEX = "redirect:/admin/index"; // REDIRECT_ADDR
     private static final String R_AUTH_LOGOUT = "redirect:/admin/logout";
@@ -41,7 +42,7 @@ public class BaseController {
 
         /* Aside data Setting */
 //        model.addAttribute("aside_system", upmsSystemService.listActive());
-        model.addAttribute("aside_system", authService.listSystem());
+        model.addAttribute("aside_system", authService.listSystemByAuth());
         UpmsSystem system = (UpmsSystem) upmsSystemService.findOneByName(fragment[0]);
         model.addAttribute("system", system);
 

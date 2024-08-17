@@ -16,7 +16,7 @@ public interface AuthService {
 
     UpmsUser resetPassword(String email, String password);
 
-    List listSystem();
+    List listSystemByAuth();
 
     List listPermission(Long systemId);
 

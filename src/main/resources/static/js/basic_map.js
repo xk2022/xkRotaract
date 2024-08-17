@@ -5,23 +5,42 @@ var map;
 var globalData;
 var markers = [];
 var infoDiv = document.getElementById('msg');
+var drawerOpen = false;
 
 function initMap() {
 
+    // 定義中心位置
     var TaiwanLocation = {
         lat: 23.73602767874198,
         lng: 121.08871396339852
     };
 
-
+    // 創建地圖
     map = new google.maps.Map(document.getElementById('map'), {
         center: TaiwanLocation,
-        zoom: 8
+        zoom: 8 // 設置縮放級別
     });
 
+    function calculateIconSize() {
+        // 根据容器或窗口的实际尺寸计算图标的大小
+    }
+    // 计算图标大小并向上取整到最接近的十位数
+    function calculateIconSize() {
+//        return new google.maps.Size(window.innerWidth / 20, window.innerWidth / 20); // 例子：图标大小为窗口宽度的 1/20
+        const width = Math.ceil(window.innerWidth / 25);
+        let roundedSize = Math.round(width / 10) * 10; // 向十位数进位
+        if (width < 40) {
+            roundedSize = 40;
+        } else {
+            roundedSize = 50;
+        }
+        return new google.maps.Size(roundedSize, roundedSize); // 高度与宽度相同
+    }
+    // 自定義圖標
     customIcon = {
-        url: 'media/logos/Rotaract_LOGO.png',
-        scaledSize: new google.maps.Size(50, 50)
+        url: 'media/logos/Rotaract_LOGO.png',   // 自定義圖標 URL
+        // scaledSize: new google.maps.Size(30, 30)    // 圖標大小
+        scaledSize: calculateIconSize()    // 动态计算图标大小
     };
 
     var customMapType = new google.maps.StyledMapType(
@@ -116,10 +135,11 @@ function initMap() {
             Object.values(data).forEach(function (locations) {
             // 遍历每个位置对象
                 locations.forEach(function (location) {
+                    // 創建標記
                     const marker = new google.maps.Marker({
                         position: { lat: Number(location.lat), lng: Number(location.lng) },
                         map: map,
-                        title: location.name,
+                        title: location.locId,
                         icon: customIcon
                     });
                     information(location.name, location.description, marker);
@@ -137,15 +157,68 @@ function initMap() {
 // show字卡的資料
 function information(a, b, marker) {
 
-    marker.addListener('click', function () {
-        infoDiv.style.left = '0';
-        infoDiv.innerHTML = '<h1>' + a + '</h1><h2>' + b + '</h2>';
+    // 添加點擊事件監聽器
+    marker.addListener('click', function() {
+        closeDrawer();
+        const companyId = this.title; // 从标记的 title 属性获取 companyId
+        fetchInformation(companyId).then(data => {
+            updateDrawerContent(data);
+            toggleDrawer();
+        });
     });
+
+//    marker.addListener('click', function () {
+//        infoDiv.style.left = '0';
+//        infoDiv.innerHTML = '<h1>' + a + '</h1><h2>' + b + '</h2>';
+//    });
 
     marker.addListener('mouseout', function () {
 //        infoDiv.style.left = '-100%';
     })
 }
+
+function fetchInformation(companyId) {
+    return $.ajax({
+        url: '/xkRotaract/api/manage/company/findInfo',
+        method: 'POST',
+        data: JSON.stringify({ 'id': companyId }), // 修改为适合你的代码
+        processData: false,
+        contentType: 'application/json',
+        success: function(response) {
+            console.log('AJAX 请求成功：', response);
+            return response; // 返回从服务器获取的数据
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX 请求失败：', error);
+            return { personal: {}, company: {} }; // 处理错误时的默认值
+        }
+    });
+}
+
+function updateDrawerContent(data) {
+    $('#rotaract_name').text(data.rotaract_name);
+    $('#rname').text(data.rname);
+
+    $('#name').text(data.name);
+    $('#phone').text(data.phone);
+    $('#address').text(data.address);
+    $('#url').text(data.url);
+}
+
+function toggleDrawer() {
+    const drawer = document.getElementById('drawer');
+    drawerOpen = !drawerOpen;
+    drawer.classList.toggle('open', drawerOpen);
+}
+
+function closeDrawer() {
+    drawerOpen = false;
+    document.getElementById('drawer').classList.remove('open');
+}
+
+// Add event listener to button
+//document.getElementById('drawerToggleButton').addEventListener('click', toggleDrawer);
+
 
 // 當按下checkbox的按鈕
 //document.getElementById('btn1').onclick = function () {

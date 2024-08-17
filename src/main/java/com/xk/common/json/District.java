@@ -1,5 +1,8 @@
 package com.xk.common.json;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum District {
 
     District_3461(3461, "3461地區"),
@@ -17,6 +20,7 @@ public enum District {
 
     private int key;
     private String name;
+    private static final Map<Integer, District> lookup = new HashMap<>();
 
     District(int key, String name) {
         this.key = key;
@@ -30,5 +34,10 @@ public enum District {
     // Optional: You can also have a method to get the name
     public String getName() {
         return name;
+    }
+
+    public static String getNameByKey(int key) {
+        District district = lookup.get(key);
+        return (district != null) ? district.getName() : null;
     }
 }

@@ -6,17 +6,18 @@
 
     <groupId>com.xk</groupId>
     <artifactId>xkRotaract</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>2024.08.15</version>
     <!--項目名稱，maven生成文擋時使用-->
     <name>xkRotaract</name>
     <packaging>war</packaging>
-    <description>Demo project for Spring Boot</description>
+    <description>xkRotaract of XploreKaleido</description>
 
+    <!-- maven3以上版本需要使用java17 -->
     <parent>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.7.18</version>
     </parent>
 
     <properties>
@@ -66,9 +67,11 @@
         </dependency>
 
         <!-- mysql -->
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -126,8 +129,6 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version>
         </dependency>
-
-
 
     </dependencies>
 

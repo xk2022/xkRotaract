@@ -2,13 +2,20 @@ package com.xk.cms.service.impl;
 
 import com.xk.cms.dao.repository.CmsCompanyRepository;
 import com.xk.cms.dao.repository.CmsUserCompanyRepository;
+import com.xk.cms.dao.repository.CmsUserRepository;
 import com.xk.cms.model.bo.CmsCompanySaveReq;
 import com.xk.cms.model.po.CmsCompany;
+import com.xk.cms.model.po.CmsUser;
 import com.xk.cms.model.po.CmsUserCompany;
 import com.xk.cms.model.vo.CmsCompanySaveResp;
+import com.xk.cms.model.vo.CmsCompanyWithUserResp;
 import com.xk.cms.service.CmsCompanyService;
 import com.xk.common.json.Industry;
 import com.xk.common.util.GoogleApiGeocode;
+import com.xk.upms.dao.repository.UpmsDictionaryCategaryRepository;
+import com.xk.upms.dao.repository.UpmsDictionaryDataRepository;
+import com.xk.upms.model.po.UpmsDictionaryCategory;
+import com.xk.upms.model.po.UpmsDictionaryData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -16,8 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,6 +46,12 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
     private CmsUserCompanyRepository cmsUserCompanyRepository;
     @Autowired
     private GoogleApiGeocode googleApiGeocode;
+    @Autowired
+    private CmsUserRepository cmsUserRepository;
+    @Autowired
+    private UpmsDictionaryCategaryRepository upmsDictionaryCategaryRepository;
+    @Autowired
+    private UpmsDictionaryDataRepository upmsDictionaryDataRepository;
 
     @Override
     public List list() {
@@ -58,20 +73,26 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
             BeanUtils.copyProperties(entity, resp);
 
             if (resp.getIndustries() != null) {
-                List<Long> industryIds = new ArrayList<>();
-
-                String industries = "";
-                String[] industry = resp.getIndustries().split(",");
-                for(String id : industry) {
-                    industryIds.add(Long.valueOf(id));
-                    industries += Industry.getNameByKey(Integer.valueOf(id)).toString()+", ";
-                }
-                resp.setIndustryIds(industryIds);
-                resp.setIndustriesChinese(industries);
+                resp = transIndustriesChinese(resp);
             }
             result.add(resp);
         }
         return result;
+    }
+
+    private CmsCompanySaveResp transIndustriesChinese(CmsCompanySaveResp resp) {
+        List<Long> industryIds = new ArrayList<>();
+
+        String industries = "";
+        String[] industry = resp.getIndustries().split(",");
+        for(String id : industry) {
+            industryIds.add(Long.valueOf(id));
+            industries += Industry.getNameByKey(Integer.valueOf(id)).toString()+", ";
+        }
+        resp.setIndustryIds(industryIds);
+        resp.setIndustriesChinese(industries);
+
+        return resp;
     }
 
     @Override
@@ -122,6 +143,51 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
             Long id = Long.valueOf(idStr);
             cmsCompanyRepository.deleteById(id);
         }
+    }
+
+    @Override
+    public CmsCompanyWithUserResp findOneWithPersonalByCompanyId(long id) {
+        CmsCompanyWithUserResp result = new CmsCompanyWithUserResp();
+        /**
+         * CmsCompany
+         */
+        Optional<CmsCompany> OCCEntity = cmsCompanyRepository.findById(id);
+        if (!OCCEntity.isPresent()) {
+            throw new EntityNotFoundException("CmsCompany not found with id: " + id);
+        }
+        CmsCompany ccEntity = OCCEntity.get();
+
+        CmsCompanySaveResp resp = new CmsCompanySaveResp();
+        BeanUtils.copyProperties(ccEntity, resp);
+        if (resp.getIndustries() != null) {
+            resp = transIndustriesChinese(resp);
+        }
+        result.setCompanyId(resp.getId());
+        BeanUtils.copyProperties(resp, result);
+        /**
+         * CmsUser
+         */
+        List<CmsUserCompany> cucEntity = cmsUserCompanyRepository.findByFkCmsCompanyId(id);
+        if (cucEntity.size() < 0) {
+            return null;
+        }
+        Optional<CmsUser> OCUEntity = cmsUserRepository.findById(cucEntity.get(0).getFkCmsUserId());
+        if (!OCUEntity.isPresent()) {
+            throw new EntityNotFoundException("CmsUser not found with id: " + id);
+        }
+        CmsUser cuEntity = OCUEntity.get();
+        result.setUserId(cuEntity.getId());
+        BeanUtils.copyProperties(cuEntity, result);
+
+        UpmsDictionaryCategory dropdown_DISTRICT_udcEntity =  upmsDictionaryCategaryRepository.findOneByCode("dropdown_DISTRICT");
+        UpmsDictionaryData dropdown_DISTRICT_uddEntity = upmsDictionaryDataRepository.findByParentIdAndCode(dropdown_DISTRICT_udcEntity.getId(), result.getDistrict_id());
+        result.setDistrict_name(dropdown_DISTRICT_uddEntity.getDescription());
+
+        UpmsDictionaryCategory udcEntity =  upmsDictionaryCategaryRepository.findOneByCode("dropdown_DISTRICT" + result.getDistrict_id());
+        UpmsDictionaryData uddEntity = upmsDictionaryDataRepository.findByParentIdAndCode(udcEntity.getId(), String.valueOf(Integer.valueOf(result.getRotaract_id())));
+        result.setRotaract_name(uddEntity.getDescription());
+
+        return result;
     }
 
     private String remixIndustryIds(String ids) {

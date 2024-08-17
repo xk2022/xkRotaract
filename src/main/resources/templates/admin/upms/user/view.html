@@ -54,11 +54,11 @@
             <!-- <th th:each="i : ${page_thead}" class="min-w-125px" th:text="${i}">Name</th>-->
             <th class="min-w-5px" style="display:none">ID</th>
             <th class="min-w-125px">用戶</th>
-            <th class="min-w-125px">角色權限</th>
+            <th class="min-w-125px">角色</th>
             <th class="min-w-125px">最後登入時間</th>
             <th class="min-w-125px">啟用狀態</th>
             <th class="min-w-125px">JOINED DATE</th>
-            <th class="text-end min-w-100px">動作</th>
+            <th class="text-end min-w-100px">ACTIONS</th>
         </tr>
         <!--end::Table row-->
         </thead>
@@ -126,13 +126,13 @@
                 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
                     <!--begin::Menu item-->
                     <div class="menu-item px-3">
-                        <a th:href="@{'/admin/upms/manage/user/'+${data.id}}" class="menu-link px-3">Edit</a>
+                        <a th:href="@{'/admin/upms/manage/user/'+${data.id}}" class="menu-link px-5">Edit</a>
                     </div>
                     <!--end::Menu item-->
                     <!--begin::Menu item-->
                     <div  class="menu-item px-3">
-                        <a th:if="${data.locked==0}" class="menu-link px-3">須先禁用，才可刪除</a>
-                        <a th:if="${data.locked!=0}" class="menu-link px-3" data-kt-table-filter="delete_row">Delete</a>
+                        <a th:if="${data.locked==0}" class="menu-link px-5">須先禁用，才可刪除</a>
+                        <a th:if="${data.locked!=0}" class="menu-link px-5" data-kt-table-filter="delete_row">Delete</a>
                     </div>
                     <!--end::Menu item-->
                 </div>

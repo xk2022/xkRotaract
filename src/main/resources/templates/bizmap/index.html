@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <!--/*/<th:block th:replace="_fragments/_fragments :: head(title='Rotaract BizMap')">/*/-->
+    <!--/*/</th:block>/*/-->
+    <style>
+        .drawer {
+            position: fixed;
+            left: 0;
+            bottom: -1px; /* 初始位置在视口下方 */
+            height: auto; /* 抽屉的高度，根据需要调整 */
+            width: 100%; /* 抽屉的宽度 */
+            background: white;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto; /* 添加滚动条以防内容溢出 */
+            z-index: 1000; /* 确保抽屉在其他元素之上 */
+        }
+        .drawer.open {
+            transform: translateY(70%);
+        }
+        .drawer-content {
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+<body id="kt_body" class="aside-enabled">
+    <!--begin::Main-->
+    <!--begin::Root-->
+    <div class="d-flex flex-column flex-row-fluid">
+        <!--/*/<th:block th:replace="_fragments/_fragments :: navbar(title='Rotaract Business Map')">/*/-->
+        <!--/*/</th:block>/*/-->
+        <div class="d-flex flex-row flex-column-fluid">
+            <div class="d-flex flex-row-fluid flex-center" id="map">
+<!--                <span class="text-white">Fluid Width</span>-->
+                <!--The div element for the map -->
+                <div></div>
+            </div>
+<!--            <button id="drawerToggleButton">Toggle Drawer</button> &lt;!&ndash; 控制抽屉显示的按钮 &ndash;&gt;-->
+            <div id="drawer" class="drawer">
+                <div class="drawer-content">
+                    <button onclick="closeDrawer()">X</button>
+                    <!-- Personal Information Section -->
+                    <div class="section">
+                        <h3>Personal Information</h3>
+                        <p><strong>Rotary Club Name:</strong> <span id="rotaract_name"></span></p>
+                        <p><strong>Member Name:</strong> <span id="rname"></span></p>
+                    </div>
+
+                    <!-- Company Information Section -->
+                    <div class="section">
+                        <h3>Company Information</h3>
+                        <p><strong>Company Name:</strong> <span id="name"></span></p>
+                        <p><strong>Phone Number:</strong> <span id="phone"></span></p>
+                        <p><strong>Address:</strong> <span id="address"></span></p>
+                        <p><strong>Website:</strong> <a href="https://www.example.com" target="_blank"><span id="url"></span></a></p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Root-->
+    <!--end::Main-->
+
+    <!--begin::Javascript-->
+    <!--/*/<th:block th:replace="_fragments/_fragments :: script">/*/-->
+    <!--/*/</th:block>/*/-->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgI-sfjvHKCWBnVoDDeRBOYxo0oTY45tQ&callback=initMap"></script>
+    <script th:src="@{/js/basic_map.js}"></script>
+    <script>
+
+    </script>
+
+<!--    這段是三小-->
+    <!-- prettier-ignore -->
+    <!--    <script>-->
+    <!--      (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({-->
+    <!--        key: "AIzaSyDgI-sfjvHKCWBnVoDDeRBOYxo0oTY45tQ",-->
+    <!--        // Add other bootstrap parameters as needed, using camel case.-->
+    <!--        // Use the 'v' parameter to indicate the version to load (alpha, beta, weekly, etc.)-->
+    <!--      });-->
+    <!--    </script>-->
+    <!--end::Javascript-->
+</body>
+<!--end::Body-->
+</html>

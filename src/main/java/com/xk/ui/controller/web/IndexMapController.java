@@ -10,12 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * 角色 Controller
- * Created by yuan on 2022/06/24
+ *  Controller
+ * Created by yuan on 2024//
  */
-@Api(value = "UI_INDEX_MAP")
 @Controller
-@RequestMapping("/")
+@RequestMapping("/BizMap")
 public class IndexMapController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexMapController.class);
@@ -32,6 +31,6 @@ public class IndexMapController extends BaseController {
 //    @RequiresPermissions("upms:role:read")
     @GetMapping()
     public String index(Model model) {
-        return DIR_INDEX;
+        return DIR_MAP_INDEX;
     }
 }

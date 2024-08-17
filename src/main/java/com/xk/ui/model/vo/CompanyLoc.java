@@ -28,12 +28,20 @@ public class CompanyLoc {
      * Location 类表示地点的详细信息。
      */
     public static class Location {
+        private String locId;
         private String name;
         private String description;
         private String lat;
         private String lng;
 
         // Getters and Setters
+        public String getLocId() {
+            return locId;
+        }
+
+        public void setLocId(String locId) {
+            this.locId = locId;
+        }
 
         public String getName() {
             return name;

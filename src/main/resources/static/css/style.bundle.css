@@ -52,6 +52,10 @@
   --bs-body-line-height: 1.5;
   --bs-body-color: #211F1C;
   --bs-body-bg: #ffffff;
+
+  // TODO
+  --rotaract-bg: #1C1C1C;
+  --rotaract-color: #F9146B;
 }
 
 *,
@@ -32552,7 +32556,8 @@ textarea.form-control-lg {
 }
 
 .text-danger {
-  color: #F06445 !important;
+//TODO  color: #F06445 !important;
+  color: #F9146B !important;
 }
 
 .text-inverse-danger {

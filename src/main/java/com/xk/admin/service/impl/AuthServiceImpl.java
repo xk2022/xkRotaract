@@ -108,9 +108,9 @@ public class AuthServiceImpl implements AuthService {
      * aside_system
      */
     @Override
-    public List listSystem() {
+    public List listSystemByAuth() {
         Set<Long> permissionIds = (Set<Long>) userPermissions();
-        // 查询所有权限
+        // 查询所有權限
         List<UpmsPermission> permissions = upmsPermissionRepository.findByStatusAndIdInOrPidIn(true, new ArrayList<>(permissionIds), new ArrayList<>(permissionIds));
 
         // 抽出所有 systemId
@@ -118,6 +118,7 @@ public class AuthServiceImpl implements AuthService {
         for(UpmsPermission temp : permissions) {
             list.add(temp.getSystemId());
         }
+        // 去重複
         List<Long> systemIds = list.stream().distinct().collect(Collectors.toList());
 
         // 查詢所有

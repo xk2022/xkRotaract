@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<!-- /good_html_v1.1.4/theme/landing.html
+Author: Keenthemes
+Product Name: GoodProduct Version: 1.1.4
+Purchase: https://themes.getbootstrap.com/product/good-bootstrap-5-admin-dashboard-template
+Website: http://www.keenthemes.com
+Contact: support@keenthemes.com
+Follow: www.twitter.com/keenthemes
+Dribbble: www.dribbble.com/keenthemes
+Like: www.facebook.com/keenthemes
+License: For each use you must have a valid license purchased only from above link in order to legally use the theme for your project.
+-->
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--begin::Head-->
+<head>
+    <!--/*/<th:block th:replace="_fragments/_fragments :: head">/*/-->
+    <!--/*/</th:block>/*/-->
+    <style>
+        .large-text {
+            font-size: 2.37rem; /* 或其他你需要的大小 */
+        }
+        /* 修改按钮的背景色和边框色 */
+        .btn-icon {
+            background-color: #dc3545; /* 设置为你想要的背景颜色，例如红色 */
+            border: 1px solid #dc3545; /* 设置为你想要的边框颜色 */
+        }
+        #kt_header_nav_wrapper {
+            display: flex;
+            justify-content: flex-end; /* 右对齐 */
+        }
+
+        #kt_header_nav_wrapper .menu {
+            display: flex;
+            flex-direction: row; /* 水平布局 */
+            gap: 1rem; /* 可选: 控制菜单项之间的间距 */
+        }
+        /* 可选，如果需要确保菜单项对齐 */
+        .menu-item {
+            margin-left: auto; /* 推动菜单项到容器的右边 */
+        }
+    </style>
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+<body id="kt_app_body" data-bs-spy="scroll" data-bs-target="#kt_landing_menu" data-bs-offset="200" data-kt-app-layout="light-sidebar" class="body-bg position-relative app-blank">
+<!--begin::Theme mode setup on page load-->
+<script>var defaultThemeMode = "light"; var themeMode; if ( document.documentElement ) { if ( document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if ( localStorage.getItem("data-bs-theme") !== null ) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }</script>
+<!--end::Theme mode setup on page load-->
+<!--begin::Root-->
+<div class="d-flex flex-column flex-root" id="kt_app_root">
+    <!--begin::Header Section-->
+    <div class="d-flex flex-column flex-row-fluid">
+        <!--/*/<th:block th:replace="_fragments/_fragments :: navbar">/*/-->
+        <!--/*/</th:block>/*/-->
+    </div>
+    <!--end::Header Section-->
+    <!--begin::How It Works Section-->
+    <div class="mb-9 pt-15 z-index-2">
+        <!--begin::Container-->
+        <div class="container">
+            <!--begin::Title-->
+            <h3 class="fs-lg-2tx fs-2x text-dark text-center mb-16 lh-base" id="how-it-works" data-kt-scroll-offset="{default: 100, lg: 150}">
+                Make your Rotaract life as kaleidoscope.<br/>
+                Coming soon...
+            </h3>
+            <!--end::Title-->
+            <!--begin::Row-->
+            <div class="row gy-10 mb-md-20">
+                <!--begin::Col-->
+                <div class="col-sm-4">
+                    <a th:href="@{/BizMap}" class="text-decoration-none">
+                        <!--begin::Story-->
+                        <div class="text-center mb-10 mb-md-0">
+                            <!--begin::Illustration-->
+                            <img th:src="@{/media/illustrations/easy/BizMap.png}" style="height: 299px;" alt="" />
+
+                            <!--end::Illustration-->
+                            <!--begin::Heading-->
+                            <div class="d-flex flex-center mb-5">
+                                <!--begin::Badge-->
+                                <span class="badge badge-circle badge-light-danger fw-bolder p-5 me-3 fs-3">24/08</span>
+                                <!--end::Badge-->
+                                <!--begin::Title-->
+                                <div class="fs-5 fs-lg-3 fw-bolder text-dark">Rotaract BizMap</div>
+                                <!--end::Title-->
+                            </div>
+                            <!--end::Heading-->
+                            <!--begin::Description-->
+                            <div class="fw-bold fs-6 fs-lg-4 text-gray-700">扶青地圖，玩轉十二地區</div>
+                            <!--end::Description-->
+                        </div>
+                        <!--end::Story-->
+                    </a>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-sm-4">
+                    <a th:href="@{/#}" class="text-decoration-none">
+                        <!--begin::Story-->
+                        <div class="text-center mb-10 mb-md-0">
+                            <!--begin::Illustration-->
+                            <img th:src="@{/media/illustrations/easy/toolingWeb.png}" style="height: 299px;" alt="" />
+                            <!--end::Illustration-->
+                            <!--begin::Heading-->
+                            <div class="d-flex flex-center mb-5">
+                                <!--begin::Badge-->
+                                <span class="badge badge-circle badge-light-danger fw-bolder p-5 me-3 fs-3">24/09</span>
+                                <!--end::Badge-->
+                                <!--begin::Title-->
+                                <div class="fs-5 fs-lg-3 fw-bolder text-dark">Rotaract Info</div>
+                                <!--end::Title-->
+                            </div>
+                            <!--end::Heading-->
+                            <!--begin::Description-->
+                            <div class="fw-bold fs-6 fs-lg-4 text-gray-700">扶青資訊</div>
+                            <!--end::Description-->
+                        </div>
+                        <!--end::Story-->
+                    </a>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-sm-4">
+                    <a th:href="@{/#}" class="text-decoration-none">
+                        <!--begin::Story-->
+                        <div class="text-center mb-10 mb-md-0">
+                            <!--begin::Illustration-->
+                            <img th:src="@{/media/illustrations/easy/Kalendar.png}" style="height: 299px;" alt="" />
+                            <!--end::Illustration-->
+                            <!--begin::Heading-->
+                            <div class="d-flex flex-center mb-5">
+                                <!--begin::Badge-->
+                                <span class="badge badge-circle badge-light-danger fw-bolder p-5 me-3 fs-3">24/11</span>
+                                <!--end::Badge-->
+                                <!--begin::Title-->
+                                <div class="fs-5 fs-lg-3 fw-bolder text-dark">Rotaract Kalendar</div>
+                                <!--end::Title-->
+                            </div>
+                            <!--end::Heading-->
+                            <!--begin::Description-->
+                            <div class="fw-bold fs-6 fs-lg-4 text-gray-700">扶青共同行事曆，北中南零距離</div>
+                            <!--end::Description-->
+                        </div>
+                        <!--end::Story-->
+                    </a>
+                </div>
+                <!--end::Col-->
+            </div>
+            <!--end::Row-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::How It Works Section-->
+    <!--begin::Fatures section-->
+    <!--end::Fatures section-->
+    <!--begin::Pricing table-->
+    <!--end::Pricing table-->
+    <!--begin::Pricing post-->
+    <!--end::Pricing post-->
+    <!--begin::Projects Section-->
+    <!--end::Projects Section-->
+    <!--begin::Footer Section-->
+    <div class="mb-0">
+        <!--begin::Wrapper-->
+        <div class="landing-dark-bg pt-lg-20 pt-5">
+            <!--begin::Container-->
+            <div class="container">
+                <!--begin::Row-->
+                <!--end::Row-->
+            </div>
+            <!--end::Container-->
+            <!--begin::Separator-->
+            <div class="separator separator-solid"></div>
+            <!--end::Separator-->
+            <!--begin::Container-->
+            <div class="container">
+                <!--begin::Wrapper-->
+                <div class="d-flex flex-column flex-md-row flex-stack py-8">
+                    <!--begin::Copyright-->
+                    <div class="d-flex align-items-center order-2 order-md-1">
+                        <!--begin::Logo-->
+<!--                        <a href="landing.html">-->
+<!--                            <img alt="Logo" src="assets/media/logos/default.svg" class="h-15px h-md-25px" />-->
+<!--                        </a>-->
+                        <!--end::Logo image-->
+                        <!--begin::Logo image-->
+                        <span class="mx-5 fs-6 fw-semibold text-gray-700 pt-1" href="https://keenthemes.com">Copyright © XploreKaleido 2024</span>
+                        <!--end::Logo image-->
+                    </div>
+                    <!--end::Copyright-->
+                    <!--begin::Menu-->
+                    <ul class="menu menu-gray-700 menu-hover-primary fw-semibold fs-5 fs-md-5 order-1 mb-5 mb-md-0">
+                        <li class="menu-item">
+                            <a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="https://themes.getbootstrap.com/product/good-bootstrap-5-admin-dashboard-template" target="_blank" class="menu-link px-2">Purchase</a>
+                        </li>
+                    </ul>
+                    <!--end::Menu-->
+                </div>
+                <!--end::Wrapper-->
+            </div>
+            <!--end::Container-->
+        </div>
+        <!--end::Wrapper-->
+    </div>
+    <!--end::Footer Section-->
+    <!--begin::Scrolltop-->
+    <div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
+        <i class="ki-duotone ki-arrow-up">
+            <span class="path1"></span>
+            <span class="path2"></span>
+        </i>
+    </div>
+    <!--end::Scrolltop-->
+</div>
+<!--end::Root-->
+<!--begin::Scrolltop-->
+<div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
+    <i class="ki-duotone ki-arrow-up">
+        <span class="path1"></span>
+        <span class="path2"></span>
+    </i>
+</div>
+<!--end::Scrolltop-->
+<!--begin::Javascript-->
+<!--/*/<th:block th:replace="_fragments/_fragments :: script">/*/-->
+<!--/*/</th:block>/*/-->
+<!--end::Javascript-->
+</body>
+<!--end::Body-->
+</html>

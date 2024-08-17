@@ -14,4 +14,5 @@ public interface CmsUserCompanyRepository extends JpaRepository<CmsUserCompany, 
 
     List findByFkCmsUserId(long cms_user_id);
 
+    List findByFkCmsCompanyId(long cms_company_id);
 }

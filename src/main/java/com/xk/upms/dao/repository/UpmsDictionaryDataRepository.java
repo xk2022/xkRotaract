@@ -10,4 +10,6 @@ public interface UpmsDictionaryDataRepository extends JpaRepository<UpmsDictiona
 
     List findByParentIdOrderByCode(Long parentId);
 
+    UpmsDictionaryData findByParentIdAndCode(Long parentId, String Code);
+
 }
