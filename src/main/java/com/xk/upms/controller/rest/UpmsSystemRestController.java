@@ -64,6 +64,15 @@ public class UpmsSystemRestController {
         data.setDescription("Content Management System");
         data.setOrders(Long.valueOf(1));
         upmsSystemService.create(data);
+
+        data.setStatus(false);
+        data.setTheme("測試用");
+        data.setBasepath("/test");
+        data.setName("test");
+        data.setTitle("測試用管理系統");
+        data.setDescription("Test Management System");
+        data.setOrders(Long.valueOf(9));
+        upmsSystemService.create(data);
         return "OK";
     }
 

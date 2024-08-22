@@ -58,7 +58,7 @@ public class UpmsUserRestController {
 
         data.setEmail("admin@admin"); // 郵箱（帳號一）
         data.setUsername("ADMIN"); // 自訂（帳號二）
-        data.setCellPhone("0978628329"); // 手機（帳號三）
+        data.setCellPhone("axktest"); // 手機（帳號三）
         upmsUserService.create(data);
 
         data.setEmail("louis@louis"); // 郵箱（帳號一）
@@ -68,17 +68,22 @@ public class UpmsUserRestController {
 
         data.setEmail("cwei@cwei"); // 郵箱（帳號一）
         data.setUsername("cwei"); // 自訂（帳號二）
-        data.setCellPhone("0987654321"); // 手機（帳號三）
+        data.setCellPhone("cxktest"); // 手機（帳號三）
         upmsUserService.create(data);
 
         data.setEmail("bonnie@bonnie"); // 郵箱（帳號一）
         data.setUsername("bonnie"); // 自訂（帳號二）
-        data.setCellPhone("0987654321"); // 手機（帳號三）
+        data.setCellPhone("bxktest"); // 手機（帳號三）
+        upmsUserService.create(data);
+
+        data.setEmail("summer@summer"); // 郵箱（帳號一）
+        data.setUsername("summer"); // 自訂（帳號二）
+        data.setCellPhone("sxktest"); // 手機（帳號三）
         upmsUserService.create(data);
 
         data.setEmail("member@member"); // 郵箱（帳號一）
         data.setUsername("member"); // 自訂（帳號二）
-        data.setCellPhone("0987654321"); // 手機（帳號三）
+        data.setCellPhone("mxktest"); // 手機（帳號三）
         upmsUserService.create(data);
 
         return "OK";
@@ -94,9 +99,10 @@ public class UpmsUserRestController {
         /**
          * admin
          */
+        UpmsRoleResp respRole = upmsRoleService.selectByCode("admin");
+
         resources.setUsername("ADMIN");
         UpmsUserResp respUser = upmsUserService.findByUsername(resources);
-        UpmsRoleResp respRole = upmsRoleService.selectByCode("admin");
         upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
         /**
          * sys
@@ -115,12 +121,16 @@ public class UpmsUserRestController {
         respUser = upmsUserService.findByUsername(resources);
         upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
 
+        resources.setUsername("summer");
+        respUser = upmsUserService.findByUsername(resources);
+        upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
         /**
          * member
          */
+        respRole = upmsRoleService.selectByCode("member");
+
         resources.setUsername("member");
         respUser = upmsUserService.findByUsername(resources);
-        respRole = upmsRoleService.selectByCode("member");
         upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
     }
 }

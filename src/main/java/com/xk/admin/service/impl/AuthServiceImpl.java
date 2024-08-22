@@ -5,6 +5,7 @@ import com.xk.admin.model.dto.UserExample;
 import com.xk.admin.service.AuthService;
 import com.xk.cms.dao.repository.CmsUserRepository;
 import com.xk.cms.model.po.CmsUser;
+import com.xk.common.util.NotFoundException;
 import com.xk.upms.dao.repository.*;
 import com.xk.upms.model.po.*;
 import com.xk.upms.model.vo.UpmsUserSaveResp;
@@ -58,31 +59,35 @@ public class AuthServiceImpl implements AuthService {
         // 改由 js 前端md5加密
 //        T_User user = userRepository.findByUsernameAndPassword(username, MD5Utils.code(password));
         // account as email
-        UpmsUser upmsUser = upmsUserRepository.findByEmailAndPassword(account, password);
-        if (upmsUser == null) {
+        UpmsUser uuEntity = upmsUserRepository.findByEmailAndPassword(account, password);
+        if (uuEntity == null) {
             // account as cellPhone
-            upmsUser = upmsUserRepository.findByCellPhoneAndPassword(account, password);
-            if (upmsUser == null) {
+            uuEntity = upmsUserRepository.findByCellPhoneAndPassword(account, password);
+            if (uuEntity == null) {
                 return null;
             }
         }
-        BeanUtils.copyProperties(upmsUser, result);
-
-        CmsUser cmsUser = cmsUserRepository.findOneByFkUpmsUserId(upmsUser.getId());
-        if (cmsUser != null) {
-            BeanUtils.copyProperties(cmsUser, result);
+        // user info update by user
+        CmsUser cuEntity = cmsUserRepository.findOneByFkUpmsUserId(uuEntity.getId());
+        if (cuEntity != null) {
+            BeanUtils.copyProperties(cuEntity, result);
         }
-
-        List<UpmsUserRole> urList = upmsUserRoleRepository.findByUserId(upmsUser.getId());
-        if (urList != null) {
-            List<Long> list = new ArrayList<>();
-            for(UpmsUserRole temp : urList) {
-                list.add(temp.getRoleId());
-            }
-            long[] roleIds = list.stream().mapToLong(Long::longValue).toArray();
-            result.setRoleId(roleIds);
+        // user role
+        List<UpmsUserRole> uurList = upmsUserRoleRepository.findByUserId(uuEntity.getId());
+        if (uurList == null) {
+            throw new NotFoundException("查無使用者對應角色");
         }
+        List<Long> list = new ArrayList<>();
+        for(UpmsUserRole temp : uurList) {
+            list.add(temp.getRoleId());
+        }
+        long[] roleIds = list.stream().mapToLong(Long::longValue).toArray();
+        result.setRoleId(roleIds);
 
+        // 確認完登入資訊，回填最後登入時間
+        uuEntity.setLastLogin(new Date());
+        uuEntity = upmsUserRepository.save(uuEntity);
+        BeanUtils.copyProperties(uuEntity, result);
         return result;
     }
 

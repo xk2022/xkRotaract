@@ -44,7 +44,6 @@ public class CmsSelfController extends BaseController {
     /**
      * 查詢 用户 資訊
      */
-//    @RequiresPermissions("upms:user:read")
     @GetMapping()
     public String index(Model model, HttpSession session) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);

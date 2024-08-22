@@ -30,12 +30,6 @@ public class BaseEntity implements Serializable {
     @Comment("96_創建者")
     private String createBy;
 
-    @ApiModelProperty(value = "編輯者", required = true, example = "王小明")
-    @LastModifiedBy
-    @Column(name = "update_by")
-    @Comment("98_編輯者")
-    private String updateBy;
-
     @ApiModelProperty(value = "創建時間", required = true, example = "王小明")
     @CreationTimestamp
     @Column(name = "create_time", updatable = false)
@@ -43,9 +37,15 @@ public class BaseEntity implements Serializable {
     @Comment("97_創建時間")
     private Date createTime;
 
+    @ApiModelProperty(value = "編輯者", required = true, example = "王小明")
+    @LastModifiedBy
+    @Column(name = "update_by")
+    @Comment("98_編輯者")
+    private String updateBy;
+
     @ApiModelProperty(value = "編輯時間", required = true, example = "王小明")
     @UpdateTimestamp
-    @Column(name = "update_time")
+    @Column(name = "update_time", nullable = true) // Make the column nullable
     @Temporal(TemporalType.TIMESTAMP)
     @Comment("99_編輯時間")
     private Date updateTime;

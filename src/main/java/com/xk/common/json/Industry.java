@@ -1,11 +1,11 @@
 package com.xk.common.json;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * 中華民國統計資訊網
  * https://www.stat.gov.tw/standardindustrialclassification.aspx?n=3144&sms=0&rid=11
+ * @author yuan
  */
 public enum Industry {
 
@@ -46,11 +46,12 @@ public enum Industry {
         return name;
     }
 
-    public static Optional<String> getNameByKey(Integer key) {
+    public static String getNameByKey(Integer key) {
         return Arrays.stream(Industry.values())
-                .filter(industry -> industry.getKey() == key)
+                .filter(industry -> industry.getKey().equals(key))
                 .map(Industry::getName)
-                .findFirst();
+                .findFirst()
+                .orElse("行業別有誤，請檢查enumIndustry");
     }
 
     @Override

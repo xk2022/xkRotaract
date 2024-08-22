@@ -95,8 +95,8 @@
             <td th:text="${data.role_title}"></td>
             <!--end::Role=-->
             <!--begin::Last login=-->
-            <td class="text-end">
-                <div class="badge badge-light fw-bolder" th:text="${#dates.format(data.createTime, 'dd-MMM-yyyy, HH:mm a')}">5 hours ago</div>
+            <td>
+                <div class="badge badge-light fw-bolder" th:text="${#dates.format(data.lastLogin, 'dd-MMM-yyyy, HH:mm a')}">5 hours ago</div>
             </td>
             <!--end::Last login=-->
             <!--begin::Two step=-->
@@ -107,9 +107,7 @@
             </td>
             <!--end::Two step=-->
             <!--begin::Joined-->
-            <td class="text-end">
-                <div class="badge badge-light fw-bolder" th:text="${#dates.format(data.createTime, 'dd-MMM-yyyy, HH:mm a')}">5 hours ago</div>
-            </td>
+            <td th:text="${#dates.format(data.createTime, 'dd-MMM-yyyy, HH:mm a')}">5 hours ago</td>
             <!--begin::Joined-->
             <!--begin::Action=-->
             <td class="text-end">

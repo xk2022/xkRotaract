@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
-
 /**
  * 權限 RestController
  * Created by yuan on 2022/06/24
@@ -56,7 +54,6 @@ public class UpmsPermissionRestController {
         UpmsSystem findSystemEntity = null;
 
         UpmsPermissionSaveReq data = new UpmsPermissionSaveReq();
-        data.setCreateTime(new Date());
         data.setCreateBy("system restAPI");
         data.setStatus(true);
         /**
@@ -65,10 +62,10 @@ public class UpmsPermissionRestController {
 //        data.setSystemId((long) 1);
         data.setPid(null);
         data.setName("首頁");
-        data.setType((byte) 0);
+        data.setType(Byte.valueOf("1"));
         data.setPermissionValue(":_fragments");
         data.setUri("/admin/index");
-        data.setOrders((long) 0);
+        data.setOrders(Long.valueOf(0));
         upmsPermissionService.create(data);
         /**
          * /admin/upms
@@ -78,10 +75,10 @@ public class UpmsPermissionRestController {
 
         data.setPid(null);
         data.setName("權限管理系統");
-        data.setType((byte) 0);
+        data.setType(Byte.valueOf("0"));
         data.setPermissionValue("upms:manage");
         data.setUri("/admin/upms/manage");
-        data.setOrders((long) 0);
+        data.setOrders(Long.valueOf(0));
         upmsPermissionService.create(data);
         /**
          * /admin/upms/po
@@ -138,10 +135,10 @@ public class UpmsPermissionRestController {
 
         findParentEntity = upmsPermissionService.findOneByUri("/admin/upms/manage/role");
         data.setPid(findParentEntity.getId());
-        data.setName("角色權限");
+        data.setName("角色明細");
         data.setPermissionValue("upms:role/detail");
         data.setUri("/admin/upms/manage/role/detail");
-        data.setOrders((long) 21);
+        data.setOrders((long) 211);
         upmsPermissionService.create(data);
         /**
          * /admin/upms/p
@@ -178,6 +175,7 @@ public class UpmsPermissionRestController {
         findParentEntity = upmsPermissionService.findOneByUri("/admin/upms/manage/o");
         data.setPid(findParentEntity.getId());
         data.setType((byte) 2);
+        data.setStatus(false);
 
         data.setName("公用碼表");
         data.setPermissionValue("upms:comm");
@@ -197,15 +195,10 @@ public class UpmsPermissionRestController {
         data.setOrders((long) 43);
         upmsPermissionService.create(data);
 
+        data.setStatus(true);
         data.setName("鍵值管理");
         data.setPermissionValue("upms:key");
         data.setUri("/admin/upms/manage/key");
-        data.setOrders((long) 44);
-        upmsPermissionService.create(data);
-
-        data.setName("公司行號");
-        data.setPermissionValue("cms:company");
-        data.setUri("/admin/cms/manage/company");
         data.setOrders((long) 44);
         upmsPermissionService.create(data);
         /**
@@ -240,6 +233,32 @@ public class UpmsPermissionRestController {
         data.setPermissionValue("cms:self");
         data.setUri("/admin/cms/manage/self");
         data.setOrders((long) 11);
+        upmsPermissionService.create(data);
+        /**
+         * /admin/cms/c
+         */
+        data.setPid(null);
+        data.setName("公司資訊管理");
+        data.setType((byte) 1);
+        data.setPermissionValue("cms:c");
+        data.setUri("/admin/cms/manage/c");
+        data.setOrders((long) 2);
+        upmsPermissionService.create(data);
+
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/cms/manage/c");
+        data.setPid(findParentEntity.getId());
+        data.setType((byte) 2);
+
+        data.setName("公司列表");
+        data.setPermissionValue("cms:company");
+        data.setUri("/admin/cms/manage/company");
+        data.setOrders((long) 21);
+        upmsPermissionService.create(data);
+
+        data.setName("公司覆核");
+        data.setPermissionValue("cms:applyCompany");
+        data.setUri("/admin/cms/manage/applyCompany");
+        data.setOrders((long) 22);
         upmsPermissionService.create(data);
 
         return "OK";

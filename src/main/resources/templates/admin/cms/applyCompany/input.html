@@ -5,31 +5,27 @@
     <script th:inline="javascript">
         // Insert
         $("[name='add_btn']").click(function(){
-            $('#modal_name').text("新增公司");
+            $('#modal_name').text("新增系統");
             $("[name='id']").val(null);
             $("[name='name']").val(null);
             $("[name='phone']").val(null);
             $("[name='address']").val(null);
             $("[name='url']").val(null);
-            $("[name='industryIds']").prop('checked', false);
+            $("[name='status']")[0].checked = true;
+            $("[name='orders']").val('999');
         });
 
         // Update
         var readyToEdit = function(row) {
-            $('#modal_name').text("更新公司");
+            $('#modal_name').text("更新系統");
             $("[name='id']").val(row[1].innerText);
             $("[name='name']").val(row[2].innerText);
             $("[name='phone']").val(row[3].innerText);
             $("[name='address']").val(row[4].innerText);
             $("[name='url']").val(row[5].innerText);
-
-            var industryIds = row[6].innerText;
-            $("[name='industryIds']").prop('checked', false);
-            var iids = industryIds.replace("[", '').replace("]", '').replace(" ", '').split(",");
-            for (var i = 0; i < iids.length; i++) {
-                var checkboxId = '#flexCheckDefault_' + iids[i].trim();
-                $(checkboxId).prop('checked', true);
-            }
+            $("[name='industries']").val(row[6].innerText);
+            var btnradio_status_ = row[7].innerText == '啟用';
+            $("#btnradio_status_"+btnradio_status_).prop('checked', true);
         }
 
         // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
@@ -68,9 +64,8 @@
 <!--begin::Modal body-->
 <div th:fragment="form" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
     <!--begin::Form-->
-    <form id="kt_modal_input_form" class="form" action="#" th:action="@{/admin/cms/manage/company/save}" method="post" th:object="${company}" >
+    <form id="kt_modal_input_form" class="form" th:action="@{/admin/cms/manage/company/save}" method="post" th:object="${entity}">
         <input type="hidden" name="id">
-        <input type="hidden" name="cmsUserId" th:value="${entity.id}">
         <!--begin::Input group-->
         <div class="row fv-row mb-7">
             <div class="col-md">
@@ -79,26 +74,53 @@
                     <span class="required">公司名稱</span>
                     <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
                        data-bs-trigger="hover" data-bs-html="true"
+                       data-bs-content="系統代號必須是唯一的。"></i>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" placeholder="Enter a company name" name="name" id="name" oninput="copyInputValue()"/>
+                <!--end::Input-->
+            </div>
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span class="required">公司電話</span>
+                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                       data-bs-trigger="hover" data-bs-html="true"
                        data-bs-content="必填"></i>
                 </label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input class="form-control form-control-solid" placeholder="Enter a company name" name="name" />
+                <input class="form-control form-control-solid" placeholder="Enter a phone" name="phone" id="phone" readonly/>
                 <!--end::Input-->
             </div>
-            <div class="col-md">
-                <!--begin::Label-->
-                <label class="fs-6 fw-bold form-label mb-2">
-                    <span>公司電話</span>
-                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                       data-bs-trigger="hover" data-bs-html="true"
-                       data-bs-content="未填寫，將顯示「暫不提供」"></i>
-                </label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <input class="form-control form-control-solid" placeholder="Enter a contact phone number" name="phone" />
-                <!--end::Input-->
-            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="fv-row mb-7">
+            <!--begin::Label-->
+            <label class="fs-6 fw-bold form-label mb-2">
+                <span class="required">公司地址(務必詳填，影響圖標)</span>
+                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                   data-bs-trigger="hover" data-bs-html="true"
+                   data-bs-content="必填"></i>
+            </label>
+            <!--end::Label-->
+            <!--begin::Input-->
+            <input class="form-control form-control-solid" placeholder="Enter a address" name="address" />
+            <!--end::Input-->
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="fv-row mb-7">
+            <!--begin::Label-->
+            <label class="fs-6 fw-bold form-label mb-2">
+                <span>公司網址</span>
+            </label>
+            <!--end::Label-->
+            <!--begin::Input-->
+            <input class="form-control form-control-solid" placeholder="Enter a url" name="url" />
+            <!--end::Input-->
         </div>
         <!--end::Input group-->
         <!--begin::Input group-->
@@ -106,54 +128,28 @@
             <div class="col-md">
                 <!--begin::Label-->
                 <label class="fs-6 fw-bold form-label mb-2">
-                    <span class="required">公司地址(務必詳填，影響圖標)</span>
-                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                       data-bs-trigger="hover" data-bs-html="true"
-                       data-bs-content="請注意填寫正確，會由系統自動產生經緯度（顯示於地圖上）"></i>
+                    <span>產業別</span>
                 </label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input class="form-control form-control-solid" placeholder="Enter a address" name="address" />
+                <input class="form-control form-control-solid" placeholder="Enter a menu orders" name="industries" />
                 <!--end::Input-->
             </div>
-        </div>
-        <!--end::Input group-->
-        <!--begin::Input group-->
-        <div class="row fv-row mb-7">
             <div class="col-md">
                 <!--begin::Label-->
                 <label class="fs-6 fw-bold form-label mb-2">
-                    <span>公司網址</span>
-                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                       data-bs-trigger="hover" data-bs-html="true"
-                       data-bs-content="未填寫，將顯示「暫不提供」"></i>
+                    <span>狀態</span>
                 </label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input class="form-control form-control-solid" placeholder="Enter a url" name="url" />
+                <div class="btn-group form-control form-control-solid mb-3 mb-lg-0" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="btnradio_status_true" id="btnradio_status_true" value="true" th:field="*{status}" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="btnradio_status_true" th:text="啟用">Radio 1</label>
+
+                    <input type="radio" class="btn-check" name="btnradio_status_false" id="btnradio_status_false" value="false" th:field="*{status}" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio_status_false" th:text="禁用">Radio 2</label>
+                </div>
                 <!--end::Input-->
-            </div>
-        </div>
-        <!--end::Input group-->
-        <!--begin::Input group-->
-        <div class="row fv-row mb-7">
-            <div class="col-md">
-                <!--begin::Label-->
-                <label class="fs-6 fw-bold form-label mb-2">
-                    <span class="required">行業別</span>
-                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                       data-bs-trigger="hover" data-bs-html="true"
-                       data-bs-content="必填，最少擇一"></i>
-                </label>
-                <!--end::Label-->
-                <th:block th:each="chunk : ${chunkedIndustries}">
-                    <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
-                        <div class="col-md" th:each="industry : ${chunk}">
-                            <input class="form-check-input" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" />
-                            <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>
-                        </div>
-                    </div>
-                </th:block>
             </div>
         </div>
         <!--end::Input group-->

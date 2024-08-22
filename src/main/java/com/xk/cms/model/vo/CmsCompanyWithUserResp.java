@@ -37,5 +37,9 @@ public class CmsCompanyWithUserResp extends UpmsUser {
     private String rotaract_name;
 //    private String avatar;
 //    private Byte sex;
-
+    /**
+     * CmsCompanyPay
+     */
+    private String paydate;
+    private Boolean locked;
 }

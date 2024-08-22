@@ -11,5 +11,4 @@ import java.io.Serializable;
  */
 public interface CmsCompanyRepository extends JpaRepository<CmsCompany, Long>, Serializable {
 
-
 }

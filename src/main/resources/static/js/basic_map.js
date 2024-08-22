@@ -199,10 +199,16 @@ function updateDrawerContent(data) {
     $('#rotaract_name').text(data.rotaract_name);
     $('#rname').text(data.rname);
 
-    $('#name').text(data.name);
-    $('#phone').text(data.phone);
-    $('#address').text(data.address);
-    $('#url').text(data.url);
+    if (data.locked) {
+        $('#ciSection').hide();
+    } else {
+        $('#ciSection').show();
+
+        $('#name').text(data.name);
+        $('#phone').text(data.phone);
+        $('#address').text(data.address);
+        $('#url').text(data.url);
+    }
 }
 
 function toggleDrawer() {
@@ -220,40 +226,55 @@ function closeDrawer() {
 //document.getElementById('drawerToggleButton').addEventListener('click', toggleDrawer);
 
 
+function handleButtonClick() {
+    // JavaScript function code here
+//    alert('按鈕被點擊了！');
+
+    // 其他代碼...
+    // 清除地图上的所有标记
+    markers.forEach(marker => {
+        marker.setMap(null);
+    });
+    markers = []; // 清空标记数组
+
+    // 獲取 globalData 的鍵數量
+    const size = Object.keys(globalData).length;
+
+    console.log(size); // 19
+    for (let i = 1; i <= size; i++) {
+        const checkbox = document.getElementById('flexCheckDefault_' + i);
+        if (checkbox && checkbox.checked) { // 添加对 checkbox 是否存在的检查
+            // 如果复选框被选中，则将其值存到typelocation中
+            var typelocation = checkbox.value;
+            console.log('typelocation:', typelocation);
+            const locations = globalData[i];
+            console.log('位址', locations);
+
+            locations.forEach(function (location) {
+                // 创建地图标记
+                const marker = new google.maps.Marker({
+                    position: { lat: Number(location.lat), lng: Number(location.lng) },
+                    map: map, // 地图对象
+                    title: location.name, // 地点名称
+                    icon: customIcon // 自定义图标（可选）
+                });
+                // 将标记添加到地图上
+                information(location.name, location.description, marker);
+                markers.push(marker);
+                marker.setMap(map);
+            });
+        }
+    }
+
+    modal.hide();
+}
 // 當按下checkbox的按鈕
 //document.getElementById('btn1').onclick = function () {
-//  // 清除地图上的所有标记
-//  markers.forEach(marker => {
-//    marker.setMap(null);
-//  });
-//  markers = []; // 清空标记数组
+
 //
 //
-//  for (let i = 1; i <= 4; i++) {
-//    const checkbox = document.getElementById('checkbox' + i);
-//    if (checkbox && checkbox.checked) { // 添加对 checkbox 是否存在的检查
-//      // 如果复选框被选中，则将其值存到typelocation中
-//      var typelocation = checkbox.value;
-//      console.log('typelocation:', typelocation);
-//      const locations = globalData['type' + i];
-//      console.log('位址', locations);
-//      locations.forEach(function (location) {
-//        // 创建地图标记
-//        const marker = new google.maps.Marker({
-//          position: { lat: location.lat, lng: location.lng },
-//          map: map, // 地图对象
-//          title: location.name, // 地点名称
-//          icon: customIcon // 自定义图标（可选）
-//        });
 //
-//        // 将标记添加到地图上
-//        marker.setMap(map);
-//        markers.push(marker);
-//
-//        information(location.name, location.description, marker);
-//      });
-//    }
-//  }
+
 //}
 //    // 嘗試獲取使用者的位置
 //    if (navigator.geolocation) {

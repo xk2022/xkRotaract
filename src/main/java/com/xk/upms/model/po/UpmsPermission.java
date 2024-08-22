@@ -53,7 +53,7 @@ public class UpmsPermission extends BaseEntity implements Serializable {
     /**
      * 圖標
      */
-    private String icon;
+//    private String icon;
     /**
      * 狀態(0:禁止,1:正常)
      */

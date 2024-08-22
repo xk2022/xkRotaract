@@ -27,18 +27,10 @@ public class CmsController extends BaseController {
 	/**
 	 * 查詢 角色 首頁
 	 */
-//    @RequiresPermissions("cms:read")
 	@GetMapping()
 	public String index(Model model) {
-		this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
-
-		if (model.getAttribute("tree_only") != null) {
-			return "redirect:" + model.getAttribute("tree_only");
-		}
-//        model.addAttribute("page_list", upmsRoleService.list(null));
-//        model.addAttribute("entity", new UpmsRole());
-//        model.addAttribute("checkbox_menus", upmsPermissionService.buildTree(upmsPermissionService.findAllMenuLevel()));
-		return ADMIN_INDEX;
+//		this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
+		return "redirect:/admin/cms/manage/self";
 	}
 
 }

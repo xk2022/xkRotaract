@@ -63,8 +63,8 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
         UpmsRole req = new UpmsRole();
         BeanUtils.copyProperties(resources, req);
 
-        long time = System.currentTimeMillis();
-        req.setOrders(time);
+//        long time = System.currentTimeMillis();
+//        req.setOrders(time);
         req.setCreateTime(new Date());
         UpmsRole entity = upmsRoleRepository.save(req);
 

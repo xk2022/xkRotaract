@@ -138,7 +138,8 @@
     </div>
     <!--end::Sitemap main-->
     <!--begin::Modal - Add task-->
-    <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: form"></div>
+    <div th:replace="admin/_fragments/input_basic :: basic(fragmentSystem='cms', fragmentPackage='company', maxWidth='mw-1000px')"></div>
+<!--    <div th:replace="'admin/cms/company/input' :: form"></div>-->
     <!--end::Modal - Add task-->
 </div>
 
@@ -146,6 +147,7 @@
     <!--begin::Form-->
     <form class="form" method="post" id="kt_modal_input_form" th:object="${entity}" th:action="@{/admin/cms/manage/user/save}" >
         <input type="hidden" name="id" th:value="${entity.id}">
+        <input type="hidden" name="fkUpmsUserId" th:value="${entity.fkUpmsUserId}">
         <input type="hidden" name="username" th:value="${session.user.username}">
         <input type="hidden" name="district_id" th:value="${entity.district_id}">
         <input type="hidden" name="rotaract_id" th:value="${entity.rotaract_id}">

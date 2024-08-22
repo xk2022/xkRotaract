@@ -9,6 +9,7 @@
         <result property="avatar" column="avatar"/>
         <result property="email" column="email"/>
         <result property="locked" column="locked"/>
+        <result property="lastLogin" column="last_login"/>
         <result property="createTime" column="create_time"/>
         <result property="role_title" column="role_title"/>
     </resultMap>

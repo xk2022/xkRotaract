@@ -9,11 +9,12 @@
         $("[name='name']").val(null);
         $("[name='phone']").val(null);
         $("[name='address']").val(null);
+        $("[name='industryIds']").prop('checked', false);
     });
 
     // Update
     function edit_btn(id, name, phone, address, url, industryIds) {
-        $('#modal_name').text("編輯角色");
+        $('#modal_name').text("編輯公司內容");
         $("[name='id']").val(id);
         $("[name='name']").val(name);
         $("[name='phone']").val(phone);
@@ -62,139 +63,5 @@
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->
-
-<div th:fragment="form" class="modal fade" id="kt_modal_input" tabindex="-1" aria-hidden="true">
-    <!--begin::Modal dialog-->
-    <div class="modal-dialog modal-dialog-centered mw-1000px">
-        <!--begin::Modal content-->
-        <div class="modal-content">
-            <!--begin::Modal header-->
-            <div class="modal-header">
-                <!--begin::Modal title-->
-                <h2 class="fw-bolder" id="modal_name">Company</h2>
-                <!--end::Modal title-->
-                <!--begin::Close-->
-                <div class="btn btn-icon btn-sm btn-active-icon-primary"
-                     data-kt-modal-action="close">
-                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-                    <span class="svg-icon svg-icon-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                             viewBox="0 0 24 24" fill="none">
-                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2"
-                                  rx="1" transform="rotate(-45 6 17.3137)" fill="black"/>
-                            <rect x="7.41422" y="6" width="16" height="2" rx="1"
-                                  transform="rotate(45 7.41422 6)" fill="black"/>
-                        </svg>
-                    </span>
-                    <!--end::Svg Icon-->
-                </div>
-                <!--end::Close-->
-            </div>
-            <!--end::Modal header-->
-            <!--begin::Modal body-->
-            <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                <!--begin::Form-->
-                <form id="kt_modal_input_form" class="form" action="#" th:action="@{/admin/cms/manage/company/save}" method="post" th:object="${company}" >
-                    <input type="hidden" name="id">
-                    <input type="hidden" name="cmsUserId" th:value="${entity.id}">
-                    <!--begin::Input group-->
-                    <div class="row fv-row mb-7">
-                        <div class="col-md">
-                            <!--begin::Label-->
-                            <label class="fs-6 fw-bold form-label mb-2">
-                                <span class="required">公司名稱</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="必填"></i>
-                            </label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input class="form-control form-control-solid" placeholder="Enter a company name" name="name" />
-                            <!--end::Input-->
-                        </div>
-                        <div class="col-md">
-                            <!--begin::Label-->
-                            <label class="fs-6 fw-bold form-label mb-2">
-                                <span>公司電話</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="未填寫，將顯示「暫不提供」"></i>
-                            </label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input class="form-control form-control-solid" placeholder="Enter a contact phone number" name="phone" />
-                            <!--end::Input-->
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-                    <!--begin::Input group-->
-                    <div class="row fv-row mb-7">
-                        <div class="col-md">
-                            <!--begin::Label-->
-                            <label class="fs-6 fw-bold form-label mb-2">
-                                <span class="required">公司地址</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="請注意填寫正確，會由系統自動產生經緯度（顯示於地圖上）"></i>
-                            </label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input class="form-control form-control-solid" placeholder="Enter a address" name="address" />
-                            <!--end::Input-->
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-                    <!--begin::Input group-->
-                    <div class="row fv-row mb-7">
-                        <div class="col-md">
-                            <!--begin::Label-->
-                            <label class="fs-6 fw-bold form-label mb-2">
-                                <span class="required">行業別</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="必填，最少擇一"></i>
-                            </label>
-                            <!--end::Label-->
-                            <th:block th:each="chunk : ${chunkedIndustries}">
-                                <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
-                                    <div class="col-md" th:each="industry : ${chunk}">
-                                        <input class="form-check-input" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" />
-                                        <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>
-                                    </div>
-                                </div>
-                            </th:block>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-
-<!--                    <span class="bullet bg-primary me-3"></span>職業分類：生命禮儀</div>-->
-<!--            <div class="d-flex align-items-center py-2">-->
-<!--                <span class="bullet bg-primary me-3"></span>公司電話：暫不提供</div>-->
-<!--            <div class="d-flex align-items-center py-2">-->
-<!--                <span class="bullet bg-primary me-3"></span>公司地址：暫不提供</div>-->
-<!--            <div class="d-flex align-items-center py-2">-->
-<!--                <span class="bullet bg-primary me-3"></span>公司網址：暫不提供</div>-->
-                    <!--begin::Actions-->
-                    <div class="text-center pt-15">
-                        <button type="reset" class="btn btn-light me-3"
-                                data-kt-modal-action="cancel">Discard
-                        </button>
-                        <button type="submit" class="btn btn-primary" data-kt-modal-action="submit">
-                            <span class="indicator-label">Submit</span>
-                            <span class="indicator-progress">Please wait...
-							    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                            </span>
-                        </button>
-                    </div>
-                    <!--end::Actions-->
-                </form>
-                <!--end::Form-->
-            </div>
-            <!--end::Modal body-->
-        </div>
-        <!--end::Modal content-->
-    </div>
-    <!--end::Modal dialog-->
-</div>
 
 </html>

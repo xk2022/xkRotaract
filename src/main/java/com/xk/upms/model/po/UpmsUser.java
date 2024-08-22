@@ -4,12 +4,14 @@ import com.xk.common.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by yuan on 2022/06/10
@@ -47,16 +49,27 @@ public class UpmsUser extends BaseEntity implements Serializable {
     @Comment("03_電話")
     private String cellPhone;
 
-    @Comment("04_鹽")
-    private String salt;
+//    @Comment("04_鹽")
+//    private String salt;
 
     @Comment("05_密碼MD5(密碼+鹽)")
     private String password;
 
+    // last_login: 記錄上次登錄時間，可以是NULL。
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Comment("06_最後登入時間")
+    private Date lastLogin;
+
+    // failed_attempts: 記錄登錄失敗的次數，用於實施登錄嘗試限制。
+//    @Comment("07_登入失敗次數")
+//    private String failedAttempts;
+
     /**
+     * account_locked: 布林值，標記帳戶是否被鎖定。
      * 状态(0:正常,1:锁定)
      */
-    @Comment("06_状态")
+    @Comment("09_状态")
     @Column(columnDefinition = "boolean default false")
     private Boolean locked;
 

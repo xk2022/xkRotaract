@@ -53,7 +53,6 @@ public class UpmsUserController extends BaseController {
     /**
      * 查詢 用户 首頁
      */
-//    @RequiresPermissions("upms:user:read")
     @GetMapping()
     public String index(Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
@@ -61,7 +60,6 @@ public class UpmsUserController extends BaseController {
 
         model.addAttribute("page_list", upmsUserService.list(null));
         model.addAttribute("entity", new UpmsUser());
-//        model.addAttribute("page_thead", baseRepostitory.queryTableComent("upms_system"));
         return ADMIN_INDEX;
     }
 
@@ -70,10 +68,10 @@ public class UpmsUserController extends BaseController {
      */
     @GetMapping("/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
+        this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
         model.addAttribute("fragmentSystem", "upms");
         model.addAttribute("fragmentPackage", "user/detail");
         model.addAttribute("fragmentName", "detail");
-        this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
 
 //        model.addAttribute("page_list", upmsUserService.list(null));
         model.addAttribute("info", upmsUserService.selectDeatilById(id));

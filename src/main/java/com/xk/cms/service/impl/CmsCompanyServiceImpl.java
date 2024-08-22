@@ -1,5 +1,6 @@
 package com.xk.cms.service.impl;
 
+import com.xk.cms.dao.repository.CmsCompanyPayRepository;
 import com.xk.cms.dao.repository.CmsCompanyRepository;
 import com.xk.cms.dao.repository.CmsUserCompanyRepository;
 import com.xk.cms.dao.repository.CmsUserRepository;
@@ -52,10 +53,25 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
     private UpmsDictionaryCategaryRepository upmsDictionaryCategaryRepository;
     @Autowired
     private UpmsDictionaryDataRepository upmsDictionaryDataRepository;
+    @Autowired
+    private CmsCompanyPayRepository cmsCompanyPayRepository;
 
     @Override
     public List list() {
-        return cmsCompanyRepository.findAll();
+        List<CmsCompanySaveResp> result = new ArrayList<>();
+        List<CmsCompany> entities = cmsCompanyRepository.findAll();
+
+        for (CmsCompany entity : entities) {
+            CmsCompanySaveResp resp = new CmsCompanySaveResp();
+            BeanUtils.copyProperties(entity, resp);
+
+            if (resp.getIndustries() != null) {
+                resp = transIndustriesChinese(resp);
+            }
+            resp.setLocked(false);
+            result.add(resp);
+        }
+        return result;
     }
 
     @Override
@@ -83,15 +99,24 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
     private CmsCompanySaveResp transIndustriesChinese(CmsCompanySaveResp resp) {
         List<Long> industryIds = new ArrayList<>();
 
-        String industries = "";
-        String[] industry = resp.getIndustries().split(",");
-        for(String id : industry) {
-            industryIds.add(Long.valueOf(id));
-            industries += Industry.getNameByKey(Integer.valueOf(id)).toString()+", ";
+        String[] industryArray = resp.getIndustries().split(",");
+
+        StringBuilder industriesBuilder = new StringBuilder();
+        for (String id : industryArray) {
+            Long industryId = Long.valueOf(id);
+            industryIds.add(industryId);
+
+            String industryName = Industry.getNameByKey(Integer.valueOf(id));
+            industriesBuilder.append(industryName).append(", ");
         }
+        // 移除末尾的逗号和空格
+        if (industriesBuilder.length() > 0) {
+            industriesBuilder.setLength(industriesBuilder.length() - 2);
+        }
+
+        String industries = industriesBuilder.toString();
         resp.setIndustryIds(industryIds);
         resp.setIndustriesChinese(industries);
-
         return resp;
     }
 
@@ -131,8 +156,20 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
             req.setLatlng(googleApiGeocode.code(resources.getAddress()));
         }
         CmsCompany entity = cmsCompanyRepository.save(req);
-
         BeanUtils.copyProperties(entity, result);
+//
+//        if (entity != null) {
+//            CmsCompanyPay entityPay = cmsCompanyPayRepository.findByFkCmsCompanyId(entity.getId());
+//            if (entityPay == null) {
+//                entityPay = new CmsCompanyPay();
+//
+//                entityPay.setFkCmsCompanyId(entity.getId());
+//            }
+//            entityPay.setLocked(resources.isLocked());
+//            entityPay.setPaydate(new Date());
+//            entityPay = cmsCompanyPayRepository.save(entityPay);
+//            BeanUtils.copyProperties(entityPay, result);
+//        }
         return result;
     }
 
@@ -168,7 +205,7 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
          * CmsUser
          */
         List<CmsUserCompany> cucEntity = cmsUserCompanyRepository.findByFkCmsCompanyId(id);
-        if (cucEntity.size() < 0) {
+        if (cucEntity.size() <= 0) {
             return null;
         }
         Optional<CmsUser> OCUEntity = cmsUserRepository.findById(cucEntity.get(0).getFkCmsUserId());
@@ -186,6 +223,16 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
         UpmsDictionaryCategory udcEntity =  upmsDictionaryCategaryRepository.findOneByCode("dropdown_DISTRICT" + result.getDistrict_id());
         UpmsDictionaryData uddEntity = upmsDictionaryDataRepository.findByParentIdAndCode(udcEntity.getId(), String.valueOf(Integer.valueOf(result.getRotaract_id())));
         result.setRotaract_name(uddEntity.getDescription());
+        /**
+         * CmsCompanyPay
+         */
+        result.setLocked(false);
+//        CmsCompanyPay ccpEntity = cmsCompanyPayRepository.findByFkCmsCompanyId(cucEntity.get(0).getId());
+//        if (ccpEntity == null) {
+//            result.setLocked(true);
+//        } else {
+//            BeanUtils.copyProperties(ccpEntity, result);
+//        }
 
         return result;
     }

@@ -33,7 +33,7 @@
     <div th:replace="admin/_fragments/table_basic :: basic"></div>
     <!--end::Card-->
     <!--begin::Modal - Add task-->
-    <div th:replace="admin/_fragments/input_basic :: basic(maxWidth='mw-1000px')"></div>
+    <div th:replace="admin/_fragments/input_basic :: basic"></div>
     <!--end::Modal - Add task-->
 </div>
 
@@ -59,8 +59,8 @@
                 <th class="min-w-125px">公司電話</th>
                 <th class="min-w-125px">公司地址</th>
                 <th class="min-w-125px">公司網址</th>
-                <th class="min-w-125px" style="display:none">產業別Key</th>
                 <th class="min-w-125px">產業別</th>
+                <th class="min-w-125px">是否付款（show）</th>
                 <th class="text-end min-w-100px">Actions</th>
             </tr>
             <!--end::Table row-->
@@ -81,7 +81,12 @@
                 <td th:text="${data.address}"></td>
                 <td th:text="${data.url}"></td>
                 <td th:text="${data.industries}"></td>
-                <td th:text="${data.industriesChinese}"></td>
+                <td>
+                    <div class="badge fw-bolder" th:text="${data.locked==true ? '啟用' : '禁用'}"
+                         th:classappend="${data.locked==true ? 'badge-light-success' : 'badge-light-danger'}">
+                        Enabled
+                    </div>
+                </td>
                 <!--begin::Action=-->
                 <td class="text-end">
                     <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>

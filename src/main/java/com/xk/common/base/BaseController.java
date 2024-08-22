@@ -32,11 +32,11 @@ public class BaseController {
 
     public Model info(Model model, String path) {
         /* find this page info private */
-        UpmsPermission info = upmsPermissionService.findOneByUri(path);
-        model.addAttribute("info", info);
+        UpmsPermission upInfo = upmsPermissionService.findOneByUri(path);
+        model.addAttribute("upInfo", upInfo);
 
         model.addAttribute("header_breadcrumb", upmsPermissionService.findBreadcrumbUri(path));
-        String[] fragment = info.getPermissionValue().split(":");
+        String[] fragment = upInfo.getPermissionValue().split(":");
         model.addAttribute("fragmentSystem", fragment[0]);
         model.addAttribute("fragmentPackage", fragment[1]);
 

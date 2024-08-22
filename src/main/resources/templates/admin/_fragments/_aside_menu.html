@@ -28,7 +28,7 @@
                 <!--begin::Menu::Dashboards-->
                 <div th:if="${menu.children == null}" class="menu-item">
                     <a class="menu-link" href="https://preview.keenthemes.com/good/layout-builder.html"
-                       th:href="@{${menu.uri}}" th:classappend="${info.orders == menu.orders} ? 'active'">
+                       th:href="@{${menu.uri}}" th:classappend="${upInfo.orders == menu.orders} ? 'active'">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
                             <span class="svg-icon svg-icon-5">
@@ -47,7 +47,7 @@
                 <!--end::Menu::Dashboards-->
                 <!--begin::Menu::Permission-->
                 <div th:if="${menu.children != null}" data-kt-menu-trigger="click" class="menu-item menu-accordion"
-                     th:classappend="${#strings.startsWith(info.orders, menu.orders)} ? 'hover show'">
+                     th:classappend="${#strings.startsWith(upInfo.orders, menu.orders)} ? 'hover show'">
 <!--            <th:block th:each="menu : ${session.left_tree}">-->
                     <span class="menu-link">
                         <span class="menu-icon">
@@ -70,7 +70,7 @@
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
                         <div th:each="child : ${menu.children}" class="menu-item">
                             <a class="menu-link" href="#" th:href="@{${child.uri}}"
-                               th:classappend="${info.orders == child.orders} ? 'active'">
+                               th:classappend="${upInfo.orders == child.orders} ? 'active'">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>

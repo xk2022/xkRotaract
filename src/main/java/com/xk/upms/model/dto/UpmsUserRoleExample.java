@@ -27,6 +27,8 @@ public class UpmsUserRoleExample {
      */
     private Byte locked;
 
+    private Date lastLogin;
+
     private Date createTime;
 
     private String role_title;

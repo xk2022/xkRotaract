@@ -20,77 +20,159 @@
         .drawer.open {
             transform: translateY(70%);
         }
+        /* Drawer content */
         .drawer-content {
             padding: 20px;
+            height: 100%;
+            overflow-y: auto; /* Enable vertical scrolling */
         }
         .section {
             margin-bottom: 20px;
         }
+        /* Scrollbar styling (optional) */
+        .drawer-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .drawer-content::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 4px;
+        }
+
+        .drawer-content::-webkit-scrollbar-thumb:hover {
+            background-color: #555;
+        }
         .section h3 {
             margin-top: 0;
         }
+
+        .no-wrap {
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow: hidden; /* Optionally hide overflow */
+<!--            text-overflow: ellipsis; /* Optionally add ellipsis for overflowed text */-->
+        }
+
+
     </style>
 </head>
 <!--end::Head-->
 <!--begin::Body-->
 <body id="kt_body" class="aside-enabled">
-    <!--begin::Main-->
-    <!--begin::Root-->
-    <div class="d-flex flex-column flex-row-fluid">
-        <!--/*/<th:block th:replace="_fragments/_fragments :: navbar(title='Rotaract Business Map')">/*/-->
-        <!--/*/</th:block>/*/-->
-        <div class="d-flex flex-row flex-column-fluid">
-            <div class="d-flex flex-row-fluid flex-center" id="map">
-<!--                <span class="text-white">Fluid Width</span>-->
-                <!--The div element for the map -->
-                <div></div>
-            </div>
-<!--            <button id="drawerToggleButton">Toggle Drawer</button> &lt;!&ndash; 控制抽屉显示的按钮 &ndash;&gt;-->
-            <div id="drawer" class="drawer">
-                <div class="drawer-content">
-                    <button onclick="closeDrawer()">X</button>
-                    <!-- Personal Information Section -->
-                    <div class="section">
-                        <h3>Personal Information</h3>
-                        <p><strong>Rotary Club Name:</strong> <span id="rotaract_name"></span></p>
-                        <p><strong>Member Name:</strong> <span id="rname"></span></p>
-                    </div>
-
-                    <!-- Company Information Section -->
-                    <div class="section">
-                        <h3>Company Information</h3>
-                        <p><strong>Company Name:</strong> <span id="name"></span></p>
-                        <p><strong>Phone Number:</strong> <span id="phone"></span></p>
-                        <p><strong>Address:</strong> <span id="address"></span></p>
-                        <p><strong>Website:</strong> <a href="https://www.example.com" target="_blank"><span id="url"></span></a></p>
-                    </div>
-
+<!--begin::Main-->
+<!--begin::Root-->
+<div class="d-flex flex-column flex-row-fluid">
+    <!--        Rotaeact Business Map-->
+    <!--        Rotaract 職業地圖-->
+    <!--/*/<th:block th:replace="_fragments/_fragments :: navbar(title='Rotaract 職業地圖')">/*/-->
+    <!--/*/</th:block>/*/-->
+    <div class="d-flex flex-row flex-column-fluid">
+        <div class="d-flex flex-row-fluid flex-center" id="map">
+            <!--                <span class="text-white">Fluid Width</span>-->
+            <!--The div element for the map -->
+            <div></div>
+        </div>
+        <!--            <button id="drawerToggleButton">Toggle Drawer</button> &lt;!&ndash; 控制抽屉显示的按钮 &ndash;&gt;-->
+        <div id="drawer" class="drawer">
+            <div class="drawer-content">
+                <button onclick="closeDrawer()">X</button>
+                <!-- Personal Information Section -->
+                <div class="section" id="piSection">
+                    <h3>Personal Information</h3>
+                    <p><strong>Rotary Club Name:</strong> <span id="rotaract_name"></span></p>
+                    <p><strong>Member Name:</strong> <span id="rname"></span></p>
                 </div>
+
+                <!-- Company Information Section -->
+                <div class="section" id="ciSection">
+                    <h3>Company Information</h3>
+                    <p><strong>Company Name:</strong> <span id="name"></span></p>
+                    <p><strong>Phone Number:</strong> <span id="phone"></span></p>
+                    <p><strong>Address:</strong> <span id="address"></span></p>
+                    <p><strong>Website:</strong> <a href="https://www.example.com" target="_blank"><span id="url"></span></a></p>
+                </div>
+
             </div>
         </div>
     </div>
-    <!--end::Root-->
-    <!--end::Main-->
+</div>
+<!--end::Root-->
+<!--begin::Modal - Add task-->
+<div class="modal fade" id="kt_modal_input" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div th:fragment="Modal_header" class="modal-header">
+                <!--begin::Modal title-->
+                <h2 class="fw-bolder" id="modal_name">行業別</h2>
+                <!--end::Modal title-->
+                <!--begin::Close-->
+                <th:block th:replace="admin/_fragments/input_basic :: btn_close"></th:block>
+                <!--end::Close-->
+            </div>
+            <!--end::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+                <!--begin::Input group-->
+                <div class="row fv-row mb-7">
+                    <div class="col-md">
+                        <th:block th:each="chunk : ${chunkedIndustries}">
+                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
+<!--                                <div class="col-md" th:each="industry : ${chunk}">-->
+                                <div th:each="industry, iterStat : ${chunk}" class="col-6 mb-3 no-wrap" th:classappend="${iterStat.index % 2 == 0} ? ' border-right' : ''">
+                                    <input class="form-check-input" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" checked/>
+                                    <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+                <!--end::Input group-->
+                <!--begin::Actions-->
+                <div class="text-center">
+<!--                    <button type="reset" class="btn btn-light me-3" data-kt-modal-action="cancel">取消</button>-->
+                    <button type="submit" class="btn btn-primary" data-kt-modal-action="submit" onclick="handleButtonClick()">
+                        <span class="indicator-label">篩選</span>
+                        <span class="indicator-progress">請稍候...
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </button>
+                </div>
+                <!--end::Actions-->
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Add task-->
+<!--end::Main-->
 
-    <!--begin::Javascript-->
-    <!--/*/<th:block th:replace="_fragments/_fragments :: script">/*/-->
-    <!--/*/</th:block>/*/-->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgI-sfjvHKCWBnVoDDeRBOYxo0oTY45tQ&callback=initMap"></script>
-    <script th:src="@{/js/basic_map.js}"></script>
-    <script>
+<!--begin::Javascript-->
+<!--/*/<th:block th:replace="_fragments/_fragments :: script">/*/-->
+<!--/*/</th:block>/*/-->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgI-sfjvHKCWBnVoDDeRBOYxo0oTY45tQ&callback=initMap"></script>
+<script th:src="@{/js/basic_map.js}"></script>
 
-    </script>
+<!--begin::Page Custom Javascript(used by this page)-->
+<!--<script th:src="@{/js/custom/datatables/table.js}"></script>-->
+<script th:src="@{/js/custom/datatables/input.js}"></script>
+<!--end::Page Custom Javascript-->
+<script>
+
+</script>
 
 <!--    這段是三小-->
-    <!-- prettier-ignore -->
-    <!--    <script>-->
-    <!--      (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({-->
-    <!--        key: "AIzaSyDgI-sfjvHKCWBnVoDDeRBOYxo0oTY45tQ",-->
-    <!--        // Add other bootstrap parameters as needed, using camel case.-->
-    <!--        // Use the 'v' parameter to indicate the version to load (alpha, beta, weekly, etc.)-->
-    <!--      });-->
-    <!--    </script>-->
-    <!--end::Javascript-->
+<!-- prettier-ignore -->
+<!--    <script>-->
+<!--      (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({-->
+<!--        key: "AIzaSyDgI-sfjvHKCWBnVoDDeRBOYxo0oTY45tQ",-->
+<!--        // Add other bootstrap parameters as needed, using camel case.-->
+<!--        // Use the 'v' parameter to indicate the version to load (alpha, beta, weekly, etc.)-->
+<!--      });-->
+<!--    </script>-->
+<!--end::Javascript-->
 </body>
 <!--end::Body-->
 </html>

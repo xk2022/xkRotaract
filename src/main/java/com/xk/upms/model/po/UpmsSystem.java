@@ -8,7 +8,6 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -28,11 +27,11 @@ public class UpmsSystem extends BaseEntity implements Serializable {
     @Comment("00_流水號")
     private Long id;
 
-    @Comment("01_系統圖標")
-    private String icon;
+//    @Comment("01_系統圖標")
+//    private String icon;
 
-    @Comment("02_系統背景")
-    private String banner;
+//    @Comment("02_系統背景")
+//    private String banner;
 
     @Comment("03_系統主题")
     private String theme;
