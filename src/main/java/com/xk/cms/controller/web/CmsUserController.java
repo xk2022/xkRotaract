@@ -35,11 +35,10 @@ public class CmsUserController extends BaseController {
     /**
      * 新增/修改 用户 Create/Update
      */
-//    @RequiresPermissions("upms:user:create")
-//    @RequiresPermissions("upms:user:update")
     @PostMapping("/save")
     public String post(CmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) {
         CmsUserSaveResp result;
+
         if (resources.getId() == null) {
             result = cmsUserService.create(resources);
             LOGGER.info("新增用户，主键：userId={}", result.getId());

@@ -42,12 +42,13 @@ public class CmsUserServiceImpl implements CmsUserService {
         CmsUser userinfo = cmsUserRepository.findOneByFkUpmsUserId(upmsUser.getId());
         if (userinfo != null) {
             BeanUtils.copyProperties(resources, userinfo);
-            entity = cmsUserRepository.save(userinfo);
         } else {
             BeanUtils.copyProperties(resources, entity);
             entity.setFkUpmsUserId(upmsUser.getId());
-            entity = cmsUserRepository.save(entity);
         }
+        entity.setPhone(resources.getCellPhone());
+        entity = cmsUserRepository.save(entity);
+
         BeanUtils.copyProperties(entity, result);
         return result;
     }
@@ -63,6 +64,7 @@ public class CmsUserServiceImpl implements CmsUserService {
 
         CmsUser userinfo = cmsUserRepository.findOneByFkUpmsUserId(upmsUser.getId());
         BeanUtils.copyProperties(resources, userinfo);
+        userinfo.setPhone(resources.getCellPhone());
 
         CmsUser entity = cmsUserRepository.save(userinfo);
 

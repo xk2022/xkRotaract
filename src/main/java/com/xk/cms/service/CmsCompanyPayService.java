@@ -15,6 +15,4 @@ public interface CmsCompanyPayService {
 
     CmsCompanySaveResp create(CmsCompanyPaySaveReq resources);
 
-    CmsCompanySaveResp update(Long id, CmsCompanyPaySaveReq resources);
-
 }

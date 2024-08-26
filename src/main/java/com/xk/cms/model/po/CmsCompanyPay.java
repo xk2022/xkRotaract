@@ -27,11 +27,7 @@ public class CmsCompanyPay extends BaseEntity implements Serializable {
     @Comment("00_流水號")
     private Long id;
 
-    // 使用对象关系来代替外键 ID
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_cms_company_id", nullable = false)
-    @Comment("fk_cms_company_id")
-    private CmsCompany cmsCompany;
+    private Long fkCmsCompanyId;
 
     @Comment("01_繳費日期")
     private Date payDate;

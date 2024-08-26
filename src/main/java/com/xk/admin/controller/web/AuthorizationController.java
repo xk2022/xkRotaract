@@ -82,6 +82,7 @@ public class AuthorizationController extends BaseController {
         model.addAttribute("fragmentName", "view");
 
         session.removeAttribute("user");
+        session.invalidate(); // 销毁 session
         return AUTH_INDEX;
     }
 

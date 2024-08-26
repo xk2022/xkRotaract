@@ -11,7 +11,9 @@
         </div>
         <!--begin::Card title-->
         <!--begin::Card toolbar-->
-        <div th:replace="admin/_fragments/table_basic :: Card_toolbar"></div>
+        <th:block th:if="${add_btn != 'false'}">
+            <div th:replace="admin/_fragments/table_basic :: Card_toolbar"></div>
+        </th:block>
         <!--end::Card toolbar-->
     </div>
     <!--end::Card header-->

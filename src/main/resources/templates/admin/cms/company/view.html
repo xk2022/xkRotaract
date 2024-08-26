@@ -80,8 +80,8 @@
                 <td th:text="${data.phone}"></td>
                 <td th:text="${data.address}"></td>
                 <td th:text="${data.url}"></td>
-                <td th:text="${data.industries}"></td>
-                <td th:text="${data.industriesChinese}"></td>
+                <td style="display:none" th:text="${data.industries}"></td>
+                <td th:utext="${#strings.replace(data.industriesChinese, ',', '<br/>。')}">。</td>
                 <!--begin::Action=-->
                 <td class="text-end">
                     <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>

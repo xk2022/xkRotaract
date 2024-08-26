@@ -5,7 +5,6 @@ import com.xk.cms.model.po.CmsCompanyPay;
 import com.xk.cms.model.vo.CmsCompanySaveResp;
 import com.xk.cms.service.CmsCompanyPayService;
 import com.xk.common.base.BaseController;
-import com.xk.common.util.GoogleApiGeocode;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,20 +53,16 @@ public class CmsCompanyPayController extends BaseController {
      */
     @PostMapping("/save")
     public String post(CmsCompanyPaySaveReq resources, RedirectAttributes attributes, HttpSession session) {
-        CmsCompanySaveResp result;
+        CmsCompanySaveResp result = null;
 
-        if (resources.getCmsCompanyPayId() == null) {
+        if (resources.getId() == null) {
             result = cmsCompanyPayService.create(resources);
             LOGGER.info("新增用户，主键：userId={}", result.getId());
-        } else {
-            result = cmsCompanyPayService.update(resources.getCmsCompanyPayId(), resources);
         }
 
         if (result == null) {
             attributes.addFlashAttribute("message", "操作失敗");
         } else {
-            // 打入
-            GoogleApiGeocode.main("123");
             attributes.addFlashAttribute("message", "操作成功");
         }
         return REDIRECT_ADDR;

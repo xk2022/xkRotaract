@@ -197,8 +197,8 @@ public class UpmsPermissionRestController {
 
         data.setStatus(true);
         data.setName("鍵值管理");
-        data.setPermissionValue("upms:key");
-        data.setUri("/admin/upms/manage/key");
+        data.setPermissionValue("upms:dictionary");
+        data.setUri("/admin/upms/manage/dictionary");
         data.setOrders((long) 44);
         upmsPermissionService.create(data);
         /**

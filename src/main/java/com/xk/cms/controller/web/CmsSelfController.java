@@ -1,7 +1,7 @@
 package com.xk.cms.controller.web;
 
 import com.xk.admin.model.dto.UserExample;
-import com.xk.cms.model.vo.CmsCompanySaveResp;
+import com.xk.cms.model.dto.CmsCompanyExample;
 import com.xk.cms.model.vo.CmsUserSaveResp;
 import com.xk.cms.service.CmsCompanyService;
 import com.xk.cms.service.CmsSelfService;
@@ -59,9 +59,9 @@ public class CmsSelfController extends BaseController {
         }
         model.addAttribute("entity", entity);
 
-        List<CmsCompanySaveResp> companies = new ArrayList<>();
+        List<CmsCompanyExample> companies = new ArrayList<>();
         if (entity != null && entity.getId() != null) {
-            companies = cmsCompanyService.listByUser(entity.getId());
+            companies = cmsCompanyService.listByUserWithPay(entity.getId());
         }
         model.addAttribute("companies", companies);
         model.addAttribute("chunkedIndustries", cmsSelfService.getChunkedIndustries());

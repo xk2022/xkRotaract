@@ -1,10 +1,12 @@
 package com.xk.cms.service.impl;
 
+import com.xk.cms.dao.mapper.CmsCompanyMapper;
 import com.xk.cms.dao.repository.CmsCompanyPayRepository;
 import com.xk.cms.dao.repository.CmsCompanyRepository;
 import com.xk.cms.dao.repository.CmsUserCompanyRepository;
 import com.xk.cms.dao.repository.CmsUserRepository;
 import com.xk.cms.model.bo.CmsCompanySaveReq;
+import com.xk.cms.model.dto.CmsCompanyExample;
 import com.xk.cms.model.po.CmsCompany;
 import com.xk.cms.model.po.CmsUser;
 import com.xk.cms.model.po.CmsUserCompany;
@@ -55,6 +57,8 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
     private UpmsDictionaryDataRepository upmsDictionaryDataRepository;
     @Autowired
     private CmsCompanyPayRepository cmsCompanyPayRepository;
+    @Autowired
+    private CmsCompanyMapper cmsCompanyMapper;
 
     @Override
     public List list() {
@@ -92,6 +96,26 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
                 resp = transIndustriesChinese(resp);
             }
             result.add(resp);
+        }
+        return result;
+    }
+
+    @Override
+    public List listByUserWithPay(long cms_user_id) {
+        List<CmsCompanyExample> result = new ArrayList<>();
+
+        List<CmsCompanyExample> cceList = cmsCompanyMapper.findByFkCmsUserId(cms_user_id);
+
+        for (CmsCompanyExample example : cceList) {
+            CmsCompanySaveResp resp = new CmsCompanySaveResp();
+            resp.setIndustries(example.getIndustries());
+
+            if (resp.getIndustries() != null) {
+                resp = transIndustriesChinese(resp);
+                example.setIndustryIds(resp.getIndustryIds());
+                example.setIndustriesChinese(resp.getIndustriesChinese());
+            }
+            result.add(example);
         }
         return result;
     }

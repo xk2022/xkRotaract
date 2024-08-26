@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xk.cms.dao.mapper.CmsCompanyMapper">
+
+    <resultMap type="com.xk.cms.model.po.CmsCompany" id="baseRM">
+        <id property="id" column="company_id"></id>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="url" column="url"/>
+        <result property="industries" column="industries"/>
+        <result property="latlng" column="latlng"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <resultMap type="com.xk.cms.model.dto.CmsCompanyExample" id="ccDto" extends="baseRM">
+        <!-- 继承自 baseRM 的映射 -->
+        <result property="companyName" column="companyName"/>
+        <result property="cmsCompanyPayId" column="company_pay_id"/>
+        <result property="payDate" column="pay_date"/>
+        <result property="locked" column="locked"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="ccDto">
+        SELECT  cc.company_id,
+                cc.name as companyName,
+                cc.create_time,
+                ccp.company_pay_id,
+                ccp.pay_date,
+                ccp.locked
+        FROM cms_company cc
+            LEFT JOIN cms_company_pay ccp ON cc.company_id = ccp.fk_cms_company_id
+        ORDER BY cc.company_id DESC
+    </select>
+    <select id="findByFkCmsUserId" resultMap="ccDto">
+        SELECT  cc.*,
+                ccp.pay_date
+        FROM cms_company cc
+            LEFT JOIN cms_user_company cuc ON cc.company_id = cuc.fk_cms_company_id
+            LEFT JOIN cms_company_pay ccp ON cc.company_id = ccp.fk_cms_company_id
+        WHERE cuc.fk_cms_user_id = #{id}
+        ORDER BY cc.company_id DESC
+    </select>
+
+</mapper>

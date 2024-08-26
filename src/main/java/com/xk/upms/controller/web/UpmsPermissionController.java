@@ -14,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,20 +42,18 @@ public class UpmsPermissionController extends BaseController {
     /**
      * 查詢 權限 首頁
      */
-//    @RequiresPermissions("upms:permission:read")
     @GetMapping()
     public String index(UpmsPermissionReq resources, Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
         model.addAttribute("fragmentName", "list");
 
-        model.addAttribute("page_list", upmsPermissionService.buildTree(upmsPermissionService.listBy(resources)));
+        model.addAttribute("page_list"
+                , upmsPermissionService.buildTree(upmsPermissionService.listBy(resources)));
         model.addAttribute("entity", new UpmsPermission());
 
         model.addAttribute("select_system", upmsSystemService.list());
         model.addAttribute("selected_system", resources.getSystemId());
         model.addAttribute("select_permission", upmsPermissionService.list());
-//        model.addAttribute("page_thead", baseRepostitory.queryTableComent("upms_system"));
-//        return "admin/upms/system/list";
         return ADMIN_INDEX;
     }
     public String index() {
@@ -80,6 +75,7 @@ public class UpmsPermissionController extends BaseController {
         }
 
         if (result == null) {
+
             attributes.addFlashAttribute("message", "操作失敗");
         } else {
             attributes.addFlashAttribute("message", "操作成功");

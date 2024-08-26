@@ -8,7 +8,8 @@
     $("[name='add_btn']").click(function(){
         $('#modal_name').text("新增權限");
         $("[name='id']").val(null);
-        $("[name='systemId']").val(null);
+        var selectElement = document.getElementById('selectMode_3').value;
+        $("[name='systemId']").val(selectElement);
         $("[name='inputGroupSelect_system']").val(null);
         $("[name='inputGroupSelect_parent']").val(null);
         $("[name='name']").val(null);
@@ -79,8 +80,11 @@
                 <!--end::Label-->
                 <!--begin::Input-->
                 <select class="form-select form-control form-control-solid" id="inputGroupSelect_system" name="systemId">
-                    <option value="" selected>Choose...</option>
-                    <option th:each="data : ${select_system}" th:value="${data.id}" th:text="${data.title}"></option>
+                    <option th:each="data : ${select_system}"
+                            th:value="${data.id}"
+                            th:text="${data.title}"
+                            th:selected="${data.id} == ${systemId}">
+                    </option>
                 </select>
                 <!--end::Input-->
             </div>

@@ -12,4 +12,6 @@ public class CmsUserSaveReq extends CmsUser {
 
     private String username;
 
+    private String cellPhone;
+
 }

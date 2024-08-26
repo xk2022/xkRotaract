@@ -16,6 +16,8 @@ public interface CmsCompanyService {
 
     List listByUser(long cms_user_id);
 
+    List listByUserWithPay(long cms_user_id);
+
     CmsCompanySaveResp create(CmsCompanySaveReq resources);
 
     CmsCompanySaveResp update(Long id, CmsCompanySaveReq resources);

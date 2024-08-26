@@ -3,41 +3,20 @@
 <!--js資源引入-->
 <th:block th:fragment="script"><!--<div>-->
     <script th:inline="javascript">
-        // Insert
-        $("[name='add_btn']").click(function(){
-            $('#modal_name').text("新增系統");
-            $("[name='id']").val(null);
-            $("[name='name']").val(null);
-            $("[name='phone']").val(null);
-            $("[name='address']").val(null);
-            $("[name='url']").val(null);
-            $("[name='status']")[0].checked = true;
-            $("[name='orders']").val('999');
-        });
-
         // Update
         var readyToEdit = function(row) {
-            $('#modal_name').text("更新系統");
-            $("[name='id']").val(row[1].innerText);
-            $("[name='name']").val(row[2].innerText);
-            $("[name='phone']").val(row[3].innerText);
-            $("[name='address']").val(row[4].innerText);
-            $("[name='url']").val(row[5].innerText);
-            $("[name='industries']").val(row[6].innerText);
-            var btnradio_status_ = row[7].innerText == '啟用';
-            $("#btnradio_status_"+btnradio_status_).prop('checked', true);
+            $('#modal_name').text("覆核公司付款");
+
+            $("[name='fkCmsCompanyId']").val(row[1].innerText);
+            $("[name='id']").val(row[2].innerText);
+            $("[name='name']").val(row[3].innerText);
         }
 
         // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
         var validator = FormValidation.formValidation( form,
             {
                 fields: {
-                    'name': { validators: { notEmpty: {
-                                message: 'Permission name is required' } } },
-                    'title': { validators: { notEmpty: {
-                                message: 'Permission name is required' } } },
-                    'basePath': { validators: { notEmpty: {
-                                message: 'Permission name is required' } } },
+
                 },
                 plugins: {
                     trigger: new FormValidation.plugins.Trigger(),
@@ -49,14 +28,6 @@
                 }
             }
         );
-
-        // JavaScript函数，用于将input1的值复制到input2中
-        function copyInputValue() {
-            var input1 = document.getElementById("name");
-            var input2 = document.getElementById("basepath");
-
-            input2.value = '/' + input1.value;
-        }
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->
@@ -64,97 +35,35 @@
 <!--begin::Modal body-->
 <div th:fragment="form" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
     <!--begin::Form-->
-    <form id="kt_modal_input_form" class="form" th:action="@{/admin/cms/manage/company/save}" method="post" th:object="${entity}">
+    <form id="kt_modal_input_form" class="form" th:action="@{/admin/cms/manage/applyCompany/save}" method="post" th:object="${entity}">
+        <input type="hidden" name="fkCmsCompanyId">
         <input type="hidden" name="id">
         <!--begin::Input group-->
         <div class="row fv-row mb-7">
-            <div class="col-md">
-                <!--begin::Label-->
-                <label class="fs-6 fw-bold form-label mb-2">
-                    <span class="required">公司名稱</span>
-                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                       data-bs-trigger="hover" data-bs-html="true"
-                       data-bs-content="系統代號必須是唯一的。"></i>
-                </label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <input class="form-control form-control-solid" placeholder="Enter a company name" name="name" id="name" oninput="copyInputValue()"/>
-                <!--end::Input-->
-            </div>
-            <div class="col-md">
-                <!--begin::Label-->
-                <label class="fs-6 fw-bold form-label mb-2">
-                    <span class="required">公司電話</span>
-                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                       data-bs-trigger="hover" data-bs-html="true"
-                       data-bs-content="必填"></i>
-                </label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <input class="form-control form-control-solid" placeholder="Enter a phone" name="phone" id="phone" readonly/>
-                <!--end::Input-->
-            </div>
-        </div>
-        <!--end::Input group-->
-        <!--begin::Input group-->
-        <div class="fv-row mb-7">
             <!--begin::Label-->
             <label class="fs-6 fw-bold form-label mb-2">
-                <span class="required">公司地址(務必詳填，影響圖標)</span>
+                <span class="required">公司名稱</span>
                 <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
                    data-bs-trigger="hover" data-bs-html="true"
-                   data-bs-content="必填"></i>
+                   data-bs-content="系統代號必須是唯一的。"></i>
             </label>
             <!--end::Label-->
             <!--begin::Input-->
-            <input class="form-control form-control-solid" placeholder="Enter a address" name="address" />
+            <input class="form-control form-control-solid" placeholder="Enter a company name" name="name" id="name" readonly/>
             <!--end::Input-->
         </div>
         <!--end::Input group-->
-        <!--begin::Input group-->
-        <div class="fv-row mb-7">
-            <!--begin::Label-->
-            <label class="fs-6 fw-bold form-label mb-2">
-                <span>公司網址</span>
-            </label>
-            <!--end::Label-->
-            <!--begin::Input-->
-            <input class="form-control form-control-solid" placeholder="Enter a url" name="url" />
-            <!--end::Input-->
-        </div>
-        <!--end::Input group-->
-        <!--begin::Input group-->
-        <div class="row fv-row mb-7">
-            <div class="col-md">
-                <!--begin::Label-->
-                <label class="fs-6 fw-bold form-label mb-2">
-                    <span>產業別</span>
-                </label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <input class="form-control form-control-solid" placeholder="Enter a menu orders" name="industries" />
-                <!--end::Input-->
-            </div>
-            <div class="col-md">
-                <!--begin::Label-->
-                <label class="fs-6 fw-bold form-label mb-2">
-                    <span>狀態</span>
-                </label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <div class="btn-group form-control form-control-solid mb-3 mb-lg-0" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check" name="btnradio_status_true" id="btnradio_status_true" value="true" th:field="*{status}" autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="btnradio_status_true" th:text="啟用">Radio 1</label>
 
-                    <input type="radio" class="btn-check" name="btnradio_status_false" id="btnradio_status_false" value="false" th:field="*{status}" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio_status_false" th:text="禁用">Radio 2</label>
-                </div>
-                <!--end::Input-->
-            </div>
-        </div>
-        <!--end::Input group-->
         <!--begin::Actions-->
-        <div th:replace="admin/_fragments/input_basic :: Actions"></div>
+        <div th:fragment="Actions" class="text-center pt-15">
+            <button type="reset" class="btn btn-light me-3" data-kt-modal-action="cancel">取消</button>
+            <button type="submit" class="btn btn-danger" data-kt-modal-action="submit">
+                <span class="indicator-label">確認繳費</span>
+                <span class="indicator-progress">Please wait...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+            </button>
+        </div>
         <!--end::Actions-->
     </form>
     <!--end::Form-->

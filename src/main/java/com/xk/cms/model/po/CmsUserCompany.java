@@ -23,7 +23,7 @@ public class CmsUserCompany extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GenericGenerator(name = "faceset_generator", strategy = "guid")
-    @Column(name = "user_id")
+    @Column(name = "user_company_id")
     @NotNull(groups = Update.class)
     @Comment("00_流水號")
     private Long id;

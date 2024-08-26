@@ -43,15 +43,15 @@
             <div class="card-title">
                 <!--begin::Select System-->
                 <div class="d-flex align-items-center position-relative my-1">
-<!--                    <div class="aside-toolbar py-5">-->
-<!--                        <div class="d-flex align-items-center flex-stack">-->
-                            <!--begin::Select-->
-                            <select class="form-select form-select-custom border-0 fw-bolder selectMode" id="selectMode_3" data-control="select2" data-placeholder="Select Project" data-hide-search="true">
-                                <option th:each="i : ${select_system}" th:value="${i.id}" th:text="${i.name} + ' - ' + ${i.title}"></option>
-                            </select>
-                            <!--end::Select-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <!--begin::Select-->
+                    <select class="form-select form-select-custom border-0 fw-bolder selectMode" id="selectMode_3" data-control="select2" data-placeholder="Select Project" data-hide-search="true">
+                        <option th:each="i : ${select_system}"
+                                th:value="${i.id}"
+                                th:text="|${i.name} - ${i.title}|"
+                                th:selected="${i.id} == ${selected_system}">
+                        </option>
+                    </select>
+                    <!--end::Select-->
                 </div>
                 <!--end::Select System-->
                 <!--begin::Search-->

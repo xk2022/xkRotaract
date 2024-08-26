@@ -5,6 +5,17 @@
     <!--begin::Page Vendor Stylesheets(used by this page)-->
     <!--General - DataTables-->
     <link rel="stylesheet" type="text/css" th:href="@{/plugins/custom/datatables/datatables.bundle.css}"/>
+    <style>
+        .hoverBox {
+            position: relative;
+        }
+        .hoverBox:hover::before {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            content: '付費解鎖詳細資訊於地圖中';
+        }
+    </style>
     <!--end::Page Vendor Stylesheets-->
 </th:block><!--</div>-->
 <!--css資源引入-->
@@ -218,7 +229,7 @@
                 <label class="fs-5 fw-bold mb-2">聯絡電話</label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input type="text" class="form-control form-control-solid" placeholder="" name="phone" th:value="${entity.phone}" />
+                <input type="text" class="form-control form-control-solid" placeholder="" name="cellPhone" th:value="${entity.phone}" />
                 <!--end::Input-->
             </div>
             <!--end::Col-->
@@ -281,6 +292,12 @@
                         <h2 th:text="${data.name}">龍巖股份有限公司</h2>
                     </div>
                     <!--end::Card title-->
+                    <div class="card-toolbar">
+                        <button type="button" class="btn btn-sm hoverBox" th:text="${data.payDate != null ? '已付費' : '未開通'}"
+                                th:classappend="${data.payDate != null ? 'badge-light-success' : 'badge-light-danger'}">
+                            付費功能
+                        </button>
+                    </div>
                 </div>
                 <!--end::Card header-->
                 <!--begin::Card body-->

@@ -3,13 +3,11 @@ package com.xk.cms.model.po;
 import com.xk.common.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by yuan on 2024/05/02
@@ -45,21 +43,5 @@ public class CmsCompany extends BaseEntity implements Serializable {
 
     @Comment("06_經緯度")
     private String latlng;
-
-    // 一对多关系，一个公司可以有多个支付记录
-    @OneToMany(mappedBy = "cmsCompany", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private List<CmsCompanyPay> companyPays;
-
-    // 用于维护双向关系
-    public void addCompanyPay(CmsCompanyPay companyPay) {
-        companyPays.add(companyPay);
-        companyPay.setCmsCompany(this);
-    }
-
-    public void removeCompanyPay(CmsCompanyPay companyPay) {
-        companyPays.remove(companyPay);
-        companyPay.setCmsCompany(null);
-    }
 
 }
