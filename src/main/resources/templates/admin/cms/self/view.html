@@ -205,7 +205,7 @@
                 <label class="fs-5 fw-bold mb-2">扶青社友名（英文）</label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input type="text" class="form-control form-control-solid" placeholder="" name="rname" th:value="${entity.rname}"/>
+                <input type="text" class="form-control form-control-solid" placeholder="" name="rname" th:value="${ entity.rname == null ? entity.username : entity.rname }"/>
                 <!--end::Input-->
             </div>
             <!--end::Col-->
@@ -229,7 +229,7 @@
                 <label class="fs-5 fw-bold mb-2">聯絡電話</label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input type="text" class="form-control form-control-solid" placeholder="" name="cellPhone" th:value="${entity.phone}" />
+                <input type="text" class="form-control form-control-solid" placeholder="" name="cellPhone" th:value="${entity.cellPhone}" />
                 <!--end::Input-->
             </div>
             <!--end::Col-->
@@ -239,7 +239,7 @@
                 <label class="fs-5 fw-bold mb-2">郵件信箱</label>
                 <!--end::Label-->
                 <!--end::Input-->
-                <input type="text" class="form-control form-control-solid" placeholder="" name="email" th:value="${session.user.email}" />
+                <input type="text" class="form-control form-control-solid" placeholder="" name="email" th:value="${session.user.email}" readonly/>
                 <!--end::Input-->
             </div>
             <!--end::Col-->

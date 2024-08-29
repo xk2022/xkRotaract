@@ -2,7 +2,7 @@ package com.xk.upms.controller.web;
 
 import com.xk.common.base.BaseController;
 import com.xk.upms.model.bo.UpmsOrganizationSaveReq;
-import com.xk.upms.model.po.UpmsRole;
+import com.xk.upms.model.po.UpmsOrganization;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
 import com.xk.upms.service.UpmsOrganizationService;
 import io.swagger.annotations.Api;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * 組織 Controller
- * Created by yuan on 2022/06/24
+ * Created by yuan on 2022/06/24, 2024/08/28
  */
 @Api(value = "組織管理")
 @Controller
@@ -45,15 +45,13 @@ public class UpmsOrganizationController extends BaseController {
         model.addAttribute("fragmentName", "list");
 
         model.addAttribute("page_list", upmsOrganizationService.list(null));
-        model.addAttribute("entity", new UpmsRole());
+        model.addAttribute("entity", new UpmsOrganization());
         return ADMIN_INDEX;
     }
 
     /**
      * 新增/修改 組織 Create/Update
      */
-//    @RequiresPermissions("upms:organization:create")
-//    @RequiresPermissions("upms:organization:update")
     @PostMapping("/save")
     public String post(UpmsOrganizationSaveReq resources, RedirectAttributes attributes, HttpSession session) {
         UpmsOrganizationSaveResp result;

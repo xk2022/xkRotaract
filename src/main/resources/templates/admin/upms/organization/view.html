@@ -22,12 +22,61 @@
     <!--/*/</th:block>/*/-->
     <!--end::Page Custom Javascript-->
     <script th:inline="javascript">
-        var deleteUrl = '/admin/upms/manage/permissions/delete/';
+        var deleteUrl = '/admin/upms/manage/organization/delete/';
 
         // 在點擊事件中選取下拉選單的選項
-        $(document).ready(function(){
-            // selectMode_3 with index selceted value
-            $('#kt_table').DataTable().columns(3).search(1).draw();
+        $(document).ready(function() {
+            // selectMode_2 with index selceted value
+<!--            $('#kt_table').DataTable().columns(2).search(1).draw();-->
+
+            // 假设 dropdown_DISTRICT 变量的值是用于获取数据的 code
+            var categoryCode = 'dropdown_DISTRICT'; // 需要替换为实际的 code 值
+            // 加载地区选项的函数
+            function loadDistricts() {
+                $.ajax({
+                    url: '/xkRotaract/api/manage/dictionary/listDictionaryData',
+                    method: 'POST',
+                    data: JSON.stringify({ 'code': categoryCode }), // 修改为适合你的代码
+                    processData: false,
+                    contentType: 'application/json',
+                    success: function(response) {
+                        console.log('AJAX 请求成功：', response);
+
+                        // 获取下拉选单元素
+                        var viewDistrictSelect = $('#selectMode_2');
+                        var inputDistrictSelect = $('#inputGroupSelect_district');
+                        // 清空现有选项
+                        viewDistrictSelect.empty();
+                        inputDistrictSelect.empty();
+                        // 添加默认选项
+                        viewDistrictSelect.append('<option value="0">請選擇</option>');
+                        inputDistrictSelect.append('<option value="0">請選擇</option>');
+
+                        // 遍历响应数据并添加到下拉选单中
+                        if(response) {
+                            response.forEach(function(district) {
+                                viewDistrictSelect.append(
+                                    `<option value="${district.code}">${district.description}</option>`
+                                );
+                                inputDistrictSelect.append(
+                                    `<option value="${district.code}">${district.description}</option>`
+                                );
+                            });
+                        }
+
+<!--                        // 设置默认选中项-->
+<!--                        var selectedDistrictId = $('input[name="district_id"]').val();-->
+<!--                        if (selectedDistrictId) {-->
+<!--                            $('#selectMode_2').val(selectedDistrictId).trigger('change'); // 触发变化以加载扶青社地區-->
+<!--                        }-->
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX 请求失败：', error);
+                    }
+                });
+            }
+            // 初始化加载地区
+            loadDistricts();
         });
     </script>
 </th:block><!--</div>-->
@@ -43,15 +92,11 @@
             <div class="card-title">
                 <!--begin::Select System-->
                 <div class="d-flex align-items-center position-relative my-1">
-<!--                    <div class="aside-toolbar py-5">-->
-<!--                        <div class="d-flex align-items-center flex-stack">-->
-                            <!--begin::Select-->
-                            <select class="form-select form-select-custom border-0 fw-bolder selectMode" id="selectMode_3" data-control="select2" data-placeholder="Select Project" data-hide-search="true">
-                                <option th:each="i : ${select_system}" th:value="${i.id}" th:text="${i.name} + ' - ' + ${i.title}"></option>
-                            </select>
-                            <!--end::Select-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <!--begin::Select-->
+                    <select class="form-select form-select-custom border-0 fw-bolder selectMode" id="selectMode_2" data-control="select2" data-placeholder="Select Project" data-hide-search="true">
+                        <option value="0">請選擇</option>
+                    </select>
+                    <!--end::Select-->
                 </div>
                 <!--end::Select System-->
                 <!--begin::Search-->
@@ -71,7 +116,7 @@
     <!--end::Card-->
 
     <!--begin::Modal - Add task-->
-<!--    <div th:replace="admin/_fragments/input_basic :: basic"></div>-->
+    <div th:replace="admin/_fragments/input_basic :: basic"></div>
     <!--end::Modal - Add task-->
 </div>
 
@@ -86,23 +131,16 @@
         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
             <th class="w-10px pe-2">
                 <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                    <input class="form-check-input" type="checkbox" data-kt-check="true"
-                           data-kt-check-target="#kt_table .form-check-input" value="1"/>
+                    <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_table .form-check-input" value="1"/>
                 </div>
             </th>
-            <th class="min-w-99px"></th>
             <!--                    <th th:each="i : ${page_thead}" class="min-w-125px" th:text="${i}">Name</th>-->
-            <th style="display:none" class="min-w-99px">流水號</th>
-            <th style="display:none" class="min-w-99px">所屬系統</th>
-            <th style="display:none" class="min-w-99px">所屬上層</th>
-            <th class="min-w-99px">名稱</th>
-            <th style="display:none" class="min-w-99px">類型</th>
-            <th class="min-w-99px">權限值</th>
-            <th class="min-w-99px">路徑</th>
-            <!--                    <th class="min-w-99px">圖標</th>-->
+            <th style="display:none" class="min-w-99px">ID</th>
+            <th class="min-w-99px">所屬地區</th>
+            <th class="min-w-99px">組織名稱</th>
+            <th class="min-w-299px">說明</th>
             <th class="min-w-99px">狀態</th>
-            <th class="text-end min-w-99px">創建時間</th>
-            <th style="display:none" class="min-w-99px">排序</th>
+            <th class="min-w-99px">排序</th>
             <th class="text-end min-w-100px">Actions</th>
         </tr>
         <!--end::Table row-->
@@ -111,51 +149,26 @@
         <!--begin::Table body-->
         <tbody class="text-gray-600 fw-bold">
         <!--begin::SubTable template-->
-        <th:block th:each="data : ${page_list}">
-            <tr>
-                <td class="id">
+            <tr th:each="data : ${page_list}">
+                <td>
                     <div class="form-check form-check-sm form-check-custom form-check-solid">
-                        <!--                                    <input class="form-check-input" type="checkbox" value="1"/>-->
-                        <input class="form-check-input" type="checkbox" th:value="${data.id}"/>
+                        <input class="form-check-input" type="checkbox" value="1"/>
                     </div>
                 </td>
-                <!--begin::Actions-->
-                <td>
-                    <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
-                            data-kt-docs-datatable-subtable="expand_row">
-                                    <span class="svg-icon svg-icon-3 m-0 toggle-off">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="currentColor"></rect>
-                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
-                                        </svg>
-                                    </span>
-                        <span class="svg-icon svg-icon-3 m-0 toggle-on">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
-                                        </svg>
-                                    </span>
-                    </button>
-                </td>
-                <!--end::Actions-->
                 <td style="display:none" class="id" th:text="${data.id}"></td>
-                <td style="display:none" class="systemId" th:text="${data.systemId}"></td>
-                <td style="display:none" th:text="${data.pid}"></td>
-                <td th:text="${data.name}"></td>
-                <td style="display:none" th:text="${data.type}"></td>
-                <td th:text="${data.permissionValue}"></td>
-                <td th:text="${data.uri}"></td>
-                <!--                            <td th:text="${data.icon}"></td>-->
+                <td th:text="${data.district}"></td>
+                <td>
+                    <div class="d-flex flex-column">
+                        <a th:href="@{'/admin/upms/manage/organization/'+${data.id}}" class="text-gray-800 text-hover-primary mb-1" th:text="${data.name}"></a>
+                    </div>
+                </td>
+                <td th:text="${data.description}"></td>
                 <td>
                     <div class="badge fw-bolder"
                          th:text="${data.status==true ? '啟用' : '禁用'}" th:value="${data.status}"
                          th:classappend="${data.status==true ? 'badge-light-success' : 'badge-light-danger'}" >Enabled</div>
                 </td>
-                <td>
-                    <div class="badge badge-light fw-bolder text-end" th:text="${#dates.format(data.createTime, 'dd-MMM-yyyy, HH:mm a')}">5 hours ago</div>
-                </td>
-                <!--                    <td style="display:none" th:text="${data.fragmentName}"></td>-->
-                <!--                    <td th:text="${data.fragmentPackage}"></td>-->
-                <td style="display:none" th:text="${data.orders}"></td>
+                <td th:text="${data.orders}"></td>
                 <!--begin::Action=-->
                 <td class="text-end">
                     <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
@@ -163,40 +176,6 @@
                 </td>
                 <!--end::Action=-->
             </tr>
-            <tr th:each="child : ${data.children}" data-kt-docs-datatable-subtable="subtable_template" th:class="'subtable_template_'+${data.id}" style="display:none" >
-                <td>
-                    <div class="form-check form-check-sm form-check-custom form-check-solid">
-                        <input class="form-check-input" type="checkbox" th:value="${child.id}"/>
-                    </div>
-                </td>
-                <td></td>
-                <td style="display:none" class="id" th:text="${child.id}"></td>
-                <td style="display:none" class="systemId" th:text="${child.systemId}"></td>
-                <td style="display:none" th:text="${child.pid}"></td>
-                <td th:text="${child.name}"></td>
-                <td style="display:none" th:text="${child.type}"></td>
-                <td th:text="${child.permissionValue}"></td>
-                <td th:text="${child.uri}"></td>
-                <!--                            <td th:text="${child.icon}"></td>-->
-                <td>
-                    <div class="badge fw-bolder"
-                         th:text="${child.status==true ? '啟用' : '禁用'}" th:value="${child.status}"
-                         th:classappend="${child.status==true ? 'badge-light-success' : 'badge-light-danger'}" >Enabled</div>
-                </td>
-                <td>
-                    <div class="badge badge-light fw-bolder text-end" th:text="${#dates.format(data.createTime, 'dd-MMM-yyyy, HH:mm a')}">5 hours ago</div>
-                </td>
-                <!--                    <td style="display:none" th:text="${child.fragmentName}"></td>-->
-                <!--                    <td th:text="${child.fragmentPackage}"></td>-->
-                <td style="display:none" th:text="${child.orders}"></td>
-                <!--begin::Action=-->
-                <td class="text-end">
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
-                </td>
-                <!--end::Action=-->
-            </tr>
-        </th:block>
         <!--end::SubTable template-->
         </tbody>
         <!--end::Table body-->

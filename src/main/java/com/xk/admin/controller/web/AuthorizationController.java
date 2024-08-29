@@ -97,7 +97,7 @@ public class AuthorizationController extends BaseController {
     }
 
     @PostMapping("/signUp")
-    public String signUp(UpmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) {
+    public String signUp(UpmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) throws Exception {
         UpmsUserSaveResp result;
 
         // 01. check referral Code first
@@ -118,6 +118,7 @@ public class AuthorizationController extends BaseController {
         resources.setCreateBy("signUp by self");
         result = upmsUserService.create(resources);
         LOGGER.info("新增用户，主键：userId={}", result.getId());
+
         UpmsRole role = upmsRoleService.selectByCode("member");
         if (role == null) {
             // 如果角色不存在，可以處理相應邏輯
@@ -126,6 +127,8 @@ public class AuthorizationController extends BaseController {
         }
         String[] roleIds = {String.valueOf(role.getId())};
         upmsUserRoleService.role(result.getId(), roleIds);
+
+
 
         if (result != null) {
             return R_AUTH_SIGNIN;

@@ -48,7 +48,7 @@ public class AdminInitController {
      * init()
      */
     @GetMapping("/init")
-    public String init() {
+    public String init() throws Exception {
         upmsSystemRestController.init();
         upmsPermissionRestController.init();
         upmsRoleRestController.init();

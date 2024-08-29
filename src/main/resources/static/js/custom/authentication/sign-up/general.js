@@ -60,6 +60,13 @@ var KTSignupGeneral = function() {
                             }
                         }
                     },
+					'referralCode': {
+						validators: {
+							notEmpty: {
+								message: 'referralCode is required'
+							}
+						}
+                    },
                     'toc': {
                         validators: {
                             notEmpty: {

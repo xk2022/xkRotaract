@@ -16,6 +16,7 @@ public interface UpmsUserRepository extends JpaRepository<UpmsUser, Long>, Seria
     UpmsUser findByCellPhoneAndPassword(String cellPhone, String code);
 
     UpmsUser findByEmail(String email);
+    UpmsUser findByCellPhone(String cellPhone);
 
     @Query("SELECT u FROM UpmsUser u WHERE u.cellPhone LIKE %:referralCode%")
     List<UpmsUser> findByCellPhoneLike(@Param("referralCode") String referralCode);

@@ -207,7 +207,14 @@ function updateDrawerContent(data) {
         $('#name').text(data.name);
         $('#phone').text(data.phone);
         $('#address').text(data.address);
-        $('#url').text(data.url);
+        // 更新 #url 的文本和 href 属性
+        if (data.url) {
+            $('#url').text(data.url);
+            $('#url').parent('a').attr('href', data.url); // 更新父 <a> 标签的 href 属性
+        } else {
+            $('#url').text('No URL available');
+            $('#url').parent('a').removeAttr('href'); // 移除 href 属性，防止点击
+        }
     }
 }
 

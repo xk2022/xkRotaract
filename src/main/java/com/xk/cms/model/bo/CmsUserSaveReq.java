@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class CmsUserSaveReq extends CmsUser {
 
+    private String email;
+
     private String username;
 
     private String cellPhone;

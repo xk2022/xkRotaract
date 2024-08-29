@@ -85,8 +85,9 @@ public class UpmsUserController extends BaseController {
 //    @RequiresPermissions("upms:user:create")
 //    @RequiresPermissions("upms:user:update")
     @PostMapping("/save")
-    public String post(UpmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) {
+    public String post(UpmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) throws Exception {
         UpmsUserSaveResp result;
+
         if (resources.getId() == null) {
             result = upmsUserService.create(resources);
             LOGGER.info("新增用户，主键：userId={}", result.getId());

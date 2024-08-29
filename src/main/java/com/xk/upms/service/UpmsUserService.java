@@ -22,9 +22,9 @@ public interface UpmsUserService {
     
     UpmsUserDetailResp selectDeatilById(long id);
 
-    UpmsUserSaveResp create(UpmsUserSaveReq resources);
+    UpmsUserSaveResp create(UpmsUserSaveReq resources) throws Exception;
 
-    UpmsUserSaveResp update(Long id, UpmsUserSaveReq resources);
+    UpmsUserSaveResp update(Long id, UpmsUserSaveReq resources) throws Exception;
 
     void delete(Long id);
 

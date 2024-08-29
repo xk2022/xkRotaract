@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
-
 /**
  * 用户 Controller
  * Created by yuan on 2024/02/21
@@ -36,7 +34,7 @@ public class CmsUserController extends BaseController {
      * 新增/修改 用户 Create/Update
      */
     @PostMapping("/save")
-    public String post(CmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) {
+    public String post(CmsUserSaveReq resources, RedirectAttributes attributes) throws Exception {
         CmsUserSaveResp result;
 
         if (resources.getId() == null) {

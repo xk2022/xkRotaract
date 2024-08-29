@@ -48,7 +48,7 @@ public class UpmsUserRestController {
      * init()
      */
     @GetMapping("/init")
-    public String init() {
+    public String init() throws Exception {
         UpmsUserSaveReq data = new UpmsUserSaveReq();
         data.setCreateBy("system restAPI");
         data.setCreateTime(new Date());

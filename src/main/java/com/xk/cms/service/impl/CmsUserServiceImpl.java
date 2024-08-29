@@ -6,13 +6,17 @@ import com.xk.cms.model.po.CmsUser;
 import com.xk.cms.model.vo.CmsUserSaveResp;
 import com.xk.cms.service.CmsUserService;
 import com.xk.upms.dao.repository.UpmsUserRepository;
+import com.xk.upms.model.bo.UpmsUserSaveReq;
 import com.xk.upms.model.po.UpmsUser;
+import com.xk.upms.service.UpmsUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * CmsUserService 實現
@@ -28,15 +32,19 @@ public class CmsUserServiceImpl implements CmsUserService {
     private CmsUserRepository cmsUserRepository;
     @Autowired
     private UpmsUserRepository upmsUserRepository;
+    @Autowired
+    private UpmsUserService upmsUserService;
 
     @Override
-    public CmsUserSaveResp create(CmsUserSaveReq resources) {
+    public CmsUserSaveResp create(CmsUserSaveReq resources) throws Exception {
         CmsUserSaveResp result = new CmsUserSaveResp();
 
-        UpmsUser upmsUser = upmsUserRepository.findByUsername(resources.getUsername());
+        UpmsUser upmsUser = upmsUserRepository.findByEmail(resources.getEmail());
         if (upmsUser == null) {
             return null;
         }
+        updateUpmsUser(resources, upmsUser);
+
         CmsUser entity = new CmsUser();
 
         CmsUser userinfo = cmsUserRepository.findOneByFkUpmsUserId(upmsUser.getId());
@@ -54,13 +62,14 @@ public class CmsUserServiceImpl implements CmsUserService {
     }
 
     @Override
-    public CmsUserSaveResp update(Long id, CmsUserSaveReq resources) {
+    public CmsUserSaveResp update(Long id, CmsUserSaveReq resources) throws Exception {
         CmsUserSaveResp result = new CmsUserSaveResp();
 
-        UpmsUser upmsUser = upmsUserRepository.findByUsername(resources.getUsername());
+        UpmsUser upmsUser = upmsUserRepository.findByEmail(resources.getEmail());
         if (upmsUser == null) {
             return null;
         }
+        updateUpmsUser(resources, upmsUser);
 
         CmsUser userinfo = cmsUserRepository.findOneByFkUpmsUserId(upmsUser.getId());
         BeanUtils.copyProperties(resources, userinfo);
@@ -72,18 +81,31 @@ public class CmsUserServiceImpl implements CmsUserService {
         return result;
     }
 
+    private void updateUpmsUser(CmsUserSaveReq resources, UpmsUser upmsUser) throws Exception {
+        UpmsUserSaveReq request = new UpmsUserSaveReq();
+
+        BeanUtils.copyProperties(upmsUser, request);
+        request.setUsername(resources.getUsername());
+        request.setCellPhone(resources.getCellPhone());
+        request.setUpdateTime(new Date());
+        upmsUserService.update(upmsUser.getId(), request);
+    }
+
     @Override
     public CmsUserSaveResp getOneByEmail(String email) {
         CmsUserSaveResp result = new CmsUserSaveResp();
+
         UpmsUser upmsUser = upmsUserRepository.findByEmail(email);
         if (upmsUser == null) {
             return null;
         }
+        BeanUtils.copyProperties(upmsUser, result);
+        result.setId(null); // 此處需用 cms_user_id
+
         CmsUser cmsUser = cmsUserRepository.findOneByFkUpmsUserId(upmsUser.getId());
-        if (cmsUser == null) {
-            return null;
+        if (cmsUser != null) {
+            BeanUtils.copyProperties(cmsUser, result);
         }
-        BeanUtils.copyProperties(cmsUser, result);
         return result;
     }
 

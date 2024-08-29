@@ -4,12 +4,14 @@ import com.xk.common.util.NotFoundException;
 import com.xk.common.util.XkBeanUtils;
 import com.xk.upms.dao.mapper.UpmsRoleMapper;
 import com.xk.upms.dao.mapper.UpmsUserMapper;
+import com.xk.upms.dao.repository.UpmsUserRefRepository;
 import com.xk.upms.dao.repository.UpmsUserRepository;
 import com.xk.upms.model.bo.UpmsUserReq;
 import com.xk.upms.model.bo.UpmsUserSaveReq;
 import com.xk.upms.model.dto.UpmsUserRoleExample;
 import com.xk.upms.model.po.UpmsRole;
 import com.xk.upms.model.po.UpmsUser;
+import com.xk.upms.model.po.UpmsUserRef;
 import com.xk.upms.model.vo.UpmsUserDetailResp;
 import com.xk.upms.model.vo.UpmsUserIndexResp;
 import com.xk.upms.model.vo.UpmsUserResp;
@@ -44,6 +46,8 @@ public class UpmsUserServiceImpl implements UpmsUserService {
     private UpmsUserMapper upmsUserMapper;
     @Autowired
     private UpmsRoleMapper upmsRoleMapper;
+    @Autowired
+    private UpmsUserRefRepository upmsUserRefRepository;
 
 //    @Override
 //    public List list(UpmsUserReq resources) {
@@ -90,8 +94,10 @@ public class UpmsUserServiceImpl implements UpmsUserService {
     }
 
     @Override
-    public UpmsUserSaveResp create(UpmsUserSaveReq resources) {
+    public UpmsUserSaveResp create(UpmsUserSaveReq resources) throws Exception {
         UpmsUserSaveResp result = new UpmsUserSaveResp();
+
+        upmsUserValidator(resources);
 
         UpmsUser req = new UpmsUser();
         BeanUtils.copyProperties(resources, req);
@@ -102,22 +108,50 @@ public class UpmsUserServiceImpl implements UpmsUserService {
         req.setCreateTime(new Date());
 //        req.setCreateTime(new java.sql.Date(new Date().getTime()));
         UpmsUser entity = upmsUserRepository.save(req);
-//        UpmsRole firstRole = new UpmsRole();
+
+        if (StringUtils.isNotBlank(resources.getReferralCode())) {
+            List<UpmsUser> referraler = upmsUserRepository.findByCellPhoneLike(resources.getReferralCode());
+
+            UpmsUserRef refEntity = new UpmsUserRef();
+            refEntity.setReferrerId(referraler.get(0).getId());
+            refEntity.setRefereeId(entity.getId());
+            refEntity.setReferralCode(resources.getReferralCode());
+            upmsUserRefRepository.save(refEntity);
+        }
 
         BeanUtils.copyProperties(entity, result);
         return result;
     }
 
     @Override
-    public UpmsUserSaveResp update(Long id, UpmsUserSaveReq resources) {
+    public UpmsUserSaveResp update(Long id, UpmsUserSaveReq resources) throws Exception {
         UpmsUserSaveResp result = new UpmsUserSaveResp();
+
+        UpmsUser entity = upmsUserRepository.findByEmail(resources.getEmail());
+        if (!entity.getId().equals(id)) {
+            upmsUserValidator(resources);
+        }
 
         UpmsUser req = new UpmsUser();
         BeanUtils.copyProperties(resources, req);
-        UpmsUser entity = upmsUserRepository.save(req);
+        entity = upmsUserRepository.save(req);
 
         BeanUtils.copyProperties(entity, result);
         return result;
+    }
+
+    private void upmsUserValidator(UpmsUserSaveReq resources) throws Exception {
+
+        // 01. check account only first
+        boolean isEmailExist = this.checkField("email", resources.getEmail());
+        if (!isEmailExist) {
+            throw new Exception("電子郵件，先前已註冊使用中。");
+        }
+        boolean isCellPhoneExist = this.checkField("cellPhone", resources.getCellPhone());
+        if (isCellPhoneExist) {
+            throw new Exception("行動電話，先前已註冊使用中。");
+        }
+
     }
 
     @Override
@@ -142,6 +176,7 @@ public class UpmsUserServiceImpl implements UpmsUserService {
     @Override
     public boolean checkField(String columnName, String checkValue) {
         boolean isExist = false;
+        UpmsUser entity;
 
         switch (columnName) {
             case "referralCode":
@@ -151,13 +186,17 @@ public class UpmsUserServiceImpl implements UpmsUserService {
                 }
                 break;
             case "email":
-                UpmsUser entity = upmsUserRepository.findByEmail(checkValue);
+                entity = upmsUserRepository.findByEmail(checkValue);
                 if (entity != null) {
                     isExist = true;
                 }
                 break;
+            case "cellPhone":
+                entity = upmsUserRepository.findByCellPhone(checkValue);
+                if (entity != null) {
+                    isExist = true;
+                }
         }
-
         return isExist;
     }
 
