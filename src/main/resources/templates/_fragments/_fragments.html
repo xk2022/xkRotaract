@@ -46,6 +46,7 @@
                 <!--end::Logo-->
             </span>
         </div>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <!--begin::Svg Icon | path: icons/duotune/abstract/abs015.svg-->
             <span class="svg-icon svg-icon-1" />
@@ -54,7 +55,6 @@
                 <path opacity="0.3" d="M21 14H3C2.4 14 2 13.6 2 13V11C2 10.4 2.4 10 3 10H21C21.6 10 22 10.4 22 11V13C22 13.6 21.6 14 21 14ZM22 20V18C22 17.4 21.6 17 21 17H3C2.4 17 2 17.4 2 18V20C2 20.6 2.4 21 3 21H21C21.6 21 22 20.6 22 20Z" fill="black" />
             </svg>
         </button>
-
         <div class="col-4 collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <div class="flex-equal text-end ms-1 position-relative z-index-2">
                 <a th:href="@{/}" class="btn text-danger">
@@ -85,7 +85,7 @@
                     </svg>
                 </a>
                 <th:block th:if="${iSearch != 'false'}">
-                    <a class="btn text-danger" data-bs-toggle="modal" data-bs-target="#kt_modal_input" name="add_btn">
+                    <a class="btn text-danger search_btn" data-bs-toggle="modal" data-bs-target="#kt_modal_input" name="search_btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                         </svg>
@@ -93,8 +93,64 @@
                 </th:block>
             </div>
         </div>
+
+<!--        <div class="collapse navbar-collapse" id="navbarSupportedContent">-->
+<!--            <div class="flex-equal ms-1 position-relative z-index-2">-->
+<!--                <ul class="navbar-nav mr-auto">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a th:href="@{/}" class="btn text-danger">-->
+<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">-->
+<!--                                <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>-->
+<!--                            </svg>-->
+<!--                            <span style="font-size: 1.5em;">　Home　-　首頁</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a th:href="@{/BizMap}" class="btn text-danger">-->
+<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">-->
+<!--                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>-->
+<!--                            </svg>-->
+<!--                            <span style="font-size: 1.5em;">　BizMap　-　產業地圖</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item" th:if="${iInfo != 'false'}">-->
+<!--                        <a href="https://www.facebook.com/taiwanrotaract?locale=zh_TW" class="btn text-danger" target="_blank">-->
+<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-square-fill" viewBox="0 0 16 16">-->
+<!--                                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm8.93 4.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>-->
+<!--                            </svg>-->
+<!--                            <span style="font-size: 1.5em;">　News　-　最新快訊</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a th:href="@{/}" class="btn text-danger">-->
+<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">-->
+<!--                                <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>-->
+<!--                            </svg>-->
+<!--                            <span style="font-size: 1.5em;">　Kalendar　-　聯合行事曆</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a th:href="@{/admin/signIn}" class="btn text-danger">-->
+<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">-->
+<!--                                <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>-->
+<!--                            </svg>-->
+<!--                            <span style="font-size: 1.5em;">　Admin　-　註冊/登入</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item" th:if="${iSearch != 'false'}">-->
+<!--                        <a class="btn text-danger" data-bs-toggle="modal" data-bs-target="#kt_modal_input" name="add_btn">-->
+<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">-->
+<!--                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>-->
+<!--                            </svg>-->
+<!--                            <span style="font-size: 1.5em;">　Filter　-　塞選</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </nav>
+
 <!--nav導航-->
 
 <!--header頂部-->

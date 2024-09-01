@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+    <script th:inline="javascript">
+        // Insert
+        $("[name='add_btn']").click(function(){
+            $('#modal_name').text("新增公司");
+            $("[name='id']").val(null);
+            $("[name='name']").val(null);
+            $("[name='phone']").val(null);
+            $("[name='address']").val(null);
+            $("[name='url']").val(null);
+            $("[name='industryIds']").prop('checked', false);
+        });
+
+        // Update
+        var readyToEdit = function(row) {
+            $('#modal_name').text("更新公司");
+            $("[name='id']").val(row[1].innerText);
+            $("[name='name']").val(row[2].innerText);
+            $("[name='phone']").val(row[3].innerText);
+            $("[name='address']").val(row[4].innerText);
+            $("[name='url']").val(row[5].innerText);
+
+            var industryIds = row[6].innerText;
+            $("[name='industryIds']").prop('checked', false);
+            var iids = industryIds.replace("[", '').replace("]", '').replace(" ", '').split(",");
+            for (var i = 0; i < iids.length; i++) {
+                var checkboxId = '#flexCheckDefault_' + iids[i].trim();
+                $(checkboxId).prop('checked', true);
+            }
+        }
+
+        // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+        var validator = FormValidation.formValidation( form,
+            {
+                fields: {
+                    'name': { validators: { notEmpty: {
+                                message: 'Permission name is required' } } },
+                    'title': { validators: { notEmpty: {
+                                message: 'Permission name is required' } } },
+                    'basePath': { validators: { notEmpty: {
+                                message: 'Permission name is required' } } },
+                },
+                plugins: {
+                    trigger: new FormValidation.plugins.Trigger(),
+                    bootstrap: new FormValidation.plugins.Bootstrap5({
+                        rowSelector: '.fv-row',
+                        eleInvalidClass: '',
+                        eleValidClass: ''
+                    })
+                }
+            }
+        );
+
+        // JavaScript函数，用于将input1的值复制到input2中
+        function copyInputValue() {
+            var input1 = document.getElementById("name");
+            var input2 = document.getElementById("basepath");
+
+            input2.value = '/' + input1.value;
+        }
+    </script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+
+
+<div th:fragment="input" class="modal fade" id="kt_modal_input" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div th:fragment="Modal_header" class="modal-header">
+                <!--begin::Modal title-->
+                <h2 class="fw-bolder" id="modal_name"></h2>
+                <!--end::Modal title-->
+                <!--begin::Close-->
+                <th:block th:replace="admin/_fragments/input_basic :: btn_close"></th:block>
+                <!--end::Close-->
+            </div>
+            <!--end::Modal header-->
+
+            <!--begin::Modal body-->
+            <div id="filterBlock" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+                <!--begin::Input group-->
+                <div class="row fv-row mb-7">
+                    <div class="col-md">
+                        <!-- 全选复选框 -->
+                        <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
+                            <div class="col-12 mb-3 no-wrap">
+                                <input class="form-check-input" type="checkbox" id="selectAll" checked/>
+                                <label class="form-check-label" for="selectAll">全選</label>
+                            </div>
+                        </div>
+
+                        <th:block th:each="chunk : ${chunkedIndustries}">
+                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
+                                <!--                                <div class="col-md" th:each="industry : ${chunk}">-->
+                                <div th:each="industry, iterStat : ${chunk}" class="col-6 mb-3 no-wrap" th:classappend="${iterStat.index % 2 == 0} ? ' border-right' : ''">
+                                    <input class="form-check-input industry-checkbox" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" checked/>
+                                    <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+                <!--end::Input group-->
+                <!--begin::Actions-->
+                <div class="text-center">
+                    <!--                    <button type="reset" class="btn btn-light me-3" data-kt-modal-action="cancel">取消</button>-->
+                    <button type="submit" class="btn btn-primary" data-kt-modal-action="submit" onclick="handleButtonClick()">
+                        <span class="indicator-label">篩選</span>
+                        <span class="indicator-progress">請稍候...
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </button>
+                </div>
+                <!--end::Actions-->
+            </div>
+            <!--end::Modal body-->
+            <!--begin::Modal body-->
+            <div id="ciSection" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+                <!--begin::Form-->
+                <form id="kt_modal_input_form" class="form">
+                    <input type="hidden" name="id">
+                    <!--begin::Input group-->
+                    <div class="row fv-row mb-7">
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span>Rotary Club Name:</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="必填"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a company name" name="rotaract_name" id="rotaract_name" readonly/>
+                            <!--end::Input-->
+                        </div>
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span>Member Name:</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="未填寫，將顯示「暫不提供」"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a contact phone number" name="rname" id="rname" readonly/>
+                            <!--end::Input-->
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                    <hr>
+                    <!--begin::Input group-->
+                    <div class="row fv-row mb-7">
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span>Company Name:</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="必填"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a company name" name="name" id="name" readonly/>
+                            <!--end::Input-->
+                        </div>
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span>Phone Number:</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="未填寫，將顯示「暫不提供」"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a contact phone number" name="phone" id="phone" readonly/>
+                            <!--end::Input-->
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="row fv-row mb-7">
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span>公司地址</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="請注意填寫正確，會由系統自動產生經緯度（顯示於地圖上）"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a address" name="address" id="address" readonly/>
+                            <!--end::Input-->
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="row fv-row mb-7">
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span>公司網址</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                                   data-bs-trigger="hover" data-bs-html="true"
+                                   data-bs-content="未填寫，將顯示「暫不提供」"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <a class="form-control form-control-solid" href="https://www.example.com" target="_blank"><span id="url"></span></a>
+<!--                            <input class="form-control form-control-solid" placeholder="Enter a url" name="url" />-->
+                            <!--end::Input-->
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+<!--                    <div class="row fv-row mb-7">-->
+<!--                        <div class="col-md">-->
+<!--                            &lt;!&ndash;begin::Label&ndash;&gt;-->
+<!--                            <label class="fs-6 fw-bold form-label mb-2">-->
+<!--                                <span class="required">行業別</span>-->
+<!--                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"-->
+<!--                                   data-bs-trigger="hover" data-bs-html="true"-->
+<!--                                   data-bs-content="必填，最少擇一"></i>-->
+<!--                            </label>-->
+<!--                            &lt;!&ndash;end::Label&ndash;&gt;-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <!--end::Input group-->
+                    <!--begin::Actions-->
+<!--                    <div th:replace="admin/_fragments/input_basic :: Actions"></div>-->
+                    <!--end::Actions-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <!--end::Modal body-->
+
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+
+
+
+</html>

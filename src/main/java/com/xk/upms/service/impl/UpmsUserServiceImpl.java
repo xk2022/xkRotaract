@@ -144,14 +144,15 @@ public class UpmsUserServiceImpl implements UpmsUserService {
 
         // 01. check account only first
         boolean isEmailExist = this.checkField("email", resources.getEmail());
-        if (!isEmailExist) {
+        if (isEmailExist) {
             throw new Exception("電子郵件，先前已註冊使用中。");
         }
-        boolean isCellPhoneExist = this.checkField("cellPhone", resources.getCellPhone());
-        if (isCellPhoneExist) {
-            throw new Exception("行動電話，先前已註冊使用中。");
+        if (resources.getCellPhone() != null) {
+            boolean isCellPhoneExist = this.checkField("cellPhone", resources.getCellPhone());
+            if (isCellPhoneExist) {
+                throw new Exception("行動電話，先前已註冊使用中。");
+            }
         }
-
     }
 
     @Override

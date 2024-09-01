@@ -1,9 +1,11 @@
 package com.xk.upms.service.impl;
 
 import com.xk.upms.dao.repository.UpmsOrganizationRepository;
+import com.xk.upms.dao.repository.UpmsOrganizationUserRepository;
 import com.xk.upms.model.bo.UpmsOrganizationReq;
 import com.xk.upms.model.bo.UpmsOrganizationSaveReq;
 import com.xk.upms.model.po.UpmsOrganization;
+import com.xk.upms.model.vo.UpmsOrganizationResp;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
 import com.xk.upms.service.UpmsOrganizationService;
 import org.slf4j.Logger;
@@ -27,10 +29,24 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
 
     @Autowired
     private UpmsOrganizationRepository upmsOrganizationRepository;
+    @Autowired
+    private UpmsOrganizationUserRepository upmsOrganizationUserRepository;
 
     @Override
     public List list(UpmsOrganizationReq resources) {
         return upmsOrganizationRepository.findAll();
+    }
+
+    @Override
+    public UpmsOrganizationResp findById(Long id) {
+        UpmsOrganizationResp resp = new UpmsOrganizationResp();
+
+        UpmsOrganization entity = upmsOrganizationRepository.getOne(id);
+        Long cntUser = upmsOrganizationUserRepository.countByOrganizationId(entity.getId());
+
+        BeanUtils.copyProperties(entity, resp);
+        resp.setCountUser(cntUser);
+        return resp;
     }
 
     @Override

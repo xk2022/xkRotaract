@@ -16,4 +16,7 @@ public interface UpmsUserOrganizationService {
     void organization(String[] organizationIds, long id);
 
     Object selectByUserId(long id);
+
+    List<UpmsUserOrganizationExample> getUsers(long organizationId);
+
 }

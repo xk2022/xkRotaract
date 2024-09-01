@@ -106,6 +106,14 @@ public class UpmsPermissionRestController {
         data.setUri("/admin/upms/manage/organization");
         data.setOrders((long) 12);
         upmsPermissionService.create(data);
+
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/upms/manage/organization");
+        data.setPid(findParentEntity.getId());
+        data.setName("組織明細");
+        data.setPermissionValue("upms:organization/detail");
+        data.setUri("/admin/upms/manage/organization/detail");
+        data.setOrders((long) 121);
+        upmsPermissionService.create(data);
         /**
          * /admin/upms/ru
          */
@@ -139,6 +147,14 @@ public class UpmsPermissionRestController {
         data.setPermissionValue("upms:role/detail");
         data.setUri("/admin/upms/manage/role/detail");
         data.setOrders((long) 211);
+        upmsPermissionService.create(data);
+
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/upms/manage/user");
+        data.setPid(findParentEntity.getId());
+        data.setName("用戶明細");
+        data.setPermissionValue("upms:user/detail");
+        data.setUri("/admin/upms/manage/user/detail");
+        data.setOrders((long) 221);
         upmsPermissionService.create(data);
         /**
          * /admin/upms/p
@@ -259,6 +275,26 @@ public class UpmsPermissionRestController {
         data.setPermissionValue("cms:applyCompany");
         data.setUri("/admin/cms/manage/applyCompany");
         data.setOrders((long) 22);
+        upmsPermissionService.create(data);
+        /**
+         * /admin/cms/d
+         */
+        data.setPid(null);
+        data.setName("Kalendar管理");
+        data.setType((byte) 1);
+        data.setPermissionValue("cms:d");
+        data.setUri("/admin/cms/manage/d");
+        data.setOrders((long) 3);
+        upmsPermissionService.create(data);
+
+        findParentEntity = upmsPermissionService.findOneByUri("/admin/cms/manage/d");
+        data.setPid(findParentEntity.getId());
+        data.setType((byte) 2);
+
+        data.setName("Kalendar");
+        data.setPermissionValue("cms:calendar");
+        data.setUri("/admin/cms/manage/calendar");
+        data.setOrders((long) 31);
         upmsPermissionService.create(data);
 
         return "OK";

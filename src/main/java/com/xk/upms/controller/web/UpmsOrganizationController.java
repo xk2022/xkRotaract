@@ -5,6 +5,7 @@ import com.xk.upms.model.bo.UpmsOrganizationSaveReq;
 import com.xk.upms.model.po.UpmsOrganization;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
 import com.xk.upms.service.UpmsOrganizationService;
+import com.xk.upms.service.UpmsUserOrganizationService;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,8 @@ public class UpmsOrganizationController extends BaseController {
 
     @Autowired
     private UpmsOrganizationService upmsOrganizationService;
+    @Autowired
+    private UpmsUserOrganizationService upmsUserOrganizationService;
 
     /**
      * 查詢 組織 首頁
@@ -45,6 +48,18 @@ public class UpmsOrganizationController extends BaseController {
         model.addAttribute("fragmentName", "list");
 
         model.addAttribute("page_list", upmsOrganizationService.list(null));
+        model.addAttribute("entity", new UpmsOrganization());
+        return ADMIN_INDEX;
+    }
+
+    @GetMapping("/{id}")
+    public String list(@PathVariable Long id, Model model) {
+        this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]+"/detail");
+        model.addAttribute("fragmentName", "detail");
+
+        model.addAttribute("organization", upmsOrganizationService.findById(id));
+        model.addAttribute("page_list", upmsUserOrganizationService.getUsers(id));
+
         model.addAttribute("entity", new UpmsOrganization());
         return ADMIN_INDEX;
     }

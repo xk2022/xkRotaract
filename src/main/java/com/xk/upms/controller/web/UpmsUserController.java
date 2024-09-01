@@ -68,12 +68,9 @@ public class UpmsUserController extends BaseController {
      */
     @GetMapping("/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
-        this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
-        model.addAttribute("fragmentSystem", "upms");
-        model.addAttribute("fragmentPackage", "user/detail");
+        this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]+"/detail");
         model.addAttribute("fragmentName", "detail");
 
-//        model.addAttribute("page_list", upmsUserService.list(null));
         model.addAttribute("info", upmsUserService.selectDeatilById(id));
         model.addAttribute("entity", upmsUserService.selectByPrimaryKey(id));
         return ADMIN_INDEX;
@@ -92,7 +89,7 @@ public class UpmsUserController extends BaseController {
             result = upmsUserService.create(resources);
             LOGGER.info("新增用户，主键：userId={}", result.getId());
         } else {
-            // 不允许直接改密码
+            // 不允许直接改密码 AuthorizationController.passwordReset()
             resources.setPassword(null);
 
             result = upmsUserService.update(resources.getId(), resources);
@@ -178,7 +175,6 @@ public class UpmsUserController extends BaseController {
 //        return new UpmsResult(UpmsResultConstant.SUCCESS, datas.size());
         return REDIRECT_ADDR;
     }
-
 
 }
 

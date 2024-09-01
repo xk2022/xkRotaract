@@ -15,7 +15,6 @@
         $("[name='name']").val(null);
         $("[name='permissionValue']").val(null);
         $("[name='uri']").val(null);
-        $("[name='fragmentPackage']").val(null);
         $("[name='status']")[0].checked = true;
         $("[name='orders']").val(null);
     });
@@ -31,7 +30,6 @@
         $("[name='type']").val(row[6].innerText);
         $("[name='permissionValue']").val(row[7].innerText);
         $("[name='uri']").val(row[8].innerText);
-        $("[name='fragmentPackage']").val(null);
         $("[name='status']")[0].checked = true;
         var btnradio_status_ = row[9].innerText == '啟用';
         $("#btnradio_status_"+btnradio_status_).prop('checked', true);
@@ -157,40 +155,6 @@
                        name="permissionValue"/>
                 <!--end::Input-->
             </div>
-            <div class="col-md">
-                <!--begin::Label-->
-                <label class="fs-6 fw-bold form-label mb-2">
-                    <span th:text="組件路徑"></span>
-                </label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <input class="form-control form-control-solid" placeholder="Enter a menu path"
-                       name="fragmentPackage"/>
-                <!--end::Input-->
-            </div>
-        </div>
-        <!--end::Input group-->
-        <!--begin::Input group-->
-        <div class="row fv-row mb-7">
-            <!--                        <div class="col-md">-->
-            <!--                            &lt;!&ndash;begin::Label&ndash;&gt;-->
-            <!--                            <label class="fs-6 fw-bold form-label mb-2">-->
-            <!--                                <span class="" th:text="類型"></span>-->
-            <!--                            </label>-->
-            <!--                            &lt;!&ndash;end::Label&ndash;&gt;-->
-            <!--                            &lt;!&ndash;begin::Input&ndash;&gt;-->
-            <!--                            <div class="btn-group form-control form-control-solid mb-3 mb-lg-0" role="group" aria-label="Basic radio toggle button group">-->
-            <!--                                <input type="radio" class="btn-check" name="btnradio_type0" id="btnradio_type0" value="0" th:field="*{type}" autocomplete="off" checked>-->
-            <!--                                <label class="btn btn-outline-primary" for="btnradio_type0" th:text="目錄">Radio 1</label>-->
-
-            <!--                                <input type="radio" class="btn-check" name="btnradio_type1" id="btnradio_type1" value="1" th:field="*{type}" autocomplete="off">-->
-            <!--                                <label class="btn btn-outline-primary" for="btnradio_type1" th:text="菜單">Radio 2</label>-->
-
-            <!--                                <input type="radio" class="btn-check" name="btnradio_type2" id="btnradio_type2" value="2" th:field="*{type}" autocomplete="off">-->
-            <!--                                <label class="btn btn-outline-primary" for="btnradio_type2" th:text="按鈕">Radio 3</label>-->
-            <!--                            </div>-->
-            <!--                            &lt;!&ndash;end::Input&ndash;&gt;-->
-            <!--                        </div>-->
             <div class="col-md">
                 <!--begin::Label-->
                 <label class="fs-6 fw-bold form-label mb-2">

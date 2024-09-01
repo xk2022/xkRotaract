@@ -159,11 +159,30 @@ function information(a, b, marker) {
 
     // 添加點擊事件監聽器
     marker.addListener('click', function() {
-        closeDrawer();
+
+        // Populate the page loading element dynamically.
+        // Optionally you can skipt this part and place the HTML
+        // code in the body element by refer to the above HTML code tab.
+        const loadingEl = document.createElement("div");
+        document.body.prepend(loadingEl);
+        loadingEl.classList.add("page-loader");
+        loadingEl.classList.add("flex-column");
+        loadingEl.classList.add("bg-dark");
+        loadingEl.classList.add("bg-opacity-25");
+        loadingEl.innerHTML = `
+            <span class="spinner-border text-primary" role="status"></span>
+            <span class="text-gray-800 fs-6 fw-semibold mt-5">Loading...</span>
+        `;
+
+
+        modal.hide(); // Hide modal
+        form.reset(); // Reset form
         const companyId = this.title; // 从标记的 title 属性获取 companyId
         fetchInformation(companyId).then(data => {
             updateDrawerContent(data);
-            toggleDrawer();
+            toggleVisibility(false);
+            modal.show(); // Hide modal
+//            toggleDrawer();
         });
     });
 
@@ -196,26 +215,46 @@ function fetchInformation(companyId) {
 }
 
 function updateDrawerContent(data) {
-    $('#rotaract_name').text(data.rotaract_name);
-    $('#rname').text(data.rname);
+//    $('#rotaract_name').text(data.rotaract_name);
+//    $('#rname').text(data.rname);
+//
+//    if (data.locked) {
+//        $('#ciSection').hide();
+//    } else {
+//        $('#ciSection').show();
+//
+//        $('#name').text(data.name);
+//        $('#phone').text(data.phone);
+//        $('#address').text(data.address);
+//        // 更新 #url 的文本和 href 属性
+//        if (data.url) {
+//            $('#url').text(data.url);
+//            $('#url').parent('a').attr('href', data.url); // 更新父 <a> 标签的 href 属性
+//        } else {
+//            $('#url').text('No URL available');
+//            $('#url').parent('a').removeAttr('href'); // 移除 href 属性，防止点击
+//        }
+//    }
+        $('#rotaract_name').val(data.rotaract_name);
+        $('#rname').val(data.rname);
 
-    if (data.locked) {
-        $('#ciSection').hide();
-    } else {
-        $('#ciSection').show();
-
-        $('#name').text(data.name);
-        $('#phone').text(data.phone);
-        $('#address').text(data.address);
-        // 更新 #url 的文本和 href 属性
-        if (data.url) {
-            $('#url').text(data.url);
-            $('#url').parent('a').attr('href', data.url); // 更新父 <a> 标签的 href 属性
+        if (data.locked) {
+            $('#ciSection').hide();
         } else {
-            $('#url').text('No URL available');
-            $('#url').parent('a').removeAttr('href'); // 移除 href 属性，防止点击
+            $('#ciSection').show();
+
+            $('#name').val(data.name);
+            $('#phone').val(data.phone);
+            $('#address').val(data.address);
+            // 更新 #url 的文本和 href 属性
+            if (data.url) {
+                $('#url').text(data.url);
+                $('#url').parent('a').attr('href', data.url); // 更新父 <a> 标签的 href 属性
+            } else {
+                $('#url').text('No URL available');
+                $('#url').parent('a').removeAttr('href'); // 移除 href 属性，防止点击
+            }
         }
-    }
 }
 
 function toggleDrawer() {
@@ -224,10 +263,10 @@ function toggleDrawer() {
     drawer.classList.toggle('open', drawerOpen);
 }
 
-function closeDrawer() {
-    drawerOpen = false;
-    document.getElementById('drawer').classList.remove('open');
-}
+//function closeDrawer() {
+//    drawerOpen = false;
+//    document.getElementById('drawer').classList.remove('open');
+//}
 
 // Add event listener to button
 //document.getElementById('drawerToggleButton').addEventListener('click', toggleDrawer);
@@ -262,7 +301,7 @@ function handleButtonClick() {
                 const marker = new google.maps.Marker({
                     position: { lat: Number(location.lat), lng: Number(location.lng) },
                     map: map, // 地图对象
-                    title: location.name, // 地点名称
+                    title: location.locId,
                     icon: customIcon // 自定义图标（可选）
                 });
                 // 将标记添加到地图上

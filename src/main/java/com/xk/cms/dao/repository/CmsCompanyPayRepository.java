@@ -11,6 +11,6 @@ import java.io.Serializable;
  */
 public interface CmsCompanyPayRepository extends JpaRepository<CmsCompanyPay, Long>, Serializable {
 
-//    CmsCompanyPay findByFkCmsCompanyId(Long id);
+    CmsCompanyPay findByFkCmsCompanyId(Long id);
 
 }

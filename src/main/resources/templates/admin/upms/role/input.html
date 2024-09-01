@@ -43,7 +43,7 @@
 <!--begin::Modal body-->
 <div th:fragment="form" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
     <!--begin::Form-->
-    <form id="kt_modal_input_form" class="form" action="#" th:action="@{/admin/upms/manage/role/save}" method="post" th:object="${entity}">
+    <form id="kt_modal_input_form" class="form" th:action="@{/admin/upms/manage/role/save}" method="post" th:object="${entity}">
         <input type="hidden" name="id" th:value="${entity.id}">
         <!--begin::Input group-->
         <div class="fv-row mb-10">

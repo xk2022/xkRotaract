@@ -1,5 +1,6 @@
 package com.xk.upms.service.impl;
 
+import com.xk.upms.dao.mapper.UpmsUserMapper;
 import com.xk.upms.model.dto.UpmsUserOrganizationExample;
 import com.xk.upms.model.po.UpmsUserOrganization;
 import com.xk.upms.service.UpmsUserOrganizationService;
@@ -21,6 +22,8 @@ public class UpmsUserOrganizationServiceImpl implements UpmsUserOrganizationServ
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsUserOrganizationServiceImpl.class);
 
+    @Autowired
+    private UpmsUserMapper upmsUserMapper;
 
     @Override
     public List<UpmsUserOrganization> selectByExample(UpmsUserOrganizationExample upmsUserOrganizationExample) {
@@ -35,6 +38,11 @@ public class UpmsUserOrganizationServiceImpl implements UpmsUserOrganizationServ
     @Override
     public Object selectByUserId(long id) {
         return null;
+    }
+
+    @Override
+    public List<UpmsUserOrganizationExample> getUsers(long organizationId) {
+        return upmsUserMapper.selectUsersByOrganization(organizationId);
     }
 
 }

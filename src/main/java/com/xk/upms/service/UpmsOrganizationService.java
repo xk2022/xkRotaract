@@ -2,6 +2,7 @@ package com.xk.upms.service;
 
 import com.xk.upms.model.bo.UpmsOrganizationReq;
 import com.xk.upms.model.bo.UpmsOrganizationSaveReq;
+import com.xk.upms.model.vo.UpmsOrganizationResp;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
 
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.List;
 public interface UpmsOrganizationService {
 
     List list(UpmsOrganizationReq resources);
+
+    UpmsOrganizationResp findById(Long id);
 
     UpmsOrganizationSaveResp create(UpmsOrganizationSaveReq resources);
 

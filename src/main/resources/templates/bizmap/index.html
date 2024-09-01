@@ -71,81 +71,37 @@
             <div></div>
         </div>
         <!--            <button id="drawerToggleButton">Toggle Drawer</button> &lt;!&ndash; 控制抽屉显示的按钮 &ndash;&gt;-->
-        <div id="drawer" class="drawer">
-            <div class="drawer-content">
-                <button onclick="closeDrawer()">X</button>
-                <!-- Personal Information Section -->
-                <div class="section" id="piSection">
-                    <h3>Personal Information</h3>
-                    <p><strong>Rotary Club Name:</strong> <span id="rotaract_name"></span></p>
-                    <p><strong>Member Name:</strong> <span id="rname"></span></p>
-                </div>
+<!--        <div id="drawer" class="drawer">-->
+<!--            <div class="drawer-content">-->
+<!--                <button onclick="closeDrawer()">X</button>-->
+<!--                &lt;!&ndash; Personal Information Section &ndash;&gt;-->
+<!--                <div class="section" id="piSection">-->
+<!--                    <h3>Personal Information</h3>-->
+<!--                    <p><strong>Rotary Club Name:</strong> <span id="rotaract_name"></span></p>-->
+<!--                    <p><strong>Member Name:</strong> <span id="rname"></span></p>-->
+<!--                </div>-->
 
-                <!-- Company Information Section -->
-                <div class="section" id="ciSection">
-                    <h3>Company Information</h3>
-                    <p><strong>Company Name:</strong> <span id="name"></span></p>
-                    <p><strong>Phone Number:</strong> <span id="phone"></span></p>
-                    <p><strong>Address:</strong> <span id="address"></span></p>
-                    <p><strong>Website:</strong> <a href="https://www.example.com" target="_blank"><span id="url"></span></a></p>
-                </div>
-
-            </div>
-        </div>
+<!--                &lt;!&ndash; Company Information Section &ndash;&gt;-->
+<!--                <div class="section" id="ciSection">-->
+<!--                    <h3>Company Information</h3>-->
+<!--                    <p><strong>Company Name:</strong> <span id="name"></span></p>-->
+<!--                    <p><strong>Phone Number:</strong> <span id="phone"></span></p>-->
+<!--                    <p><strong>Address:</strong> <span id="address"></span></p>-->
+<!--                    <p><strong>Website:</strong> <a href="https://www.example.com" target="_blank"><span id="url"></span></a></p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
+    <!--begin::Page loading(append to body)-->
+    <div class="page-loader flex-column bg-dark bg-opacity-25">
+        <span class="spinner-border text-primary" role="status"></span>
+        <span class="text-gray-800 fs-6 fw-semibold mt-5">Loading...</span>
+    </div>
+    <!--end::Page loading-->
 </div>
 <!--end::Root-->
 <!--begin::Modal - Add task-->
-<div class="modal fade" id="kt_modal_input" tabindex="-1" aria-hidden="true">
-    <!--begin::Modal dialog-->
-    <div class="modal-dialog modal-dialog-centered mw-650px">
-        <!--begin::Modal content-->
-        <div class="modal-content">
-            <!--begin::Modal header-->
-            <div th:fragment="Modal_header" class="modal-header">
-                <!--begin::Modal title-->
-                <h2 class="fw-bolder" id="modal_name">行業別</h2>
-                <!--end::Modal title-->
-                <!--begin::Close-->
-                <th:block th:replace="admin/_fragments/input_basic :: btn_close"></th:block>
-                <!--end::Close-->
-            </div>
-            <!--end::Modal header-->
-            <!--begin::Modal body-->
-            <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                <!--begin::Input group-->
-                <div class="row fv-row mb-7">
-                    <div class="col-md">
-                        <th:block th:each="chunk : ${chunkedIndustries}">
-                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
-<!--                                <div class="col-md" th:each="industry : ${chunk}">-->
-                                <div th:each="industry, iterStat : ${chunk}" class="col-6 mb-3 no-wrap" th:classappend="${iterStat.index % 2 == 0} ? ' border-right' : ''">
-                                    <input class="form-check-input" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" checked/>
-                                    <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>
-                                </div>
-                            </div>
-                        </th:block>
-                    </div>
-                </div>
-                <!--end::Input group-->
-                <!--begin::Actions-->
-                <div class="text-center">
-<!--                    <button type="reset" class="btn btn-light me-3" data-kt-modal-action="cancel">取消</button>-->
-                    <button type="submit" class="btn btn-primary" data-kt-modal-action="submit" onclick="handleButtonClick()">
-                        <span class="indicator-label">篩選</span>
-                        <span class="indicator-progress">請稍候...
-                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                        </span>
-                    </button>
-                </div>
-                <!--end::Actions-->
-            </div>
-            <!--end::Modal body-->
-        </div>
-        <!--end::Modal content-->
-    </div>
-    <!--end::Modal dialog-->
-</div>
+<div th:replace="'bizmap/input' :: input"></div>
 <!--end::Modal - Add task-->
 <!--end::Main-->
 
@@ -158,9 +114,51 @@
 <!--begin::Page Custom Javascript(used by this page)-->
 <!--<script th:src="@{/js/custom/datatables/table.js}"></script>-->
 <script th:src="@{/js/custom/datatables/input.js}"></script>
+<!--/*/<th:block th:replace="'bizmap/input' :: script">/*/-->
+<!--/*/</th:block>/*/-->
 <!--end::Page Custom Javascript-->
 <script>
+    document.getElementById('selectAll').addEventListener('change', function() {
+        var checkboxes = document.querySelectorAll('.industry-checkbox');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = this.checked;
+        }, this);
+    });
 
+
+    function toggleVisibility(show) {
+        var filterBlock = document.getElementById("filterBlock");
+        var showContent = document.getElementById("ciSection");
+        if (show) {
+            filterBlock.style.display = "block";  // 显示元素
+            showContent.style.display = "none";  // 隐藏元素
+        } else {
+            filterBlock.style.display = "none";  // 隐藏元素
+            showContent.style.display = "block";  // 显示元素
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // 假设你有一个变量 `shouldShowButton`，它决定按钮是否显示
+        var shouldShowButton = true; // 或者 false，取决于你的逻辑
+
+        toggleVisibility(false);
+    });
+
+    $('.search_btn').click(function() {
+        toggleVisibility(true);
+    });
+    $('.search_btn').click(function() {
+        toggleVisibility(true);
+    });
+
+
+    // Example usage:
+    // Call this function with true to show the element
+    toggleVisibility(true);
+
+    // Call this function with false to hide the element
+    toggleVisibility(false);
 </script>
 
 <!--    這段是三小-->

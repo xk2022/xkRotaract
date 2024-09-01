@@ -8,7 +8,7 @@
             $('#modal_name').text("新增使用者");
             $("[name='id']").val(null);
             $("[name='username']").val(null);
-            $("[name='avatar']").val(null);
+<!--            $("[name='avatar']").val(null);-->
             $("[name='email']").val(null);
             $("[name='role']").val(null);
         });
@@ -18,7 +18,7 @@
             $('#modal_name').text("更新使用者");
             $("[name='id']").val(row[1].innerText);
             $("[name='username']").val(row[2].innerText);
-            $("[name='avatar']").val(row[0].innerText);
+<!--            $("[name='avatar']").val(row[0].innerText);-->
             $("[name='email']").val(row[7].innerText);
             $("[name='password']").val(null);
         }
@@ -53,152 +53,57 @@
         <input type="hidden" name="id">
         <!--begin::Scroll-->
         <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
+<!--            <div class="fv-row mb-7">-->
+<!--                &lt;!&ndash;begin::Label&ndash;&gt;-->
+<!--                <label class="d-block fw-bold fs-6 mb-5">Avatar</label>-->
+<!--                &lt;!&ndash;end::Label&ndash;&gt;-->
+<!--                &lt;!&ndash;begin::Image input&ndash;&gt;-->
+<!--                <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('assets/media/svg/avatars/blank.svg')">-->
+<!--                    &lt;!&ndash;begin::Preview existing avatar&ndash;&gt;-->
+<!--                    <div class="image-input-wrapper w-125px h-125px" style="background-image: url(assets/media/avatars/300-6.jpg);"></div>-->
+<!--                    &lt;!&ndash;end::Preview existing avatar&ndash;&gt;-->
+<!--                    &lt;!&ndash;begin::Label&ndash;&gt;-->
+<!--                    <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">-->
+<!--                        <i class="bi bi-pencil-fill fs-7"></i>-->
+<!--                        &lt;!&ndash;begin::Inputs&ndash;&gt;-->
+<!--                        <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />-->
+<!--                        <input type="hidden" name="avatar_remove" />-->
+<!--                        &lt;!&ndash;end::Inputs&ndash;&gt;-->
+<!--                    </label>-->
+<!--                    &lt;!&ndash;end::Label&ndash;&gt;-->
+<!--                    &lt;!&ndash;begin::Cancel&ndash;&gt;-->
+<!--                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">-->
+<!--                                    <i class="bi bi-x fs-2"></i>-->
+<!--                                </span>-->
+<!--                    &lt;!&ndash;end::Cancel&ndash;&gt;-->
+<!--                    &lt;!&ndash;begin::Remove&ndash;&gt;-->
+<!--                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">-->
+<!--                                    <i class="bi bi-x fs-2"></i>-->
+<!--                                </span>-->
+<!--                    &lt;!&ndash;end::Remove&ndash;&gt;-->
+<!--                </div>-->
+<!--                &lt;!&ndash;end::Image input&ndash;&gt;-->
+<!--                &lt;!&ndash;begin::Hint&ndash;&gt;-->
+<!--                <div class="form-text">Allowed file types: png, jpg, jpeg.</div>-->
+<!--                &lt;!&ndash;end::Hint&ndash;&gt;-->
+<!--            </div>-->
+            <!--begin::Input group-->
             <div class="fv-row mb-7">
-                <!--begin::Label-->
-                <label class="d-block fw-bold fs-6 mb-5">Avatar</label>
-                <!--end::Label-->
-                <!--begin::Image input-->
-                <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('assets/media/svg/avatars/blank.svg')">
-                    <!--begin::Preview existing avatar-->
-                    <div class="image-input-wrapper w-125px h-125px" style="background-image: url(assets/media/avatars/300-6.jpg);"></div>
-                    <!--end::Preview existing avatar-->
-                    <!--begin::Label-->
-                    <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-                        <i class="bi bi-pencil-fill fs-7"></i>
-                        <!--begin::Inputs-->
-                        <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
-                        <input type="hidden" name="avatar_remove" />
-                        <!--end::Inputs-->
-                    </label>
-                    <!--end::Label-->
-                    <!--begin::Cancel-->
-                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-                                    <i class="bi bi-x fs-2"></i>
-                                </span>
-                    <!--end::Cancel-->
-                    <!--begin::Remove-->
-                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-                                    <i class="bi bi-x fs-2"></i>
-                                </span>
-                    <!--end::Remove-->
-                </div>
-                <!--end::Image input-->
-                <!--begin::Hint-->
-                <div class="form-text">Allowed file types: png, jpg, jpeg.</div>
-                <!--end::Hint-->
-            </div>
-            <div class="fv-row mb-7">
-                <label class="required fw-bold fs-6 mb-2">使用者名稱</label>
+                <label class="required fw-bold fs-6 mb-2">使用者名稱(扶輪名)</label>
                 <input type="text" name="username" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" />
             </div>
-            <div class="fv-row mb-7">
-                <label class="required fw-bold fs-6 mb-2">信箱</label>
-                <input type="email" name="email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com"/>
-            </div>
+            <!--end::Input group-->
             <!--begin::Input group-->
-            <div class="mb-7">
-                <!--begin::Label-->
-                <label class="required fw-bold fs-6 mb-5">權限</label>
-                <!--end::Label-->
-                <!--begin::Roles-->
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="0" id="kt_modal_update_role_option_0" checked='checked' />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_0">
-                            <div class="fw-bolder text-gray-800">Administrator</div>
-                            <div class="text-gray-600">Best for business owners and company administrators</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <div class='separator separator-dashed my-5'></div>
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="1" id="kt_modal_update_role_option_1" />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_1">
-                            <div class="fw-bolder text-gray-800">Developer</div>
-                            <div class="text-gray-600">Best for developers or people primarily using the API</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <div class='separator separator-dashed my-5'></div>
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="2" id="kt_modal_update_role_option_2" />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_2">
-                            <div class="fw-bolder text-gray-800">Analyst</div>
-                            <div class="text-gray-600">Best for people who need full access to analytics data, but don't need to update business settings</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <div class='separator separator-dashed my-5'></div>
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="3" id="kt_modal_update_role_option_3" />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_3">
-                            <div class="fw-bolder text-gray-800">Support</div>
-                            <div class="text-gray-600">Best for employees who regularly refund payments and respond to disputes</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <div class='separator separator-dashed my-5'></div>
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="4" id="kt_modal_update_role_option_4" />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_4">
-                            <div class="fw-bolder text-gray-800">Trial</div>
-                            <div class="text-gray-600">Best for people who need to preview content data, but don't need to make any updates</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <!--end::Roles-->
+            <div class="fv-row mb-7">
+                <label class="required fw-bold fs-6 mb-2">信箱(登入帳號)</label>
+                <input type="email" name="email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com"/>
             </div>
             <!--end::Input group-->
         </div>
         <!--end::Scroll-->
         <!--begin::Disclaimer-->
-        <div class="text-gray-600">Permission set as a
-            <strong class="me-1">Core Permission</strong>will be locked and
-            <strong class="me-1">not editable</strong>in future
+        <div class="text-gray-600">率先協助建立帳號，
+            <strong class="me-1">密碼、權限、組織</strong>...請至使用者明細頁調整
         </div>
         <!--end::Disclaimer-->
         <!--begin::Actions-->
