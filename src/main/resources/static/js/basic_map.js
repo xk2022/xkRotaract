@@ -135,6 +135,10 @@ function initMap() {
             Object.values(data).forEach(function (locations) {
             // 遍历每个位置对象
                 locations.forEach(function (location) {
+                    // 20240906 防呆裝置，避免資料經緯度異常，造成所有標記消失
+                    if (location == null) {
+                        return;
+                    }
                     // 創建標記
                     const marker = new google.maps.Marker({
                         position: { lat: Number(location.lat), lng: Number(location.lng) },

@@ -32,7 +32,7 @@ public class IndexCompanyServiceImpl implements IndexCompanyService {
         LOGGER.info("Fetching all companies.");
         CompanyLoc result = new CompanyLoc();
         try {
-            List<CmsCompany> companies = cmsCompanyRepository.findAll();
+            List<CmsCompany> companies = cmsCompanyRepository.findByLatlngIsNotNull();
 
             // Initialize the map to store locations by type
             Map<String, List<CompanyLoc.Location>> typeMap = new HashMap<>();
@@ -59,8 +59,12 @@ public class IndexCompanyServiceImpl implements IndexCompanyService {
                             location.setName(company.getName());
                             location.setDescription(company.getAddress());
                             String[] latLng = company.getLatlng().split(",");
-                            location.setLat(latLng[0]); // Convert to double
-                            location.setLng(latLng[1]); // Convert to double
+                            if (latLng.length >= 2) {
+                                location.setLat(latLng[0]); // Convert to double
+                                location.setLng(latLng[1]); // Convert to double
+                            } else {
+                                return null;
+                            }
                             return location;
                         })
                         .collect(Collectors.toList());

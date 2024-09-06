@@ -132,6 +132,19 @@
                 var selectedRotaractId = $(this).val();
                 $('input[name="rotaract_id"]').val(selectedRotaractId);
             });
+
+            function init_referralCode() {
+                var referralCode;
+                var cellPhone = $('#cellPhone').val();
+
+                if (cellPhone.length != 10) {
+                    referralCode = '請確認聯絡電話為十碼數字';
+                } else {
+                    referralCode = cellPhone.substr(4, 10);
+                }
+                $('#referralCode').val(referralCode);
+            }
+            init_referralCode();
         });
     </script>
 </th:block><!--</div>-->
@@ -229,7 +242,7 @@
                 <label class="fs-5 fw-bold mb-2">聯絡電話</label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input type="text" class="form-control form-control-solid" placeholder="" name="cellPhone" th:value="${entity.cellPhone}" />
+                <input type="text" class="form-control form-control-solid" placeholder="" name="cellPhone" id="cellPhone" th:value="${entity.cellPhone}" />
                 <!--end::Input-->
             </div>
             <!--end::Col-->
@@ -254,7 +267,7 @@
                 <!--end::Label-->
                 <!--begin::Input-->
                 <!-- 表示從第4個字符（索引為3）到第10個字符（索引為9）的子字符串 -->
-                <input type="text" class="form-control form-control-solid" placeholder="XXXXXX" name="referralCode" th:value="${#strings.substring(entity.phone, 4, 10)}" readonly />
+                <input type="text" class="form-control form-control-solid" placeholder="XXXXXX" name="referralCode" id="referralCode" readonly />
                 <!--end::Input-->
             </div>
             <!--end::Col-->

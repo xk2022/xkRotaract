@@ -201,16 +201,14 @@
         <!--end::Wrapper-->
     </div>
     <!--end::Footer Section-->
-    <!--begin::Scrolltop-->
-    <div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
-        <i class="ki-duotone ki-arrow-up">
-            <span class="path1"></span>
-            <span class="path2"></span>
-        </i>
-    </div>
-    <!--end::Scrolltop-->
 </div>
 <!--end::Root-->
+
+
+<!--begin::Modal - Add task-->
+<div th:replace="'index/input' :: input"></div>
+<!--end::Modal - Add task-->
+
 <!--begin::Scrolltop-->
 <div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
     <i class="ki-duotone ki-arrow-up">
@@ -219,8 +217,12 @@
     </i>
 </div>
 <!--end::Scrolltop-->
+
+
 <!--begin::Javascript-->
 <!--/*/<th:block th:replace="_fragments/_fragments :: script">/*/-->
+<!--/*/</th:block>/*/-->
+<!--/*/<th:block th:replace="index/input :: script">/*/-->
 <!--/*/</th:block>/*/-->
 <!--end::Javascript-->
 </body>
