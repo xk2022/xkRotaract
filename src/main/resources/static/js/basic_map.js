@@ -250,14 +250,15 @@ function updateDrawerContent(data) {
             $('#name').val(data.name);
             $('#phone').val(data.phone);
             $('#address').val(data.address);
+            $('#url').val(data.url);
             // 更新 #url 的文本和 href 属性
-            if (data.url) {
-                $('#url').text(data.url);
-                $('#url').parent('a').attr('href', data.url); // 更新父 <a> 标签的 href 属性
-            } else {
-                $('#url').text('No URL available');
-                $('#url').parent('a').removeAttr('href'); // 移除 href 属性，防止点击
-            }
+//            if (data.url) {
+//                $('#url').text(data.url);
+//                $('#url').parent('a').attr('href', '/redirect?url=' + data.url); // 更新父 <a> 标签的 href 属性
+//            } else {
+//                $('#url').text('暫不提供');
+//                $('#url').parent('a').removeAttr('href'); // 移除 href 属性，防止点击
+//            }
         }
 }
 

@@ -2,6 +2,9 @@ server:
   servlet:
     context-path: /xkRotaract
 
+app:
+  baseUrl: "http://localhost:8000/xkRotaract"
+
 spring:
   profiles:
     active: sit

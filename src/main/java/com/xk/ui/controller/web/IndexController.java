@@ -1,7 +1,6 @@
 package com.xk.ui.controller.web;
 
 import com.xk.common.base.BaseController;
-import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -26,4 +25,5 @@ public class IndexController extends BaseController {
     public String index(Model model) {
         return DIR_INDEX;
     }
+
 }

@@ -174,7 +174,16 @@
 
 <!--js資源引入-->
 <th:block th:fragment="script">
-    <script>var hostUrl = "assets/";</script>
+    <script th:inline="javascript">
+        var hostUrl = "assets/";
+
+        // 动态确定基础 URL 前缀
+<!--        var baseUrl = window.location.origin; // 获取当前的域名和端口号，如 http://localhost:8000 或 http://rotaract.xplorekaleido.com-->
+        var baseUrl = /*[[${baseUrl}]]*/ 'http://localhost:8000/xkRotaract'; // 默认值，用于开发环境
+    </script>
+    <!-- Font Awesome  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <!--begin::Global Javascript Bundle(mandatory for all pages)-->
     <script th:src="@{/plugins/global/plugins.bundle.js}"></script>
     <script th:src="@{/js/scripts.bundle.js}"></script>

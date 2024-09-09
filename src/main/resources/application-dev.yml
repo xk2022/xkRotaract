@@ -1,6 +1,9 @@
 server:
   port: 8000
 
+app:
+  baseUrl: "http://localhost:8000/xkRotaract"
+
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver # 驅動類型(注意MySQL 8.0的值是com.mysql.cj.jdbc.Driver和之前不同)

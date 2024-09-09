@@ -3,64 +3,30 @@
 <!--js資源引入-->
 <th:block th:fragment="script"><!--<div>-->
     <script th:inline="javascript">
-        // Insert
-        $("[name='add_btn']").click(function(){
-            $('#modal_name').text("新增公司");
-            $("[name='id']").val(null);
-            $("[name='name']").val(null);
-            $("[name='phone']").val(null);
-            $("[name='address']").val(null);
-            $("[name='url']").val(null);
-            $("[name='industryIds']").prop('checked', false);
-        });
+        // 跳转到外部链接
+        $('#redirectButton').click(function(e) {
+            e.preventDefault(); // 阻止默认行为
 
-        // Update
-        var readyToEdit = function(row) {
-            $('#modal_name').text("更新公司");
-            $("[name='id']").val(row[1].innerText);
-            $("[name='name']").val(row[2].innerText);
-            $("[name='phone']").val(row[3].innerText);
-            $("[name='address']").val(row[4].innerText);
-            $("[name='url']").val(row[5].innerText);
+            // 获取隐藏输入框的值
+            var urlValue = $('#url').val();
 
-            var industryIds = row[6].innerText;
-            $("[name='industryIds']").prop('checked', false);
-            var iids = industryIds.replace("[", '').replace("]", '').replace(" ", '').split(",");
-            for (var i = 0; i < iids.length; i++) {
-                var checkboxId = '#flexCheckDefault_' + iids[i].trim();
-                $(checkboxId).prop('checked', true);
-            }
-        }
-
-        // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
-        var validator = FormValidation.formValidation( form,
-            {
-                fields: {
-                    'name': { validators: { notEmpty: {
-                                message: 'Permission name is required' } } },
-                    'title': { validators: { notEmpty: {
-                                message: 'Permission name is required' } } },
-                    'basePath': { validators: { notEmpty: {
-                                message: 'Permission name is required' } } },
+            // 通过 AJAX 发送 POST 请求
+            $.ajax({
+                type: 'POST',
+                url: baseUrl + '/redirect',  // 调用后端控制器的 URL
+                contentType: 'application/json', // 指定请求的数据类型
+                data: JSON.stringify({ url: urlValue }),  // 将隐藏输入框的值作为参数传递
+                success: function(response) {
+                    // 根据后端返回的结果处理重定向
+<!--                    window.location.href = response;-->
+                    // 根据后端返回的结果，在新标签页中打开 URL
+                    window.open(response, '_blank');  // 使用 _blank 在新标签页中打开
                 },
-                plugins: {
-                    trigger: new FormValidation.plugins.Trigger(),
-                    bootstrap: new FormValidation.plugins.Bootstrap5({
-                        rowSelector: '.fv-row',
-                        eleInvalidClass: '',
-                        eleValidClass: ''
-                    })
+                error: function(xhr, status, error) {
+                    console.error("An error occurred: " + error);
                 }
-            }
-        );
-
-        // JavaScript函数，用于将input1的值复制到input2中
-        function copyInputValue() {
-            var input1 = document.getElementById("name");
-            var input2 = document.getElementById("basepath");
-
-            input2.value = '/' + input1.value;
-        }
+            });
+        });
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->
@@ -83,6 +49,8 @@
             </div>
             <!--end::Modal header-->
 
+
+
             <!--begin::Modal body-->
             <div id="filterBlock" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                 <!--begin::Input group-->
@@ -96,12 +64,15 @@
                             </div>
                         </div>
 
-                        <th:block th:each="chunk : ${chunkedIndustries}">
+                        <th:block th:if="${chunkedIndustries != null}" th:each="chunk : ${chunkedIndustries}">
                             <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
                                 <!--                                <div class="col-md" th:each="industry : ${chunk}">-->
                                 <div th:each="industry, iterStat : ${chunk}" class="col-6 mb-3 no-wrap" th:classappend="${iterStat.index % 2 == 0} ? ' border-right' : ''">
-                                    <input class="form-check-input industry-checkbox" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" checked/>
-                                    <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>
+                                    <!-- 添加 null 检查，确保 industry 不为空 -->
+                                    <th:block th:if="${industry != null}">
+                                        <input class="form-check-input industry-checkbox" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" checked/>
+                                        <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>
+                                    </th:block>
                                 </div>
                             </div>
                         </th:block>
@@ -114,27 +85,39 @@
                     <button type="submit" class="btn btn-primary" data-kt-modal-action="submit" onclick="handleButtonClick()">
                         <span class="indicator-label">篩選</span>
                         <span class="indicator-progress">請稍候...
-                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                        </span>
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
                     </button>
                 </div>
                 <!--end::Actions-->
             </div>
             <!--end::Modal body-->
+
             <!--begin::Modal body-->
             <div id="ciSection" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                 <!--begin::Form-->
                 <form id="kt_modal_input_form" class="form">
-                    <input type="hidden" name="id">
+                    <input type="hidden" name="url" id="url">
                     <!--begin::Input group-->
                     <div class="row fv-row mb-7">
                         <div class="col-md">
                             <!--begin::Label-->
                             <label class="fs-6 fw-bold form-label mb-2">
-                                <span>Rotary Club Name:</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="必填"></i>
+                                <span>名稱</span>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a company name" name="name" id="name" readonly/>
+                            <!--end::Input-->
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="row fv-row mb-7">
+                        <div class="col-md">
+                            <!--begin::Label-->
+                            <label class="fs-6 fw-bold form-label mb-2">
+                                <span>所屬扶青社:</span>
                             </label>
                             <!--end::Label-->
                             <!--begin::Input-->
@@ -144,10 +127,7 @@
                         <div class="col-md">
                             <!--begin::Label-->
                             <label class="fs-6 fw-bold form-label mb-2">
-                                <span>Member Name:</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="未填寫，將顯示「暫不提供」"></i>
+                                <span>社友名:</span>
                             </label>
                             <!--end::Label-->
                             <!--begin::Input-->
@@ -156,50 +136,41 @@
                         </div>
                     </div>
                     <!--end::Input group-->
-                    <hr>
                     <!--begin::Input group-->
                     <div class="row fv-row mb-7">
                         <div class="col-md">
                             <!--begin::Label-->
                             <label class="fs-6 fw-bold form-label mb-2">
-                                <span>Company Name:</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="必填"></i>
-                            </label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input class="form-control form-control-solid" placeholder="Enter a company name" name="name" id="name" readonly/>
-                            <!--end::Input-->
-                        </div>
-                        <div class="col-md">
-                            <!--begin::Label-->
-                            <label class="fs-6 fw-bold form-label mb-2">
-                                <span>Phone Number:</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="未填寫，將顯示「暫不提供」"></i>
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
+                                        <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
+                                    </svg>
+                                    公司電話:
+                                </span>
                             </label>
                             <!--end::Label-->
                             <!--begin::Input-->
                             <input class="form-control form-control-solid" placeholder="Enter a contact phone number" name="phone" id="phone" readonly/>
                             <!--end::Input-->
                         </div>
-                    </div>
-                    <!--end::Input group-->
-                    <!--begin::Input group-->
-                    <div class="row fv-row mb-7">
                         <div class="col-md">
                             <!--begin::Label-->
                             <label class="fs-6 fw-bold form-label mb-2">
-                                <span>公司地址</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="請注意填寫正確，會由系統自動產生經緯度（顯示於地圖上）"></i>
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
+                                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z"/>
+                                    </svg>
+                                    公司網址:
+                                </span>
                             </label>
                             <!--end::Label-->
                             <!--begin::Input-->
-                            <input class="form-control form-control-solid" placeholder="Enter a address" name="address" id="address" readonly/>
+                            <!-- Button with icon to trigger redirect -->
+                            <button id="redirectButton" class="btn btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z"/>
+                                </svg>
+                            </button>
                             <!--end::Input-->
                         </div>
                     </div>
@@ -209,46 +180,29 @@
                         <div class="col-md">
                             <!--begin::Label-->
                             <label class="fs-6 fw-bold form-label mb-2">
-                                <span>公司網址</span>
-                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                                   data-bs-trigger="hover" data-bs-html="true"
-                                   data-bs-content="未填寫，將顯示「暫不提供」"></i>
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-map-fill" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M3.1 11.2a.5.5 0 0 1 .4-.2H6a.5.5 0 0 1 0 1H3.75L1.5 15h13l-2.25-3H10a.5.5 0 0 1 0-1h2.5a.5.5 0 0 1 .4.2l3 4a.5.5 0 0 1-.4.8H.5a.5.5 0 0 1-.4-.8z"/>
+                                        <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999z"/>
+                                    </svg>
+                                    公司地址:
+                                </span>
                             </label>
                             <!--end::Label-->
-                            <!--begin::Input-->
-                            <a class="form-control form-control-solid" href="https://www.example.com" target="_blank"><span id="url"></span></a>
-<!--                            <input class="form-control form-control-solid" placeholder="Enter a url" name="url" />-->
-                            <!--end::Input-->
+                            <input class="form-control form-control-solid" placeholder="Enter a contact phone number" name="address" id="address" readonly/>
                         </div>
                     </div>
                     <!--end::Input group-->
-                    <!--begin::Input group-->
-<!--                    <div class="row fv-row mb-7">-->
-<!--                        <div class="col-md">-->
-<!--                            &lt;!&ndash;begin::Label&ndash;&gt;-->
-<!--                            <label class="fs-6 fw-bold form-label mb-2">-->
-<!--                                <span class="required">行業別</span>-->
-<!--                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"-->
-<!--                                   data-bs-trigger="hover" data-bs-html="true"-->
-<!--                                   data-bs-content="必填，最少擇一"></i>-->
-<!--                            </label>-->
-<!--                            &lt;!&ndash;end::Label&ndash;&gt;-->
-<!--                        </div>-->
-<!--                    </div>-->
-                    <!--end::Input group-->
-                    <!--begin::Actions-->
-<!--                    <div th:replace="admin/_fragments/input_basic :: Actions"></div>-->
-                    <!--end::Actions-->
                 </form>
                 <!--end::Form-->
             </div>
             <!--end::Modal body-->
-
         </div>
         <!--end::Modal content-->
     </div>
     <!--end::Modal dialog-->
 </div>
+
 
 
 

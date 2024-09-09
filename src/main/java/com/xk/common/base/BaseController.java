@@ -6,6 +6,7 @@ import com.xk.upms.model.po.UpmsSystem;
 import com.xk.upms.service.UpmsPermissionService;
 import com.xk.upms.service.UpmsSystemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -23,6 +24,9 @@ public class BaseController {
     public static final String R_ADMIN_INDEX = "redirect:/admin/index"; // REDIRECT_ADDR
     private static final String R_AUTH_LOGOUT = "redirect:/admin/logout";
 
+    @Value("${app.baseUrl:defaultBaseUrl}") // 如果配置没找到，使用 defaultBaseUrl
+    private String baseUrl;
+
     @Autowired
     private UpmsSystemService upmsSystemService;
     @Autowired
@@ -30,7 +34,14 @@ public class BaseController {
     @Autowired
     private AuthService authService;
 
+    public Model info(Model model) {
+        model.addAttribute("baseUrl", baseUrl);
+
+        return model;
+    }
+
     public Model info(Model model, String path) {
+        model.addAttribute("baseUrl", baseUrl);
         /* find this page info private */
         UpmsPermission upInfo = upmsPermissionService.findOneByUri(path);
         model.addAttribute("upInfo", upInfo);
