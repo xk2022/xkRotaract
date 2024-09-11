@@ -16,12 +16,13 @@
     <!--end::Page Vendors Javascript-->
     <!--begin::Page Custom Javascript(used by this page)-->
     <script th:src="@{/js/custom/datatables/table.js}"></script>
+    <script th:src="@{/js/custom/datatables/shared.js}"></script>
     <script th:src="@{/js/custom/datatables/input.js}"></script>
     <!--/*/<th:block th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: script">/*/-->
     <!--/*/</th:block>/*/-->
     <!--end::Page Custom Javascript-->
     <script th:inline="javascript">
-        var deleteUrl = baseUrl + '/delete/';
+//        var deleteUrl = baseUrl + '/delete/';
 
     </script>
 </th:block><!--</div>-->
@@ -123,7 +124,7 @@
                 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
                     <!--begin::Menu item-->
                     <div class="menu-item px-3">
-                        <a th:href="@{'/admin/upms/manage/user/'+${data.id}}" class="menu-link px-5">Edit</a>
+                        <a th:href="@{'/admin/upms/manage/user/'+${data.id}}" class="menu-link px-5" th:text="編輯">Edit</a>
                     </div>
                     <!--end::Menu item-->
                     <!--begin::Menu item-->

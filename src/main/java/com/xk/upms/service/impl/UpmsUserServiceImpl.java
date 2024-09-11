@@ -127,14 +127,20 @@ public class UpmsUserServiceImpl implements UpmsUserService {
     public UpmsUserSaveResp update(Long id, UpmsUserSaveReq resources) throws Exception {
         UpmsUserSaveResp result = new UpmsUserSaveResp();
 
-        UpmsUser entity = upmsUserRepository.findByEmail(resources.getEmail());
+        UpmsUser entity = upmsUserRepository.findById(id)
+                .map(u -> {
+                    // 这里可以对 UpmsUser 做一些操作
+                    return u;
+                })
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
         if (!entity.getId().equals(id)) {
             upmsUserValidator(resources);
         }
 
         UpmsUser req = new UpmsUser();
         BeanUtils.copyProperties(resources, req);
-        entity = upmsUserRepository.save(req);
+//        entity = upmsUserRepository.save(req);
 
         BeanUtils.copyProperties(entity, result);
         return result;

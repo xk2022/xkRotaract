@@ -63,10 +63,10 @@ var KTSigninGeneral = function() {
 
                         // Show message popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
                         Swal.fire({
-                            text: "You have successfully logged in!",
+                            text: "你已成功登入，歡迎來到萬花筒!",
                             icon: "success",
                             buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
+                            confirmButtonText: "馬上開始!",
                             customClass: {
                                 confirmButton: "btn btn-primary"
                             }

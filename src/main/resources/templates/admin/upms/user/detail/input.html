@@ -3,47 +3,7 @@
 <!--js資源引入-->
 <th:block th:fragment="script"><!--<div>-->
     <script th:inline="javascript">
-    // Update
-    var readyToEdit = function(row) {
-        $('#modal_name').text("Update User Details");
-        $("[name='id']").val(row[1].innerText);
-        $("[name='username']").val(row[2].innerText);
-        $("[name='avatar']").val(row[0].innerText);
-        $("[name='email']").val(row[7].innerText);
-        $("[name='password']").val(null);
-    }
 
-    // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
-    var validator = FormValidation.formValidation(
-        form,
-        {
-            fields: {
-                'username': {
-                    validators: {
-                        notEmpty: {
-                            message: 'Username is required'
-                        }
-                    }
-                },
-                'email': {
-                    validators: {
-                        notEmpty: {
-                            message: 'Email is required'
-                        }
-                    }
-                },
-            },
-
-            plugins: {
-                trigger: new FormValidation.plugins.Trigger(),
-                bootstrap: new FormValidation.plugins.Bootstrap5({
-                    rowSelector: '.fv-row',
-                    eleInvalidClass: '',
-                    eleValidClass: ''
-                })
-            }
-        }
-    );
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->
@@ -66,7 +26,8 @@
             <!--begin::Modal body-->
             <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                 <!--begin::Form-->
-                <form id="kt_modal_update_email_form" class="form" th:action="@{/admin/upms/manage/system/save}" method="post">
+                <form id="kt_modal_update_email_form" class="form" th:action="@{/admin/upms/manage/user/save}" method="post">
+                    <input type="hidden" name="id" th:value="${info.email}">
                     <!--begin::Notice-->
                     <!--begin::Notice-->
                     <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed mb-9 p-6">
@@ -104,7 +65,7 @@
                         </label>
                         <!--end::Label-->
                         <!--begin::Input-->
-                        <input class="form-control form-control-solid" placeholder="" name="profile_email" th:value="${info.email}" />
+                        <input class="form-control form-control-solid" placeholder="" name="email" th:value="${info.email}" />
                         <!--end::Input-->
                     </div>
                     <!--end::Input group-->

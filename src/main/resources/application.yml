@@ -24,6 +24,13 @@ spring:
   resources:
     #用于告诉Spring Boot应该在何处查找静态资源文件,查找文件时会依赖于配置的先后顺序依次进行
     static-locations: classpath:/static/,classpath:/view/,classpath:/public,classpath:/resources,classpath:/META-INF/resources
+  #全局異常處理with ControllerExceptionHandler
+  mvc:
+    throw-exception-if-no-handler-found: true # 启用404抛出异常
+  web:
+    resources:
+      add-mappings: false # 防止 Spring 自动映射资源，确保404会抛出异常
+
 
 # mybatis配置
 mybatis:

@@ -1,5 +1,8 @@
 server:
   port: 8000
+  error:
+    whitelabel:
+      enabled: false  # 禁用默认的白标签错误页面
 
 app:
   baseUrl: "http://localhost:8000/xkRotaract"
@@ -32,6 +35,13 @@ springfox:
 
 logging:
   level:
-    root: INFO
-    com.xk: DEBUG
-  file: log/log-pro.log
+    root: INFO         # 全局日志级别设置为 INFO
+    org.springframework: DEBUG  # 启用Spring的调试日志
+    org.thymeleaf: DEBUG  # 启用Thymeleaf的调试日志
+    com.xk: DEBUG      # 仅为 com.xk 包启用 DEBUG 级别日志
+  file:
+    path: log          # 指定日志文件的路径
+    name: log-pro.log  # 指定日志文件的名称
+
+
+

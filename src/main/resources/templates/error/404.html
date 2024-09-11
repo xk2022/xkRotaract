@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!-- /good_html_v1.0.3/theme/landing.html -->
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--begin::Head-->
+<head>
+	<!--/*/<th:block th:replace="_fragments/_fragments :: head">/*/-->
+	<!--/*/</th:block>/*/-->
+<!--	<base href="../../">-->
+<!--	<title>Good – Bootstrap 5 HTML Admin Dashboard Template by Keenthemes</title>-->
+<!--	<meta charset="utf-8" />-->
+<!--	<meta name="description" content="Good admin dashboard live demo. Check out all the features of the admin panel. A large number of settings, additional services and widgets." />-->
+<!--	<meta name="keywords" content="Good, bootstrap, bootstrap 5, admin themes, free admin themes, bootstrap admin, bootstrap dashboard, bootstrap dark mode" />-->
+<!--	<meta name="viewport" content="width=device-width, initial-scale=1" />-->
+<!--	<meta property="og:locale" content="en_US" />-->
+<!--	<meta property="og:type" content="article" />-->
+<!--	<meta property="og:title" content="Good - Bootstrap 5 HTML Admin Dashboard Template" />-->
+<!--	<meta property="og:url" content="https://themes.getbootstrap.com/product/good-bootstrap-5-admin-dashboard-template" />-->
+<!--	<meta property="og:site_name" content="Keenthemes | Good" />-->
+<!--	<link rel="canonical" href="https://preview.keenthemes.com/good" />-->
+<!--	<link rel="shortcut icon" href="assets/media/logos/favicon.ico" />-->
+<!--	&lt;!&ndash;begin::Fonts&ndash;&gt;-->
+<!--	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />-->
+<!--	&lt;!&ndash;end::Fonts&ndash;&gt;-->
+<!--	&lt;!&ndash;begin::Global Stylesheets Bundle(used by all pages)&ndash;&gt;-->
+<!--	<link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />-->
+<!--	<link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />-->
+<!--	&lt;!&ndash;end::Global Stylesheets Bundle&ndash;&gt;-->
+</head>
+<!--end::Head-->
+
+<!--begin::Body-->
+<body id="kt_body" class="auth-bg">
+	<!--begin::Main-->
+	<!--begin::Root-->
+	<div class="d-flex flex-column flex-root">
+		<!--begin::Authentication - 404 Page-->
+		<div class="d-flex flex-column flex-center flex-column-fluid p-10">
+			<!--begin::Illustration-->
+			<img th:src="@{/media/illustrations/sketchy-1/18.png}" src="assets/media/illustrations/sketchy-1/18.png" alt="" class="mw-100 mb-10 h-lg-450px" />
+			<!--end::Illustration-->
+			<!--begin::Message-->
+			<h1 class="fw-bold mb-10" style="color: #A3A3C7">Seems there is nothing here</h1>
+			<p th:text="${message}">Default error message</p>  <!-- 显示message内容 -->
+			<!--end::Message-->
+			<!--begin::Link-->
+			<a th:href="@{/}" class="btn btn-primary">Return Home</a>
+			<!--end::Link-->
+		</div>
+		<!--end::Authentication - 404 Page-->
+	</div>
+	<!--end::Root-->
+	<!--end::Main-->
+
+
+
+	<!--begin::Javascript-->
+	<!--/*/<th:block th:replace="_fragments/_fragments :: script">/*/-->
+	<!--/*/</th:block>/*/-->
+	<!--end::Javascript-->
+</body>
+<!--end::Body-->
+</html>

@@ -64,7 +64,8 @@ var KTUsersUpdatePassword = function () {
         );
 
         // Close button handler
-        const closeButton = element.querySelector('[data-kt-users-modal-action="close"]');
+//        const closeButton = element.querySelector('[data-kt-users-modal-action="close"]');
+        const closeButton = element.querySelector('[data-kt-modal-action="close"]');
         closeButton.addEventListener('click', e => {
             e.preventDefault();
 
