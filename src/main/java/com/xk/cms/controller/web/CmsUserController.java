@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 /**
  * 用户 Controller
  * Created by yuan on 2024/02/21
+ * @author yuan
  */
 @Api(value = "用户管理")
 @Controller
@@ -24,7 +25,7 @@ public class CmsUserController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CmsUserController.class);
 
-    private static final String REDIRECT_ADDR = "redirect:/admin/upms/manage/user";
+    private static final String REDIRECT_ADDR = "redirect:/admin/cms/manage/user";
     private static final int PAGE_SIZE = 8;
 
     @Autowired
@@ -34,7 +35,7 @@ public class CmsUserController extends BaseController {
      * 新增/修改 用户 Create/Update
      */
     @PostMapping("/save")
-    public String post(CmsUserSaveReq resources, RedirectAttributes attributes) throws Exception {
+    public String post(CmsUserSaveReq resources, RedirectAttributes attributes) {
         CmsUserSaveResp result;
 
         if (resources.getId() == null) {

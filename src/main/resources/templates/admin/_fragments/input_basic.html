@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 
 <!--begin::Modal - Add task-->
-<div th:fragment="basic" class="modal fade" id="kt_modal_input" tabindex="-1" aria-hidden="true">
+<div th:fragment="basic" class="modal fade" th:id="${modal_id != null ? 'kt_modal_input_' + modal_id : 'kt_modal_input'}" tabindex="-1" aria-hidden="true">
     <!--begin::Modal dialog-->
     <div class="modal-dialog modal-dialog-centered" th:classappend="${maxWidth != null ? maxWidth : 'mw-650px'}">
         <!--begin::Modal content-->
@@ -11,7 +11,7 @@
             <div th:replace="admin/_fragments/input_basic :: Modal_header"></div>
             <!--end::Modal header-->
             <!--begin::Modal body-->
-            <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: form"></div>
+            <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/'+${modal_id != null ? 'input_' + modal_id : 'input'} :: form"></div>
             <!--end::Modal body-->
         </div>
         <!--end::Modal content-->
@@ -23,7 +23,7 @@
 <!--begin::Modal header-->
 <div th:fragment="Modal_header" class="modal-header">
     <!--begin::Modal title-->
-    <h2 class="fw-bolder" id="modal_name"></h2>
+    <h2 class="fw-bolder modal_name" id="modal_name"></h2>
     <!--end::Modal title-->
     <!--begin::Close-->
     <th:block th:replace="admin/_fragments/input_basic :: btn_close"></th:block>

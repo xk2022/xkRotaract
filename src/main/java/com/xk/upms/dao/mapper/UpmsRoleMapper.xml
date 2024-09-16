@@ -10,7 +10,7 @@
         <result property="orders" column="orders"/>
         <result property="createTime" column="create_time"/>
     </resultMap>
-    <select id="selectAllByUserId" resultMap="baseRM">
+    <select id="findRolesByUserId" resultMap="baseRM">
         SELECT role.*
         FROM upms_role role
             LEFT JOIN upms_user_role ur ON ur.role_id = role.role_id

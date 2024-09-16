@@ -32,7 +32,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handle500(HttpServletRequest request, Exception ex, Model model) {
+
         logger.error("Request URL : {}, Exception : {}", request.getRequestURI(), ex);
+        // 记录错误信息
+        logger.error("An unexpected error occurred: ", ex);
         model.addAttribute("message", ex.getMessage());
         return "error/500";  // 返回自定义的 500 页面
     }

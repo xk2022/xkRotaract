@@ -1,6 +1,7 @@
 package com.xk.upms.controller.rest;
 
 import com.xk.common.base.BaseRepostitory;
+import com.xk.upms.model.bo.UpmsRolePermissionReq;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
 import com.xk.upms.model.vo.UpmsPermissionResp;
 import com.xk.upms.model.vo.UpmsRoleResp;
@@ -12,9 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -50,6 +49,15 @@ public class UpmsRoleRestController {
     public Object page_head() {
         return baseRepostitory.queryTableComent("upms_role");
     }
+
+    @ApiOperation(value = "角色列表")
+    @PostMapping("/permissionsBySystem")
+    @ResponseBody
+    public Object permissionsBySystem(@RequestBody UpmsRolePermissionReq resources) {
+        return upmsRolePermissionService.listBy(resources);
+    }
+
+
 
     /**
      * init()
@@ -100,7 +108,7 @@ public class UpmsRoleRestController {
                 .map(String::valueOf) // 转换为字符串
                 .toArray(String[]::new);
         UpmsRoleResp resp = upmsRoleService.selectByCode("admin");
-        upmsRolePermissionService.rolePermission(checkBoxValues, resp.getId());
+        upmsRolePermissionService.rolePermission(resp.getId(), null, checkBoxValues);
     }
 }
 

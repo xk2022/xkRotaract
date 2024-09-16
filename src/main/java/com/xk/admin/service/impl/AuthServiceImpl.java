@@ -7,6 +7,7 @@ import com.xk.cms.dao.repository.CmsUserRepository;
 import com.xk.cms.model.po.CmsUser;
 import com.xk.common.util.NotFoundException;
 import com.xk.upms.dao.repository.*;
+import com.xk.upms.model.enums.PermissionAction;
 import com.xk.upms.model.po.*;
 import com.xk.upms.model.vo.UpmsUserSaveResp;
 import org.springframework.beans.BeanUtils;
@@ -59,14 +60,18 @@ public class AuthServiceImpl implements AuthService {
         // 改由 js 前端md5加密
 //        T_User user = userRepository.findByUsernameAndPassword(username, MD5Utils.code(password));
         // account as email
-        UpmsUser uuEntity = upmsUserRepository.findByEmailAndPassword(account, password);
+
+        UpmsUser uuEntity = upmsUserRepository.findByUsernameOrEmailOrCellPhone(account, account, account);
         if (uuEntity == null) {
-            // account as cellPhone
-            uuEntity = upmsUserRepository.findByCellPhoneAndPassword(account, password);
-            if (uuEntity == null) {
-                return null;
-            }
+//            throw new NotFoundException("查無使用者");
+            return null;
         }
+        UpmsUser chkPass = upmsUserRepository.findByUsernameAndPassword(uuEntity.getUsername(), password);
+        if (chkPass == null) {
+//            throw new NotFoundException("使用者密碼錯誤");
+            return null;
+        }
+
         // user info update by user
         CmsUser cuEntity = cmsUserRepository.findOneByFkUpmsUserId(uuEntity.getId());
         if (cuEntity != null) {
@@ -187,7 +192,7 @@ public class AuthServiceImpl implements AuthService {
         // 从用户角色中获取权限
         Set<Long> permissionIds = new HashSet<>();
         for (long roleId : user.getRoleId()) {
-            List<UpmsRolePermission> rps = upmsRolePermissionRepository.findByRoleIdAndAction(roleId, "write");
+            List<UpmsRolePermission> rps = upmsRolePermissionRepository.findByRoleIdAndActionAndActive(roleId, PermissionAction.READ, true);
             for (UpmsRolePermission rp : rps) {
                 permissionIds.add(rp.getPermissionId());
             }

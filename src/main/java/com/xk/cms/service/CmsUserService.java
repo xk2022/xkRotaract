@@ -9,9 +9,9 @@ import com.xk.cms.model.vo.CmsUserSaveResp;
  */
 public interface CmsUserService {
 
-    CmsUserSaveResp create(CmsUserSaveReq resources) throws Exception;
+    CmsUserSaveResp create(CmsUserSaveReq resources);
 
-    CmsUserSaveResp update(Long id, CmsUserSaveReq resources) throws Exception;
+    CmsUserSaveResp update(Long id, CmsUserSaveReq resources);
 
     CmsUserSaveResp getOneByEmail(String email);
 }

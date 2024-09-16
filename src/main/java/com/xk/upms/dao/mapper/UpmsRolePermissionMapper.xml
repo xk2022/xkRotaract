@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xk.upms.dao.mapper.UpmsRolePermissionMapper">
+
+    <resultMap type="com.xk.upms.model.vo.UpmsRolePermissionWithActiveResp" id="baseRM">
+        <id property="id" column="permission_id"></id>
+        <result property="action" column="action"/>
+        <result property="active" column="active"/>
+        <result property="name" column="name"/>
+    </resultMap>
+    <select id="findBy" resultMap="baseRM">
+        SELECT urp.`permission_id`, urp.`action`, urp.`active`, up.`name`
+        FROM `upms_role_permission` urp
+        LEFT JOIN `upms_permission` up ON up.`permission_id` = urp.`permission_id`
+        INNER JOIN `upms_system` us ON up.`system_id` = us.`system_id`
+        WHERE 1=1
+            AND up.`type` = 2
+            AND urp.`role_id` = #{role_id}
+        <if test="system_name != null and system_name != ''">
+            AND us.`name` = #{system_name}
+        </if>
+    </select>
+
+</mapper>

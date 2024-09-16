@@ -1,5 +1,6 @@
 package com.xk.upms.dao.repository;
 
+import com.xk.upms.model.enums.PermissionAction;
 import com.xk.upms.model.po.UpmsRolePermission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,7 +14,11 @@ public interface UpmsRolePermissionRepository extends JpaRepository<UpmsRolePerm
 
 	List findByRoleId(long roleId);
 
-	List findByRoleIdAndAction(long roleId, String action);
+	List findByRoleIdAndActive(long roleId, boolean active);
+
+	UpmsRolePermission findByRoleIdAndPermissionId(long roleId, long permissionId);
+
+	List findByRoleIdAndActionAndActive(long roleId, PermissionAction action, boolean active);
 
 	@Transactional
 	@Modifying

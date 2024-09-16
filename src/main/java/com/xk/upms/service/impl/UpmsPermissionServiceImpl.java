@@ -10,6 +10,7 @@ import com.xk.upms.model.po.UpmsSystem;
 import com.xk.upms.model.vo.UpmsPermissionResp;
 import com.xk.upms.model.vo.UpmsPermissionSaveResp;
 import com.xk.upms.model.vo.UpmsPermissionTreeResp;
+import com.xk.upms.model.vo.UpmsRolePermissionResp;
 import com.xk.upms.service.UpmsPermissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class UpmsPermissionServiceImpl implements UpmsPermissionService {
 
     @Override
     public List listBy(UpmsPermissionReq resources) {
-        List<UpmsPermissionResp> result = new ArrayList<>();
+        List<UpmsRolePermissionResp> result = new ArrayList<>();
 
         UpmsPermission req = new UpmsPermission();
         BeanUtils.copyProperties(resources, req);
@@ -65,7 +66,7 @@ public class UpmsPermissionServiceImpl implements UpmsPermissionService {
         List<UpmsPermission> entities = upmsPermissionRepository.findAll(example);
 
         for (UpmsPermission entity : entities) {
-            UpmsPermissionResp temp  = new UpmsPermissionResp();
+            UpmsRolePermissionResp temp  = new UpmsRolePermissionResp();
             BeanUtils.copyProperties(entity, temp);
             result.add(temp);
         }

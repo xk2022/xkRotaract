@@ -6,16 +6,16 @@ import com.xk.upms.dao.mapper.UpmsRoleMapper;
 import com.xk.upms.dao.mapper.UpmsUserMapper;
 import com.xk.upms.dao.repository.UpmsUserRefRepository;
 import com.xk.upms.dao.repository.UpmsUserRepository;
+import com.xk.upms.dao.repository.UpmsUserRoleRepository;
 import com.xk.upms.model.bo.UpmsUserReq;
+import com.xk.upms.model.bo.UpmsUserRoleSaveReq;
 import com.xk.upms.model.bo.UpmsUserSaveReq;
 import com.xk.upms.model.dto.UpmsUserRoleExample;
 import com.xk.upms.model.po.UpmsRole;
 import com.xk.upms.model.po.UpmsUser;
 import com.xk.upms.model.po.UpmsUserRef;
-import com.xk.upms.model.vo.UpmsUserDetailResp;
-import com.xk.upms.model.vo.UpmsUserIndexResp;
-import com.xk.upms.model.vo.UpmsUserResp;
-import com.xk.upms.model.vo.UpmsUserSaveResp;
+import com.xk.upms.model.po.UpmsUserRole;
+import com.xk.upms.model.vo.*;
 import com.xk.upms.service.UpmsUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,6 +46,8 @@ public class UpmsUserServiceImpl implements UpmsUserService {
     private UpmsUserMapper upmsUserMapper;
     @Autowired
     private UpmsRoleMapper upmsRoleMapper;
+    @Autowired
+    private UpmsUserRoleRepository upmsUserRoleRepository;
     @Autowired
     private UpmsUserRefRepository upmsUserRefRepository;
 
@@ -87,14 +89,21 @@ public class UpmsUserServiceImpl implements UpmsUserService {
         }
         BeanUtils.copyProperties(entity, result);
 
-        List<UpmsRole> roleList = upmsRoleMapper.selectAllByUserId(id);
+        List<UpmsRole> roleList = upmsRoleMapper.findRolesByUserId(id);
         result.setRoleList(roleList);
 
         return result;
     }
 
+    /**
+     * 創建用戶
+     *
+     * @param resources
+     * @return
+     * @throws Exception
+     */
     @Override
-    public UpmsUserSaveResp create(UpmsUserSaveReq resources) throws Exception {
+    public UpmsUserSaveResp create(UpmsUserSaveReq resources) {
         UpmsUserSaveResp result = new UpmsUserSaveResp();
 
         upmsUserValidator(resources);
@@ -124,7 +133,7 @@ public class UpmsUserServiceImpl implements UpmsUserService {
     }
 
     @Override
-    public UpmsUserSaveResp update(Long id, UpmsUserSaveReq resources) throws Exception {
+    public UpmsUserSaveResp update(Long id, UpmsUserSaveReq resources) {
         UpmsUserSaveResp result = new UpmsUserSaveResp();
 
         UpmsUser entity = upmsUserRepository.findById(id)
@@ -140,23 +149,31 @@ public class UpmsUserServiceImpl implements UpmsUserService {
 
         UpmsUser req = new UpmsUser();
         BeanUtils.copyProperties(resources, req);
-//        entity = upmsUserRepository.save(req);
+        entity = upmsUserRepository.save(req);
 
         BeanUtils.copyProperties(entity, result);
         return result;
     }
 
-    private void upmsUserValidator(UpmsUserSaveReq resources) throws Exception {
+    private void upmsUserValidator(UpmsUserSaveReq resources) {
 
         // 01. check account only first
         boolean isEmailExist = this.checkField("email", resources.getEmail());
         if (isEmailExist) {
-            throw new Exception("電子郵件，先前已註冊使用中。");
+            try {
+                throw new Exception("電子郵件，先前已註冊使用中。");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         if (resources.getCellPhone() != null) {
             boolean isCellPhoneExist = this.checkField("cellPhone", resources.getCellPhone());
             if (isCellPhoneExist) {
-                throw new Exception("行動電話，先前已註冊使用中。");
+                try {
+                    throw new Exception("行動電話，先前已註冊使用中。");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -205,6 +222,29 @@ public class UpmsUserServiceImpl implements UpmsUserService {
                 }
         }
         return isExist;
+    }
+
+    @Override
+    public void addRoleToUser(UpmsUserRoleSaveReq resources) {
+        UpmsUserRole req = new UpmsUserRole();
+        BeanUtils.copyProperties(resources, req);
+        upmsUserRoleRepository.save(req);
+    }
+
+    @Override
+    public void removeRoleFromUser(UpmsUserRoleSaveReq resources) {
+        UpmsUserRole req = new UpmsUserRole();
+        BeanUtils.copyProperties(resources, req);
+        upmsUserRoleRepository.delete(req);
+    }
+
+    @Override
+    public List<UpmsRoleCNDResp> getUserRoles(Long userId) {
+        List<UpmsRoleCNDResp> result = new ArrayList<>();
+
+        List<UpmsRole> entities = upmsRoleMapper.findRolesByUserId(userId);
+        BeanUtils.copyProperties(entities, result);
+        return result;
     }
 
 }

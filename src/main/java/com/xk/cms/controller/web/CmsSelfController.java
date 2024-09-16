@@ -46,26 +46,32 @@ public class CmsSelfController extends BaseController {
      */
     @GetMapping()
     public String index(Model model, HttpSession session) {
+        LOGGER.info("進入用戶信息查詢方法：CmsSelfController().index()");
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
         model.addAttribute("fragmentName", "view");
 
         UserExample user = (UserExample) session.getAttribute("user");
         CmsUserSaveResp entity = new CmsUserSaveResp();
         if (user != null) {
+            LOGGER.info("查詢用戶信息，用戶郵箱: {}", user.getEmail());
             entity = cmsUserService.getOneByEmail(user.getEmail());
-        }
-        if (entity == null) {
-            entity = new CmsUserSaveResp();
+        } else {
+            LOGGER.warn("用戶未登錄，session中未找到用戶信息。");
         }
         model.addAttribute("entity", entity);
 
+        // 查詢個人公司信息，並記錄公司數量
         List<CmsCompanyExample> companies = new ArrayList<>();
         if (entity != null && entity.getId() != null) {
             companies = cmsCompanyService.listByUserWithPay(entity.getId());
+            LOGGER.info("用戶ID: {}，查詢到的公司數量: {}", entity.getId(), companies.size());
+        } else {
+            LOGGER.warn("無法查詢公司信息，用戶信息為空或ID為空");
         }
         model.addAttribute("companies", companies);
         model.addAttribute("chunkedIndustries", cmsSelfService.getChunkedIndustries());
 
+        LOGGER.info("成功加載用戶數據，返回試圖頁面");
         return ADMIN_INDEX;
     }
 

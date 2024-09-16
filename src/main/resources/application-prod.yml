@@ -32,6 +32,12 @@ springfox:
 
 logging:
   level:
-    root: WARN
-    com.xk: INFO
-  file: log/log-pro.log
+    root: WARN         # 全局日志级别设置为 INFO
+    org.springframework: DEBUG  # 启用 Spring 的调试日志
+    org.thymeleaf: DEBUG  # 启用 Thymeleaf 的调试日志
+    com.xk: INFO      # 仅为 com.xk 包启用 DEBUG 级别日志
+  file:
+    path: ./logs       # 指定日志文件的路径（请确保路径存在）
+    name: log-pro.log  # 指定日志文件的名称
+  console:
+    level: DEBUG       # 控制台日志级别设置为 DEBUG

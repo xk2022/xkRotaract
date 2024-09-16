@@ -10,6 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -38,20 +39,25 @@ public class UpmsUser extends BaseEntity implements Serializable {
     @Comment("00_流水號")
     private Long id;
 
-    @NotBlank(message = "用戶名稱NotBlank")
+    @NotBlank(message = "用戶名稱不能為空")
     @Column(unique = true)
     @Comment("01_用戶名稱")
     private String username;
 
+    @NotBlank(message = "郵箱不能為空")
+    @Column(unique = true)
     @Comment("02_郵箱")
+    @Pattern(regexp = ".+@.+\\..+", message = "請輸入有效的郵箱地址")
     private String email;
 
     @Comment("03_電話")
+    @Pattern(regexp = "^[0-9]{10,15}$", message = "請輸入有效的電話號碼")
     private String cellPhone;
 
 //    @Comment("04_鹽")
 //    private String salt;
 
+    @NotBlank(message = "密碼不能為空")
     @Comment("05_密碼MD5(密碼+鹽)")
     private String password;
 

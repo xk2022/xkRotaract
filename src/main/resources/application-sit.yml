@@ -1,10 +1,16 @@
 server:
   port: 8000
+  error:
+    whitelabel:
+      enabled: false  # 禁用默认的白标签错误页面
+
+app:
+  baseUrl: "http://localhost:8000/xkRotaract"
 
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver # 驅動類型(注意MySQL 8.0的值是com.mysql.cj.jdbc.Driver和之前不同)
-    url: jdbc:mysql://localhost:3306/rotaract?useSSL=false&useUnicode=yes&characterEncoding=UTF-8&characterSetResults=UTF-8 # 數據庫連接字符串
+    url: jdbc:mysql://localhost:3306/xkrotaract?useSSL=false&useUnicode=yes&characterEncoding=UTF-8&characterSetResults=UTF-8 # 數據庫連接字符串
     username: root # 數據庫用戶名
     password: 1qaz@WSX # 數據庫密碼
     type: com.alibaba.druid.pool.DruidDataSource
@@ -27,8 +33,22 @@ springfox:
     swagger-ui:
       enabled : true
 
+#  OFF：关闭所有日志记录。
+#  FATAL：仅记录严重的错误，可能导致应用程序崩溃的情况。
+#  ERROR：记录错误信息，表示应用程序在运行中出现了问题。
+#  WARN：记录潜在的问题或警告，但不一定是错误。
+#  INFO：记录常规信息，通常用来了解应用程序的状态或进程。
+#  DEBUG：记录详细的调试信息，用于开发和调试阶段，包含应用程序的内部状态、变量值等。
+#  TRACE：记录最详细的日志信息，包括每一步的执行情况，比DEBUG更详细。
+#  ALL：打开所有级别的日志记录（从TRACE到FATAL）。
 logging:
   level:
-    root: INFO
-    com.xk: DEBUG
-  file: log/log-pro.log
+    root: INFO         # 全局日志级别设置为 INFO
+    org.springframework: INFO  # 启用 Spring 的调试日志
+    org.thymeleaf: INFO  # 启用 Thymeleaf 的调试日志
+    com.xk: INFO      # 仅为 com.xk 包启用 DEBUG 级别日志
+  file:
+    path: ./logs       # 指定日志文件的路径（请确保路径存在）
+    name: log-pro.log  # 指定日志文件的名称
+  console:
+    level: INFO       # 控制台日志级别设置为 DEBUG

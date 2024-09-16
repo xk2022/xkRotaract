@@ -1,7 +1,6 @@
 package com.xk.upms.controller.web;
 
 import com.xk.common.base.BaseController;
-import com.xk.upms.model.bo.UpmsPermissionReq;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
 import com.xk.upms.model.po.UpmsRole;
 import com.xk.upms.model.po.UpmsRolePermission;
@@ -25,6 +24,7 @@ import javax.servlet.http.HttpSession;
 /**
  * 角色 Controller
  * Created by yuan on 2022/06/24
+ * @author yuan
  */
 @Api(value = "角色管理")
 @Controller
@@ -46,6 +46,8 @@ public class UpmsRoleController extends BaseController {
     private UpmsPermissionService upmsPermissionService;
     @Autowired
     private UpmsRolePermissionService upmsRolePermissionService;
+    @Autowired
+    private UpmsSystemService upmsSystemService;
 
     /**
      * 查詢 角色 首頁
@@ -67,15 +69,15 @@ public class UpmsRoleController extends BaseController {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]+"/detail");
         model.addAttribute("fragmentName", "detail");
 
+        LOGGER.info("正在取得角色 ID 的資訊: {}", id);
         model.addAttribute("role", upmsRoleService.findById(id));
+        LOGGER.info("正在取得角色 ID 的使用者: {}", id);
         model.addAttribute("page_list", upmsUserRoleService.getUsers(id));
-//        model.addAttribute("list", upmsUserService.list(null));
-//        model.addAttribute("menus", menuService.buildTree(menuService.listWithoutType0()));
 
+        LOGGER.info("正在取得角色 ID 的權限: {}", id);
         model.addAttribute("entity", new UpmsRolePermission());
-        UpmsPermissionReq resources = new UpmsPermissionReq();
-        resources.setType(new Byte("1"));
-        model.addAttribute("permissions", upmsPermissionService.listBy(resources));
+
+        model.addAttribute("btn_systems", upmsSystemService.list());
         return ADMIN_INDEX;
     }
 
@@ -92,6 +94,7 @@ public class UpmsRoleController extends BaseController {
         } else {
             result = upmsRoleService.update(resources.getId(), resources);
         }
+        upmsRolePermissionService.checkCountSameWithPermission(result.getId());
 
         if (result == null) {
             attributes.addFlashAttribute("message", "操作失敗");
@@ -126,9 +129,10 @@ public class UpmsRoleController extends BaseController {
     @PostMapping("/permission/{id}")
     public Object permission(@PathVariable("id") long id, HttpServletRequest request) {
 
-        String[] checkBoxValues = request.getParameterValues("checkBox");
+        String[] checkBoxValues = request.getParameterValues("permissions");
+        String systemCode = request.getParameter("systemCode");
 //        JSONArray datas = JSONArray.parseArray(request.getParameter("datas"));
-        upmsRolePermissionService.rolePermission(checkBoxValues, id);
+        upmsRolePermissionService.rolePermission(id, systemCode, checkBoxValues);
 //        return new UpmsResult(UpmsResultConstant.SUCCESS, result);
         return REDIRECT_ADDR + "/" + id;
     }

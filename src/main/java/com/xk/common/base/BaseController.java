@@ -1,15 +1,18 @@
 package com.xk.common.base;
 
+import com.xk.admin.model.dto.UserExample;
 import com.xk.admin.service.AuthService;
 import com.xk.upms.model.po.UpmsPermission;
 import com.xk.upms.model.po.UpmsSystem;
 import com.xk.upms.service.UpmsPermissionService;
+import com.xk.upms.service.UpmsRolePermissionService;
 import com.xk.upms.service.UpmsSystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -33,6 +36,8 @@ public class BaseController {
     private UpmsPermissionService upmsPermissionService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private UpmsRolePermissionService upmsRolePermissionService;
 
     public Model info(Model model) {
         model.addAttribute("baseUrl", baseUrl);
@@ -52,15 +57,10 @@ public class BaseController {
         model.addAttribute("fragmentPackage", fragment[1]);
 
         /* Aside data Setting */
-//        model.addAttribute("aside_system", upmsSystemService.listActive());
-        model.addAttribute("aside_system", authService.listSystemByAuth());
         UpmsSystem system = (UpmsSystem) upmsSystemService.findOneByName(fragment[0]);
         model.addAttribute("system", system);
+        model = this.versionBasic(model);
 
-//        model.addAttribute("left_tree", upmsPermissionService.buildTree(upmsPermissionService.selectBySystemIdAndRole(system, 1)));
-        if (system != null) {
-            model.addAttribute("left_tree", upmsPermissionService.buildTree(authService.listPermission(system.getId())));
-        }
         /**TODO
          * 單功能快速進入管道
          */
@@ -72,13 +72,46 @@ public class BaseController {
             model.addAttribute("tree_only", null);
         }
 
-        model.addAttribute("system_title", null);
-        model.addAttribute("system_list", null);
-        model.addAttribute("user_menus", null);
-        model.addAttribute("user", null);
-        model.addAttribute("menus", null);
+//        model.addAttribute("system_title", null);
+//        model.addAttribute("system_list", null);
+//        model.addAttribute("user_menus", null);
+//        model.addAttribute("user", null);
+//        model.addAttribute("menus", null);
         return model;
     }
+
+    private Model versionBasic(Model model) {
+
+        /* Aside data Setting */
+//        model.addAttribute("aside_system", upmsSystemService.listActive());
+//        model.addAttribute("aside_system", authService.listSystemByAuth());
+
+        UpmsSystem system = (UpmsSystem) model.getAttribute("system");
+//        model.addAttribute("left_tree", upmsPermissionService.buildTree(upmsPermissionService.selectBySystemIdAndRole(system, 1)));
+        if (system != null) {
+            model.addAttribute("left_tree", upmsPermissionService.buildTree(authService.listPermission(system.getId())));
+        }
+
+        return model;
+    }
+
+    public void versionSession(HttpSession session) {
+        // 从 HttpSession 中获取用户信息
+        UserExample user = (UserExample) session.getAttribute("user");
+
+        // 检查 user 是否为空，防止空指针异常
+        if (user != null && user.getRoleId() != null) {
+            session.setAttribute("aside_system", authService.listSystemByAuth());
+            session.setAttribute("permissionAction", upmsRolePermissionService.listByAuth(user.getRoleId()));
+
+            // 添加更多的上下文信息到日志
+//            LOGGER.info("Permissions set for user role ID: {}", user.getRoleId());
+        } else {
+            // 记录警告日志，指出用户信息不存在
+//            LOGGER.warn("User information not found in session or role ID is null.");
+        }
+    }
+
 
 }
 

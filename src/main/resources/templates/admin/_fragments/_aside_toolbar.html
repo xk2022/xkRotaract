@@ -6,7 +6,7 @@
         <select class="form-select form-select-custom border-0 fw-bolder" onchange="redirectToSystem(this)"
                 data-control="select2" data-placeholder="Select Project" data-hide-search="true">
             <option th:value="@{'/admin/index'}" selected="selected">請選擇系統切換</option>
-            <option th:each="i : ${aside_system}" th:href="@{'/admin'+${i.basepath}+'/manage'}"
+            <option th:each="i : ${session.aside_system}" th:href="@{'/admin'+${i.basepath}+'/manage'}"
                     th:value="@{'/admin' + ${i.basepath} + '/manage'}" th:text="${i.name} + ' - ' + ${i.title}" th:selected="${system} ? ${i.id==system.id} : false">
                 <a th:href="@{'/admin' + ${i.basepath} + '/manage'}" class="btn btn-light btn-active-primary my-1 me-2">Go System</a></option>
         </select>

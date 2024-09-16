@@ -1,5 +1,7 @@
 package com.xk.upms.service;
 
+import com.xk.upms.model.bo.UpmsRolePermissionReq;
+
 import java.util.List;
 
 /**
@@ -8,6 +10,14 @@ import java.util.List;
  */
 public interface UpmsRolePermissionService {
 
-    List rolePermission(String[] datas, long id);
+//    List list();
+
+    void checkCountSameWithPermission(long roleId);
+
+    List listBy(UpmsRolePermissionReq resource);
+
+    List rolePermission(long roleId, String systemCode, String[] checkBoxValues);
+
+    List listByAuth(long[] roleId);
 
 }

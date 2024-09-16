@@ -16,6 +16,7 @@
     <!--end::Page Vendors Javascript-->
     <!--begin::Page Custom Javascript(used by this page)-->
     <script th:src="@{/js/custom/datatables/table.js}"></script>
+    <script th:src="@{/js/custom/datatables/shared.js}"></script>
     <script th:src="@{/js/custom/datatables/input.js}"></script>
     <!--/*/<th:block th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: script">/*/-->
     <!--/*/</th:block>/*/-->
@@ -61,7 +62,10 @@
                 <th class="min-w-125px">公司網址</th>
                 <th class="min-w-125px" style="display:none">產業別Key</th>
                 <th class="min-w-125px">產業別</th>
-                <th class="text-end min-w-100px">Actions</th>
+                <th:block th:fragment="btn_delete" th:each="permission : ${session.permissionAction}">
+                    <th th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                        class="text-end min-w-100px">Actions</th>
+                </th:block>
             </tr>
             <!--end::Table row-->
         </thead>

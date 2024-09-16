@@ -67,6 +67,7 @@ public class AuthorizationController extends BaseController {
 
         if (user != null) {
             session.setAttribute("user", user);
+            this.versionSession(session);
 
             return R_ADMIN_INDEX;
         } else {

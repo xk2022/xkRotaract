@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+    <script th:inline="javascript">
+    // Class definition
+    var KTRoleUpdatePermission = function () {
+        // Shared variables
+        const element = document.getElementById('kt_modal_input_permission');
+        const form = element.querySelector('#kt_modal_input_form');
+        const modal = new bootstrap.Modal(element);
+
+        // Init add schedule modal
+        var initUpdatePermission = () => {
+
+            // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+                var validator = FormValidation.formValidation( form,
+                    {
+                        fields: {
+                            'name': { validators: { notEmpty: {
+                                        message: 'Role name is required' } } },
+                        },
+                        plugins: {
+                            trigger: new FormValidation.plugins.Trigger(),
+                            bootstrap: new FormValidation.plugins.Bootstrap5({
+                                rowSelector: '.fv-row',
+                                eleInvalidClass: '',
+                                eleValidClass: ''
+                            })
+                        }
+                    }
+                );
+
+            handleCloseButton(element, modal);
+            handleCancelButton(element, form, modal);
+            handleFormSubmit(element, form, validator, modal);
+        }
+
+        return {
+            // Public functions
+            init: function () {
+                initUpdatePermission();
+            }
+        };
+    }();
+
+    // On document ready
+    KTUtil.onDOMContentLoaded(function () {
+        KTRoleUpdatePermission.init();
+    });
+
+    document.querySelectorAll('button[data-btn-allPermissionBySystem]').forEach(button => {
+        button.addEventListener('click', function() {
+            var roleId = $('#role_id').val();
+            var systemCode = this.getAttribute('data-btn-allPermissionBySystem');
+            edit_btn_allPermissionBySystem(roleId, systemCode);
+        });
+    });
+
+    // Update
+    function edit_btn_allPermissionBySystem(roleId, systemCode) {
+        $('.modal_name').text("操作_權限管理系統");
+        $('#systemCode').val(systemCode);
+        const tbody = document.getElementById('permissionsTable');
+        tbody.innerHTML = ''; // 清空當前的表格內容
+
+        $.ajax({
+            url: baseUrl + '/api/manage/role/permissionsBySystem', // 修改为你的实际 API 地址
+            method: 'POST',
+            data: JSON.stringify({ 'roleId': roleId, 'systemCode': systemCode }),
+            processData: false,
+            contentType: 'application/json',
+            success: function(response) {
+                console.log('AJAX 请求成功：', response);
+
+                // 调用渲染函数
+                renderPermissions(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX 请求失败：', error);
+            }
+        });
+    }
+
+    function renderPermissions(permissions) {
+        const tbody = document.getElementById('permissionsTable');
+        tbody.innerHTML = ''; // 清空当前的表格内容
+    
+        // 添加 "Select all" 行
+        const selectAllRow = document.createElement('tr');
+
+        const selectAllTdName = document.createElement('td');
+        selectAllTdName.classList.add('text-gray-800');
+        selectAllTdName.innerHTML = `Administrator Access <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Allows full access to the system"></i>`;
+        selectAllRow.appendChild(selectAllTdName);
+
+        const selectAllTdActions = document.createElement('td');
+        const selectAllLabel = document.createElement('label');
+        selectAllLabel.classList.add('form-check', 'form-check-sm', 'form-check-custom', 'form-check-solid', 'me-9');
+
+        const selectAllInput = document.createElement('input');
+        selectAllInput.classList.add('form-check-input');
+        selectAllInput.type = 'checkbox';
+        selectAllInput.id = 'kt_select_all';
+        selectAllInput.name = 'permission_id';
+        selectAllInput.addEventListener('change', () => {
+            // "Select all" checkbox logic
+            tbody.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = selectAllInput.checked;
+            });
+        });
+
+        const selectAllSpan = document.createElement('span');
+        selectAllSpan.classList.add('form-check-label');
+        selectAllSpan.setAttribute('for', 'kt_select_all');
+        selectAllSpan.textContent = 'Select all';
+
+        selectAllLabel.appendChild(selectAllInput);
+        selectAllLabel.appendChild(selectAllSpan);
+        selectAllTdActions.appendChild(selectAllLabel);
+        selectAllRow.appendChild(selectAllTdActions);
+
+        // 将 "Select all" 行添加到表格的最上面
+        tbody.appendChild(selectAllRow);
+
+        // 使用 Map 根据 id 分组
+        const permissionMap = new Map();
+        permissions.forEach(permission => {
+            const { id, action, name, active } = permission;
+
+            if (!permissionMap.has(id)) {
+                permissionMap.set(id, { name, actions: {} });
+            }
+
+            permissionMap.get(id).actions[action] = active;
+        });
+
+        let fragment = document.createDocumentFragment(); // 创建 DocumentFragment
+        let counter = 0;
+
+        permissionMap.forEach((permissionData, id) => {
+            const { name, actions } = permissionData;
+
+            const tr = document.createElement('tr');
+
+            // 创建表格列（权限名称）
+            const tdName = document.createElement('td');
+            tdName.classList.add('text-gray-800');
+            tdName.textContent = name;
+            tr.appendChild(tdName);
+
+            // 创建表格列（权限操作复选框）
+            const tdActions = document.createElement('td');
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('d-flex');
+
+            // 生成 Read 复选框
+            wrapper.appendChild(createCheckbox(id, 'READ', actions['READ']));
+
+            // 生成 Write 复选框
+            wrapper.appendChild(createCheckbox(id, 'WRITE', actions['WRITE']));
+
+            // 生成 Create 复选框
+            wrapper.appendChild(createCheckbox(id, 'CREATE', actions['CREATE']));
+
+            tdActions.appendChild(wrapper);
+            tr.appendChild(tdActions);
+
+            // 将行添加到 DocumentFragment 中
+            fragment.appendChild(tr);
+            counter++;
+
+            // 每三笔数据插入一次到 DOM
+            if (counter === 3) {
+                tbody.appendChild(fragment);
+                fragment = document.createDocumentFragment(); // 重置 DocumentFragment
+                counter = 0;
+            }
+        });
+
+        // 如果有剩余行，插入到 DOM
+        if (counter > 0) {
+            tbody.appendChild(fragment);
+        }
+    }
+
+
+    // Helper function to create a checkbox input and its label
+    function createCheckbox(permissionId, action, isChecked) {
+        const label = document.createElement('label');
+        label.classList.add('form-check', 'form-check-sm', 'form-check-custom', 'form-check-solid', 'me-5', 'me-lg-20');
+
+        const input = document.createElement('input');
+        input.classList.add('form-check-input');
+        input.type = 'checkbox';
+        input.value = `${permissionId}_${action}`;
+        input.name = 'permissions';
+        if (isChecked) {
+            input.checked = true;
+        }
+
+        const span = document.createElement('span');
+        span.classList.add('form-check-label');
+        span.textContent = action.charAt(0).toUpperCase() + action.slice(1).toLowerCase();  // 格式化權限操作名稱
+
+        label.appendChild(input);
+        label.appendChild(span);
+
+        return label;
+    }
+
+    <!-- input.js -->
+<!--    document.getElementById('kt_select_all').addEventListener('change', function(e) {-->
+<!--        let checkboxes = document.querySelectorAll('[name="permissions"]');-->
+<!--        checkboxes.forEach(function(checkbox) {-->
+<!--            checkbox.checked = e.target.checked;-->
+<!--        });-->
+<!--    });-->
+    </script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+<!--begin::Modal body-->
+<div th:fragment="form" class="modal-body scroll-y mx-5 my-7">
+    <!--begin::Form-->
+    <form id="kt_modal_input_form" class="form" action="#" th:action="@{/admin/upms/manage/role/permission/{id}(id=${role.id})}" method="post" th:object="${entity}">
+        <input type="hidden" name="id">
+        <input type="hidden" id="systemCode" name="systemCode">
+        <!--begin::Scroll-->
+        <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_update_role_scroll" data-kt-scroll="true"
+             data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
+             data-kt-scroll-dependencies="#kt_modal_update_role_header" data-kt-scroll-wrappers="#kt_modal_update_role_scroll" data-kt-scroll-offset="300px">
+            <!--begin::Permissions-->
+            <div class="fv-row">
+                <!--begin::Label-->
+                <label class="fs-5 fw-bolder form-label mb-2">角色權限</label>
+                <!--end::Label-->
+                <!--begin::Table wrapper-->
+                <div class="table-responsive">
+                    <!--begin::Table-->
+                    <table class="table align-middle table-row-dashed fs-6 gy-5">
+                        <!--begin::Table body-->
+                        <tbody class="text-gray-600 fw-bold" id="permissionsTable">
+                        <!--begin::Table row-->
+                        <tr>
+                            <td class="text-gray-800">Administrator Access
+                                <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Allows a full access to the system"></i>
+                            </td>
+                            <td>
+                                <!--begin::Checkbox-->
+                                <label class="form-check form-check-sm form-check-custom form-check-solid me-9">
+                                    <input class="form-check-input" type="checkbox" value="" id="kt_select_all" th:name="permission_id"/>
+                                    <span class="form-check-label" for="kt_select_all">Select all</span>
+                                </label>
+                                <!--end::Checkbox-->
+                            </td>
+                        </tr>
+                        <!--end::Table row-->
+                        <!--begin::Table row-->
+
+                        <!--end::Table row-->
+
+                        </tbody>
+                        <!--end::Table body-->
+                    </table>
+                    <!--end::Table-->
+                </div>
+                <!--end::Table wrapper-->
+            </div>
+            <!--end::Permissions-->
+        </div>
+        <!--end::Scroll-->
+        <!--begin::Actions-->
+        <div th:replace="admin/_fragments/input_basic :: Actions"></div>
+        <!--end::Actions-->
+    </form>
+    <!--end::Form-->
+</div>
+<!--end::Modal body-->
+
+</html>

@@ -2,9 +2,6 @@ server:
   servlet:
     context-path: /xkRotaract
 
-app:
-  baseUrl: "http://localhost:8000/xkRotaract"
-
 spring:
   profiles:
     active: sit
@@ -37,7 +34,7 @@ mybatis:
   #    mapper-locations: classpath*:**/mapper/xml/**Mapper.xml    # mapper映射文件位置
   #    type-aliases-package: com.xk.**.model    # 实体类所在的位置
   configuration:
-    #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   #用于控制台打印sql语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   #用于控制台打印sql语句
     map-underscore-to-acmel-case: true    #開啟mybatis駝峰式命名規則自動轉換
 #  mybatis-plus:
 #    mapper-locations: classpath*:**/mapper/xml/**Mapper.xml    # mapper映射文件位置

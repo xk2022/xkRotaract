@@ -1,8 +1,10 @@
 package com.xk.upms.service.impl;
 
+import com.xk.common.util.XkBeanUtils;
 import com.xk.upms.dao.repository.UpmsSystemRepository;
 import com.xk.upms.model.bo.UpmsSystemSaveReq;
 import com.xk.upms.model.po.UpmsSystem;
+import com.xk.upms.model.vo.UpmsSystemResp;
 import com.xk.upms.model.vo.UpmsSystemSaveResp;
 import com.xk.upms.service.UpmsSystemService;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +33,11 @@ public class UpmsSystemServiceImpl implements UpmsSystemService {
 
     @Override
     public List list() {
-        return upmsSystemRepository.findAll(Sort.by(Sort.Direction.ASC, "orders"));
+    	List<UpmsSystemResp> resultList = new ArrayList<>();
+
+    	List<UpmsSystem> entities = upmsSystemRepository.findAll(Sort.by(Sort.Direction.ASC, "orders"));
+		resultList = XkBeanUtils.copyListProperties(entities, UpmsSystemResp::new);
+    	return resultList;
     }
 
 	@Override

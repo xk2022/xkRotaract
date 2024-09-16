@@ -42,20 +42,25 @@
 <div th:fragment="Card_toolbar" class="card-toolbar">
     <!--begin::Toolbar-->
     <div class="d-flex justify-content-end" data-kt-table-toolbar="base">
-        <!--begin::Add user-->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_input" name="add_btn">
-            <!--begin::Svg Icon | path: icons/duotune/arrows/arr075.svg-->
-            <span class="svg-icon svg-icon-2">
+        <!-- 使用 th:each 遍历 session.permissionAction -->
+        <div th:each="permission : ${session.permissionAction}">
+            <!-- 检查当前遍历的权限对象是否满足条件 -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_input" name="add_btn"
+                    th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).CREATE and permission.active}">
+                <!--begin::Svg Icon | path: icons/duotune/arrows/arr075.svg-->
+                <span class="svg-icon svg-icon-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="black"/>
                     <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="black"/>
                 </svg>
             </span>
-            <!--end::Svg Icon-->新增點我
-        </button>
+                <!--end::Svg Icon-->新增點我
+            </button>
+        </div>
         <!--end::Add user-->
     </div>
     <!--end::Toolbar-->
+
     <!--begin::Group actions-->
     <div class="d-flex justify-content-end align-items-center d-none" data-kt-table-toolbar="selected">
         <div class="fw-bolder me-5">
@@ -75,9 +80,11 @@
 <!--end::Submit-->
 
 <!--begin::Update-->
-<button th:fragment="btn_update" class="btn btn-icon btn-active-light-primary w-30px h-30px me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_input" data-kt-table-filter="update_row">
-    <!--begin::Svg Icon | path: icons/duotune/general/gen019.svg-->
-    <span class="svg-icon svg-icon-3">
+<th:block th:fragment="btn_update" th:each="permission : ${session.permissionAction}">
+    <button th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+            class="btn btn-icon btn-active-light-primary w-30px h-30px me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_input" data-kt-table-filter="update_row">
+        <!--begin::Svg Icon | path: icons/duotune/general/gen019.svg-->
+        <span class="svg-icon svg-icon-3">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
              fill="none">
             <path d="M17.5 11H6.5C4 11 2 9 2 6.5C2 4 4 2 6.5 2H17.5C20 2 22 4 22 6.5C22 9 20 11 17.5 11ZM15 6.5C15 7.9 16.1 9 17.5 9C18.9 9 20 7.9 20 6.5C20 5.1 18.9 4 17.5 4C16.1 4 15 5.1 15 6.5Z"
@@ -87,14 +94,17 @@
                   fill="black"/>
         </svg>
     </span>
-    <!--end::Svg Icon-->
-</button>
+        <!--end::Svg Icon-->
+    </button>
+</th:block>
 <!--end::Update-->
 
 <!--begin::Delete-->
-<button th:fragment="btn_delete" class="btn btn-icon btn-active-light-primary w-30px h-30px" data-kt-table-filter="delete_row">
-    <!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
-    <span class="svg-icon svg-icon-3">
+<th:block th:fragment="btn_delete" th:each="permission : ${session.permissionAction}">
+    <button th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+            class="btn btn-icon btn-active-light-primary w-30px h-30px" data-kt-table-filter="delete_row">
+        <!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
+        <span class="svg-icon svg-icon-3">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
              fill="none">
             <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z"
@@ -107,8 +117,9 @@
                   fill="black"/>
         </svg>
     </span>
-    <!--end::Svg Icon-->
-</button>
+        <!--end::Svg Icon-->
+    </button>
+</th:block>
 <!--end::Delete-->
 
 </html>
