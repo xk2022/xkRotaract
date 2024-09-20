@@ -54,6 +54,7 @@ function handleFormSubmit(element, form, validator, modal) {
     if (submitButton && validator) {
         submitButton.addEventListener('click', function (e) {
             e.preventDefault();
+
             validator.validate().then(function (status) {
                 if (status === 'Valid') {
                     submitButton.setAttribute('data-kt-indicator', 'on');

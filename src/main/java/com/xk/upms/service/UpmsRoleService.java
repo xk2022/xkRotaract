@@ -1,6 +1,5 @@
 package com.xk.upms.service;
 
-import com.xk.upms.model.bo.UpmsRoleReq;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
 import com.xk.upms.model.po.UpmsRole;
 import com.xk.upms.model.vo.UpmsRoleResp;
@@ -15,7 +14,7 @@ import java.util.Optional;
  */
 public interface UpmsRoleService {
 
-    List list(UpmsRoleReq resources);
+    List list();
 
     UpmsRoleSaveResp create(UpmsRoleSaveReq resources);
 

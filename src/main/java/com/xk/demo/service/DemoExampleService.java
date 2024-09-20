@@ -1,24 +1,28 @@
 package com.xk.demo.service;
 
-import com.xk.demo.model.dto.DemoExampleExample;
-import com.xk.demo.model.po.DemoExample;
+import com.xk.demo.model.bo.DemoExampleReq;
+import com.xk.demo.model.bo.DemoExampleSaveReq;
+import com.xk.demo.model.vo.DemoExampleSaveResp;
 
 import java.util.List;
 
 /**
- * DemoExampleService 接口
+ * DemoExample Service interface
+ * @author yuan
  * Created by yuan on 2022/06/10
+ * Update by yuan at 2024/09/18
  */
 public interface DemoExampleService {
 
-    List list(DemoExampleExample resources);
+    List list();
 
-    DemoExample create(DemoExampleExample resources);
+    List listBy(DemoExampleReq resources);
 
-    DemoExample update(Long id, DemoExampleExample resources);
+    DemoExampleSaveResp create(DemoExampleSaveReq resources);
 
-    void deleteById(Long id);
+    DemoExampleSaveResp update(Long id, DemoExampleSaveReq resources);
 
-    DemoExample queryById(Long id);
+    void deleteByPrimaryKeys(String ids);
+//    void deleteById(Long id);
 
 }

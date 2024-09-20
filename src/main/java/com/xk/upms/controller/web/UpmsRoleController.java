@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * 角色 Controller
@@ -58,7 +57,7 @@ public class UpmsRoleController extends BaseController {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
         model.addAttribute("fragmentName", "list");
 
-        model.addAttribute("page_list", upmsRoleService.list(null));
+        model.addAttribute("page_list", upmsRoleService.list());
         model.addAttribute("entity", new UpmsRole());
 //        model.addAttribute("checkbox_menus", upmsPermissionService.buildTree(upmsPermissionService.findAllMenuLevel()));
         return ADMIN_INDEX;
@@ -87,7 +86,7 @@ public class UpmsRoleController extends BaseController {
 //    @RequiresPermissions("upms:role:create")
 //    @RequiresPermissions("upms:role:update")
     @PostMapping("/save")
-    public String post(UpmsRoleSaveReq resources, RedirectAttributes attributes, HttpSession session) {
+    public String post(UpmsRoleSaveReq resources, RedirectAttributes attributes) {
         UpmsRoleSaveResp result;
         if (resources.getId() == null) {
             result = upmsRoleService.create(resources);

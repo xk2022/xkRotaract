@@ -75,7 +75,6 @@ public class UpmsPermissionController extends BaseController {
         }
 
         if (result == null) {
-
             attributes.addFlashAttribute("message", "操作失敗");
         } else {
             attributes.addFlashAttribute("message", "操作成功");

@@ -254,7 +254,7 @@ public class UpmsPermissionRestController {
          * /admin/cms/c
          */
         data.setPid(null);
-        data.setName("公司資訊管理");
+        data.setName("社內信息管理");
         data.setType((byte) 1);
         data.setPermissionValue("cms:c");
         data.setUri("/admin/cms/manage/c");

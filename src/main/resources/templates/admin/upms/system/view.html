@@ -100,10 +100,13 @@
                     </div>
                 </td>
                 <!--begin::Action=-->
-                <td class="text-end">
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
-                </td>
+                <th:block th:each="permission : ${session.permissionAction}">
+                    <td th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                        class="text-end">
+                        <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
+                        <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
+                    </td>
+                </th:block>
                 <!--end::Action=-->
             </tr>
             <!--end::Table row-->

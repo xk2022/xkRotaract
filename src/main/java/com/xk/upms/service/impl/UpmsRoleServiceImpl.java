@@ -1,9 +1,9 @@
 package com.xk.upms.service.impl;
 
+import com.xk.common.util.GenericUpdateService;
 import com.xk.upms.dao.repository.UpmsRolePermissionRepository;
 import com.xk.upms.dao.repository.UpmsRoleRepository;
 import com.xk.upms.dao.repository.UpmsUserRoleRepository;
-import com.xk.upms.model.bo.UpmsRoleReq;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
 import com.xk.upms.model.po.UpmsRole;
 import com.xk.upms.model.vo.UpmsRoleResp;
@@ -16,13 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * UpmsRoleService 實現
+ * @author yuan
  * Created by yuan on 2022/06/24
  */
 @Transactional(rollbackFor = Exception.class)
@@ -39,7 +40,7 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
     private UpmsRolePermissionRepository upmsRolePermissionRepository;
 
     @Override
-    public List list(UpmsRoleReq resources) {
+    public List list() {
         List<UpmsRoleResp> resultList = new ArrayList<>();
 
         List<UpmsRole> entities = upmsRoleRepository.findAll();
@@ -47,9 +48,9 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
             for (UpmsRole entity : entities) {
                 UpmsRoleResp resp = new UpmsRoleResp();
                 Long cntUser = upmsUserRoleRepository.countByRoleId(entity.getId());
+
                 BeanUtils.copyProperties(entity, resp);
                 resp.setCountUser(cntUser);
-
                 resultList.add(resp);
             }
         }
@@ -62,10 +63,6 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
 
         UpmsRole req = new UpmsRole();
         BeanUtils.copyProperties(resources, req);
-
-//        long time = System.currentTimeMillis();
-//        req.setOrders(time);
-        req.setCreateTime(new Date());
         UpmsRole entity = upmsRoleRepository.save(req);
 
         BeanUtils.copyProperties(entity, result);
@@ -76,12 +73,19 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
     public UpmsRoleSaveResp update(Long id, UpmsRoleSaveReq resources) {
         UpmsRoleSaveResp result = new UpmsRoleSaveResp();
 
-        UpmsRole req = new UpmsRole();
-        BeanUtils.copyProperties(resources, req);
+        Optional<UpmsRole> optional = upmsRoleRepository.findById(id);
+        if (!optional.isPresent()) {
+            // 根据需求处理找不到实体的情况，例如抛出异常
+            throw new EntityNotFoundException("Role with ID " + id + " not found");
+        }
+        UpmsRole req = optional.get();
+
+        // 通用更新实体方法，仅更新 resources 中非 null 的字段
+        GenericUpdateService<UpmsRole> updateService = new GenericUpdateService<>();
+        req = updateService.updateEntity(req, resources);
+        // 保存实体
         UpmsRole entity = upmsRoleRepository.save(req);
-
-//        upmsRolePermissionRepository.saveAll()
-
+        // 将更新后的实体转换为响应对象
         BeanUtils.copyProperties(entity, result);
         return result;
     }

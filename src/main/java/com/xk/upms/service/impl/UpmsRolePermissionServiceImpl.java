@@ -134,6 +134,8 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
             upmsRolePermissionRepository.saveAll(saveEntities);
         }
         this.checkPermissionLevelOne(roleId);
+        this.checkPermissionLevelOne(roleId);
+        this.checkPermissionLevelOne(roleId);
         return result;
     }
 

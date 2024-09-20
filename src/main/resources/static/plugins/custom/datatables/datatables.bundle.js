@@ -11944,7 +11944,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sZeroRecords": "No matching records found"
+			"sZeroRecords": "查無資料"
 		},
 	
 	

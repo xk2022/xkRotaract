@@ -1,7 +1,7 @@
 package com.xk.demo.controller.rest;
 
-import com.xk.demo.model.dto.DemoExampleExample;
-import com.xk.demo.model.po.DemoExample;
+import com.xk.demo.model.bo.DemoExampleSaveReq;
+import com.xk.demo.model.vo.DemoExampleSaveResp;
 import com.xk.demo.service.DemoExampleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,7 +15,9 @@ import java.util.List;
 
 /**
  * 範例 RestController
+ * @author yuan
  * Created by yuan on 2022/06/10
+ * Update by yuan at 2024/09/18
  */
 @Api(tags = "範例接口")
 @RestController
@@ -30,42 +32,26 @@ public class DemoExampleRestController {
     @ApiOperation(value = "範例列表")
     @GetMapping("/list")
     public List list() {
-        return demoExampleService.list(null);
+        return demoExampleService.list();
     }
 
     @ApiOperation(value = "Execute INSERT method")
     @PostMapping("/insert")
-    public DemoExample insert(DemoExampleExample resource) {
+    public DemoExampleSaveResp insert(DemoExampleSaveReq resource) {
         return demoExampleService.create(resource);
     }
 
     @ApiOperation(value = "Execute UPDATE method")
     @PutMapping("/update")
-    public DemoExample update(DemoExampleExample resource) {
+    public DemoExampleSaveResp update(DemoExampleSaveReq resource) {
         return demoExampleService.update(resource.getId(), resource);
     }
 
     @ApiOperation(value = "Execute DELETE method")
     @DeleteMapping("/{id}/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) {
-        demoExampleService.deleteById(id);
-    }
-
-//    @Operation(summary = "商品详情,针对得到单个商品的信息")
-//    @GetMapping(value = "/findByUserId")
-//    public Object findByUserId(@RequestParam Long userId) {
-//        return demoService.findByUserId(userId);
-//    }
-//
-//    @GetMapping(value = "/findAll")
-//    public Object findAll() {
-//        return demoService.findAll();
-//    }
-
-    @GetMapping("/{id}")
-    public DemoExample findById(@PathVariable("id") Long id) {
-        return demoExampleService.queryById(id);
+    public void deleteById(@PathVariable String ids) {
+        demoExampleService.deleteByPrimaryKeys(ids);
     }
 
 }

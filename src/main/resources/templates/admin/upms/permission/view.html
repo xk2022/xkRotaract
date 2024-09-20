@@ -161,10 +161,13 @@
                 <!--                    <td th:text="${data.fragmentPackage}"></td>-->
                 <td style="display:none" th:text="${data.orders}"></td>
                 <!--begin::Action=-->
-                <td class="text-end">
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
-                </td>
+                <th:block th:each="permission : ${session.permissionAction}">
+                    <td th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                        class="text-end">
+                        <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
+                        <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
+                    </td>
+                </th:block>
                 <!--end::Action=-->
             </tr>
             <tr th:each="child : ${data.children}" data-kt-docs-datatable-subtable="subtable_template" th:class="'subtable_template_'+${data.id}" style="display:none" >
@@ -194,10 +197,13 @@
                 <!--                    <td th:text="${child.fragmentPackage}"></td>-->
                 <td style="display:none" th:text="${child.orders}"></td>
                 <!--begin::Action=-->
-                <td class="text-end">
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
-                </td>
+                <th:block th:each="permission : ${session.permissionAction}">
+                    <td th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                        class="text-end">
+                        <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
+                        <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
+                    </td>
+                </th:block>
                 <!--end::Action=-->
             </tr>
         </th:block>

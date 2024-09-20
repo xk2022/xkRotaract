@@ -47,8 +47,8 @@ var KTDataTablesList = function () {
             "scrollX": true,
             'columnDefs': [
                 { orderable: false, targets: 0 }, // Disable ordering on column 0 (assigned)
-                { orderable: false, targets: 1 }, // Disable ordering on column 1 (assigned)
-                { orderable: false, targets: 3 }, // Disable ordering on column 3 (actions)
+//                { orderable: false, targets: 1 }, // Disable ordering on column 1 (assigned)
+//                { orderable: false, targets: 3 }, // Disable ordering on column 3 (actions)
             ]
         });
 

@@ -86,9 +86,7 @@ public class UpmsPermissionServiceImpl implements UpmsPermissionService {
             throw new NotFoundException("權限已存在！");
         }
 
-//        req.setType((req.getPid() == null) ? (byte) 1 : (byte) 2);
-//        long time = System.currentTimeMillis();
-//        req.setOrders(time);
+        req.setType((req.getPid() == null) ? (byte) 1 : (byte) 2);
         req.setCreateTime(new Date());
         UpmsPermission entity = upmsPermissionRepository.save(req);
 

@@ -34,7 +34,7 @@ public class UpmsUserController extends BaseController {
     //    private static final String DIR_INDEX = "truck/apps/user-management/permissions/";
 //    private static final String INDEX = DIR_INDEX + "permission";
 //    private static final String COMPILER = DIR_INDEX + "permission_add";
-    private static final String REDIRECT_ADDR = "redirect:/admin/upms/manage/user";
+    private static final String REDIRECT_ADDR = "redirect:/admin/upms/manage/user/";
     private static final int PAGE_SIZE = 8;
 
     @Autowired
@@ -70,6 +70,7 @@ public class UpmsUserController extends BaseController {
     public String detail(@PathVariable("id") Long id, Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]+"/detail");
         model.addAttribute("fragmentName", "detail");
+        model.addAttribute("role_list", upmsRoleService.list());
 
         model.addAttribute("info", upmsUserService.selectDeatilById(id));
         model.addAttribute("entity", upmsUserService.selectByPrimaryKey(id));
@@ -142,7 +143,7 @@ public class UpmsUserController extends BaseController {
     @GetMapping("/role/{name}")
     public String role(@PathVariable("code") String code, Model model) {
         // 所有角色
-        model.addAttribute("upmsRoles", upmsRoleService.list(null));
+        model.addAttribute("upmsRoles", upmsRoleService.list());
         // 用戶擁有角色
         model.addAttribute("upmsUserRoles", upmsRoleService.selectByCode(code));
         return "/manage/user/role.jsp";
@@ -151,10 +152,10 @@ public class UpmsUserController extends BaseController {
     //    @RequiresPermissions("upms:user:role")
     @PostMapping("/role/{id}")
     public Object role(@PathVariable("id") int id, HttpServletRequest request) {
-        String[] roleIds = request.getParameterValues("roleId");
+        String[] roleIds = request.getParameterValues("user_role");
         upmsUserRoleService.role((long) id, roleIds);
 //        return new UpmsResult(UpmsResultConstant.SUCCESS, "");
-        return REDIRECT_ADDR;
+        return REDIRECT_ADDR + id;
     }
 
     /**

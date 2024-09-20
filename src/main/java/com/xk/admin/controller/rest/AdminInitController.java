@@ -1,5 +1,7 @@
 package com.xk.admin.controller.rest;
 
+import com.xk.cms.dao.repository.CmsClubRepository;
+import com.xk.cms.model.po.CmsClub;
 import com.xk.common.json.*;
 import com.xk.upms.controller.rest.UpmsPermissionRestController;
 import com.xk.upms.controller.rest.UpmsRoleRestController;
@@ -10,6 +12,7 @@ import com.xk.upms.dao.repository.UpmsDictionaryDataRepository;
 import com.xk.upms.model.po.UpmsDictionaryCategory;
 import com.xk.upms.model.po.UpmsDictionaryData;
 import io.swagger.annotations.Api;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,6 +49,8 @@ public class AdminInitController {
     private UpmsDictionaryCategaryRepository categaryRepository;
     @Autowired
     private UpmsDictionaryDataRepository dataRepository;
+    @Autowired
+    private CmsClubRepository clubRepository;
 
     /**
      * init()
@@ -55,11 +63,13 @@ public class AdminInitController {
         upmsUserRestController.init();
         upmsUserRestController.role();
         upmsRoleRestController.permission();
+        this.initDDD();
+        this.insertClub();
+
         return "OK";
     }
 
-    @GetMapping("/initDDD")
-    public void initDDD() {
+    private void initDDD() {
         categaryRepository.deleteAll();
         // 打印所有地区的键和值
 
@@ -102,89 +112,279 @@ public class AdminInitController {
             req.setDescription(district.getName());
             datas.add(req);
         }
+//        // 打印所有地区的键和值
+//        for (District_3461 district : District_3461.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3461").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+//        for (District_3462 district : District_3462.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3462").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+//        for (District_3481 district : District_3481.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3481").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+//        for (District_3482 district : District_3482.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3482").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+//        for (District_3490 district : District_3490.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3490").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+//        for (District_3501 district : District_3501.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3501").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+//        for (District_3502 district : District_3502.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3502").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+//        for (District_3510 district : District_3510.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3510").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+//        for (District_3521 district : District_3521.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3521").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+//        for (District_3522 district : District_3522.values()) {
+//            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
+//            UpmsDictionaryData req = new UpmsDictionaryData();
+//            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3522").getId());
+//            req.setCode(String.valueOf(district.getKey()));
+//            req.setDescription(district.getName());
+//            datas.add(req);
+//        }
+
+        dataRepository.saveAll(datas);
+    }
+
+    @GetMapping("insertClub")
+    public void insertClub() {
+        List<CmsClub> datas = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+
         // 打印所有地区的键和值
-        for (District_3461 district : District_3461.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3461").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3461 club : District_3461.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3461");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
-        for (District_3462 district : District_3462.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3462").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3462 club : District_3462.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3462");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
-        for (District_3481 district : District_3481.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3481").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3481 club : District_3481.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3481");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
-        for (District_3482 district : District_3482.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3482").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3482 club : District_3482.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3482");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
-        for (District_3490 district : District_3490.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3490").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3490 club : District_3490.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3490");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
-        for (District_3501 district : District_3501.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3501").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3501 club : District_3501.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3501");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
-        for (District_3502 district : District_3502.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3502").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3502 club : District_3502.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3502");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
-        for (District_3510 district : District_3510.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3510").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3510 club : District_3510.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3510");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
-        for (District_3521 district : District_3521.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3521").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3521 club : District_3521.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3521");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
-        for (District_3522 district : District_3522.values()) {
-            System.out.printf("键: %d, 名称: %s%n", district.getKey(), district.getName());
-            UpmsDictionaryData req = new UpmsDictionaryData();
-            req.setParentId(categaryRepository.findOneByCode("dropdown_DISTRICT3522").getId());
-            req.setCode(String.valueOf(district.getKey()));
-            req.setDescription(district.getName());
+        for (District_3522 club : District_3522.values()) {
+            System.out.printf("键: %d, 名称: %s%n", club.getKey(), club.getName());
+            CmsClub req = new CmsClub();
+            req.setDistrict("3522");
+            String[] splitStr = club.getName().split("_");
+            req.setName(splitStr[0]);
+            if (StringUtils.isNotBlank(splitStr[1])) {
+                try {
+                    Date date = formatter.parse(splitStr[1]);
+                    req.setRegistrationDate(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            req.setStatus(true);
+            req.setCreateBy("system restAPI");
             datas.add(req);
         }
 
-        dataRepository.saveAll(datas);
+        clubRepository.saveAll(datas);
     }
 
 }

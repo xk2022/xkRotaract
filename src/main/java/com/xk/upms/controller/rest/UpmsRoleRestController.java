@@ -41,7 +41,7 @@ public class UpmsRoleRestController {
     @ApiOperation(value = "角色列表")
     @GetMapping("/cms_core")
     public Object list() {
-        return upmsRoleService.list(null);
+        return upmsRoleService.list();
     }
 
     @ApiOperation(value = "角色列表")

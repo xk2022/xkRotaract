@@ -27,6 +27,16 @@ spring:
     #physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     open-in-view: true
 
+# mybatis配置
+mybatis:
+  #    mapper-locations: classpath*:**/mapper/xml/**Mapper.xml    # mapper映射文件位置
+  #    type-aliases-package: com.xk.**.model    # 实体类所在的位置
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   #用于控制台打印sql语句
+#    map-underscore-to-acmel-case: true    #開啟mybatis駝峰式命名規則自動轉換
+#  mybatis-plus:
+#    mapper-locations: classpath*:**/mapper/xml/**Mapper.xml    # mapper映射文件位置
+
 # ===== 自定義 swagger 配置 ===== #
 springfox:
   documentation:
