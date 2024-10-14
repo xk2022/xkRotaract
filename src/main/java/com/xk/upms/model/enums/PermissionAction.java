@@ -33,4 +33,12 @@ public enum PermissionAction {
         }
         throw new IllegalArgumentException("Invalid permission action: " + value);
     }
+    
+    /**
+     * Get the number of PermissionAction enums.
+     * @return the size of PermissionAction values
+     */
+    public static int size() {
+        return PermissionAction.values().length;
+    }
 }

@@ -8,8 +8,10 @@ import org.hibernate.annotations.Comment;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
+ * @author yuan
  * Created by yuan on 2024/08/26
  */
 @Entity
@@ -25,25 +27,40 @@ public class CmsCalendar extends BaseEntity implements Serializable {
     @NotNull(groups = Update.class)
     @Comment("00_流水號")
     private Long id;
-//
-//    @Comment("01_公司名稱")
-//    private String name;
-//
-//    @Comment("02_公司電話")
-//    private String phone;
-//
-//    @Comment("03_公司地址")
-//    private String address;
-//
-//    @Comment("04_公司網址")
-//    private String url;
-//
-//    @Comment("05_產業別")
-//    private String industries;
-//
-//    @Comment("06_經緯度")
-//    private String latlng;
 
+    @Comment("01_活動名稱")
+    private String eventName;
 
+    @Comment("02_活動說明")
+    private String eventDescription;
+
+    @Comment("03_活動地點")
+    private String eventLocation;
+
+    @Comment("04_全天")
+    private boolean allDay;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Comment("05_活動開始日期")
+    private Date startDate;
+
+    @Comment("06_活動開始時間")
+    private String startTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Comment("07_活動結束日期")
+    private Date endDate;
+
+    @Comment("08_活動結束時間")
+    private String endTime;
+
+    @Comment("09_活動類型")
+    private String type;
+
+    @Comment("10_所屬地區")
+    private String district_id;
+
+    @Comment("11_所屬扶青社")
+    private String rotaract_id;
 
 }

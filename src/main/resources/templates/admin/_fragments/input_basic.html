@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 
 <!--begin::Modal - Add task-->
-<div th:fragment="basic" class="modal fade" th:id="${modal_id != null ? 'kt_modal_input_' + modal_id : 'kt_modal_input'}" tabindex="-1" aria-hidden="true">
+<div th:fragment="basic" class="modal fade" th:id="${modal_id != null ? 'kt_modal_input_' + modal_id : 'kt_modal_input'}" tabindex="-1">
     <!--begin::Modal dialog-->
     <div class="modal-dialog modal-dialog-centered" th:classappend="${maxWidth != null ? maxWidth : 'mw-650px'}">
         <!--begin::Modal content-->
@@ -43,6 +43,8 @@
 </div>
 <!--end::Actions-->
 
+<!--第一段依賴 KT 框架來處理關閉按鈕的邏輯。-->
+<!--第二段則是使用 Bootstrap 的 tooltip 和 modal 關閉功能，並且在按鈕上加入了額外的提示工具顯示。-->
 <!--begin::Close-->
 <div th:fragment="btn_close" class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-modal-action="close">
     <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
@@ -55,5 +57,16 @@
     <!--end::Svg Icon-->
 </div>
 <!--end::Close-->
-
+<!--begin::Close-->
+<div th:fragment="btn_close_b5(dynamicTitle)" class="btn btn-icon btn-sm btn-color-gray-500 btn-active-icon-primary" data-bs-toggle="tooltip" th:attr="title=${dynamicTitle}" data-bs-dismiss="modal">
+    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+    <span class="svg-icon svg-icon-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="black"/>
+            <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="black"/>
+        </svg>
+    </span>
+    <!--end::Svg Icon-->
+</div>
+<!--end::Close-->
 </html>

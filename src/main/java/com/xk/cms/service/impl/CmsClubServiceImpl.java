@@ -1,6 +1,7 @@
 package com.xk.cms.service.impl;
 
 import com.xk.cms.dao.repository.CmsClubRepository;
+import com.xk.cms.model.bo.CmsClubReq;
 import com.xk.cms.model.bo.CmsClubSaveReq;
 import com.xk.cms.model.po.CmsClub;
 import com.xk.cms.model.vo.CmsClubResp;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,19 @@ public class CmsClubServiceImpl implements CmsClubService {
         List<CmsClubResp> resultList = new ArrayList<>();
 
         List<CmsClub> entities = cmsClubRepository.findAll(Sort.by(Sort.Direction.ASC, "registrationDate"));
+        resultList = XkBeanUtils.copyListProperties(entities, CmsClubResp::new);
+        return resultList;
+    }
+
+    @Override
+    public List listBy(CmsClubReq resources) {
+        List<CmsClubResp> resultList = new ArrayList<>();
+
+        CmsClub req = new CmsClub();
+        BeanUtils.copyProperties(resources, req);
+        Example<CmsClub> example = Example.of(req);
+
+        List<CmsClub> entities = cmsClubRepository.findAll(example);
         resultList = XkBeanUtils.copyListProperties(entities, CmsClubResp::new);
         return resultList;
     }

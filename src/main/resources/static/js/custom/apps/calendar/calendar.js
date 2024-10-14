@@ -4,7 +4,8 @@
 var KTAppCalendar = function () {
     // Shared variables
     // Calendar variables
-    var calendar;
+    var calendar; // 存儲 FullCalendar 實例，用於渲染日曆和管理事件。
+    var calendarData;
     var data = {
         id: '',
         eventName: '',
@@ -12,10 +13,13 @@ var KTAppCalendar = function () {
         eventLocation: '',
         startDate: '',
         endDate: '',
-        allDay: false
-    };
-    var popover;
-    var popoverState = false;
+        allDay: false,
+        type: '',
+        district_id: '',
+        rotaract_id: ''
+    }; // 用來存儲日曆事件的屬性（如事件名稱、描述、開始時間、結束時間等）。
+    var popover; // 用來控制事件懸停時的彈出預覽框。
+    var popoverState = false; // 用來控制事件懸停時的彈出預覽框。
 
     // Add event variables
     var eventName;
@@ -49,6 +53,47 @@ var KTAppCalendar = function () {
     var viewEditButton;
     var viewDeleteButton;
 
+    var formattedEvents;
+    // 取得 PermissionAction_CREATE 的值，並轉換為布林值
+    var PermissionAction_CREATE = $('#PermissionAction_CREATE').val() === 'true'; // 預設為 false。
+
+
+
+    var initData = function () {
+        $.ajax({
+            url: baseUrl + '/api/manage/calendar/list',
+            method: 'POST',
+            data: JSON.stringify({
+                    // 傳遞 JSON 格式的數據
+                    calendar_range: $('#calendar_range').val(),
+                    district_id: $('#district_id').val(),
+                    rotaract_id: $('#rotaract_id').val()
+                }),
+            processData: false,
+            contentType: 'application/json',
+            success: function(response) {
+                console.log('AJAX 请求成功：', response);
+
+                calendarData = response; // 将数据存储在全局变量中
+                // 將資料轉換為 FullCalendar 所需的格式
+                formattedEvents = calendarData.map(function(event) {
+                    return {
+                        id: event.id,
+                        title: event.title,
+                        start: event.start,  // 移除不需要的時間部分
+                        end: event.end,
+                        className: event.className || "fc-event-primary",  // 如果 className 是 null, 則設置一個預設的 class
+                        description: event.description || '',  // 如果 description 缺失, 則設置為空字串
+                        location: event.location
+                    };
+                });
+                initCalendarApp();
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX 请求失败：', error);
+            }
+        });
+    }
 
     // Private functions
     var initCalendarApp = function () {
@@ -90,11 +135,14 @@ var KTAppCalendar = function () {
                 listMonth: { buttonText: '列表' }
             },
 
+            editable: PermissionAction_CREATE,
             // Select dates action --- more info: https://fullcalendar.io/docs/select-callback
             select: function (arg) {
-                hidePopovers();
-                formatArgs(arg);
-                handleNewEvent();
+                if (PermissionAction_CREATE) {
+                    hidePopovers();
+                    formatArgs(arg);
+                    handleNewEvent();
+                }
             },
 
             // Click event --- more info: https://fullcalendar.io/docs/eventClick
@@ -129,9 +177,17 @@ var KTAppCalendar = function () {
                 initPopovers(arg.el);
             },
 
-            editable: true,
             dayMaxEvents: true, // allow "more" link when too many events
-            events: [
+            events: formattedEvents,
+
+            // Reset popovers when changing calendar views --- more info: https://fullcalendar.io/docs/datesSet
+            datesSet: function(){
+                hidePopovers();
+            }
+        });
+        /**
+            events: formattedEvents.concat(
+            [
                 {
                     id: uid(),
                     title: 'All Day Event',
@@ -265,13 +321,7 @@ var KTAppCalendar = function () {
                     description: 'Lorem ipsum dolor sit amet, labore',
                     location: '271, Spring Street'
                 }
-            ],
-
-            // Reset popovers when changing calendar views --- more info: https://fullcalendar.io/docs/datesSet
-            datesSet: function(){
-                hidePopovers();
-            }
-        });
+            ]),**/
 
         calendar.render();
     }
@@ -282,7 +332,8 @@ var KTAppCalendar = function () {
 
         // Generate popover content
         const startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
-        const endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
+//        const endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
+        const endDate = startDate;
         const popoverHtml = '<div class="fw-bolder mb-2">' + data.eventName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div><div id="kt_calendar_event_view_button" type="button" class="btn btn-sm btn-light-primary">View More</div>';
 
         // Popover options
@@ -325,21 +376,21 @@ var KTAppCalendar = function () {
             form,
             {
                 fields: {
-                    'calendar_event_name': {
+                    'eventName': {
                         validators: {
                             notEmpty: {
                                 message: 'Event name is required'
                             }
                         }
                     },
-                    'calendar_event_start_date': {
+                    'startDate': {
                         validators: {
                             notEmpty: {
                                 message: 'Start date is required'
                             }
                         }
                     },
-                    'calendar_event_end_date': {
+                    'endDate': {
                         validators: {
                             notEmpty: {
                                 message: 'End date is required'
@@ -387,259 +438,124 @@ var KTAppCalendar = function () {
 
     // Handle add button
     const handleAddButton = () => {
-        addButton.addEventListener('click', e => {
-            hidePopovers();
+        if (addButton) {
+            addButton.addEventListener('click', e => {
+                hidePopovers();
 
-            // Reset form data
-            data = {
-                id: '',
-                eventName: '',
-                eventDescription: '',
-                startDate: new Date(),
-                endDate: new Date(),
-                allDay: false
-            };
-            handleNewEvent();
+                // Reset form data
+                data = {
+                    id: '',
+                    eventName: '',
+                    eventDescription: '',
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    allDay: false
+                };
+                handleNewEvent();
+            });
+        }
+    }
+
+    // Input Control Setting
+    const HandleInputControl = () => {
+        // Select datepicker wrapper elements
+        const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
+
+        // Handle all day toggle
+        const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
+        const dayMorningToggle = form.querySelector('#kt_calendar_datepicker_dayMorning');
+        const dayAfternoonToggle = form.querySelector('#kt_calendar_datepicker_dayAfternoon');
+        const dayNightToggle = form.querySelector('#kt_calendar_datepicker_dayNight');
+
+        allDayToggle.addEventListener('click', e => {
+            dayMorningToggle.checked = false;
+            dayAfternoonToggle.checked = false;
+            dayNightToggle.checked = false;
+            if (e.target.checked) {
+                // 如果勾選 allDay，清空時間並隱藏時間選擇
+                $("[name='startTime']").val('');
+                $("[name='endTime']").val('');
+                datepickerWrappers.forEach(dw => {
+                    dw.classList.add('d-none'); // 隱藏時間選擇框
+                });
+            } else {
+                // 如果未勾選 allDay，顯示時間選擇框
+                endFlatpickr.setDate(data.startDate, true, 'Y-m-d');
+                datepickerWrappers.forEach(dw => {
+                    dw.classList.remove('d-none');
+                });
+            }
+        });
+        dayMorningToggle.addEventListener('click', e => {
+            allDayToggle.checked = false;
+            dayAfternoonToggle.checked = false;
+            dayNightToggle.checked = false;
+            if (e.target.checked) {
+                // 如果勾選
+                $("[name='startTime']").val('09:00');
+                $("[name='endTime']").val('12:00');
+                datepickerWrappers.forEach(dw => {
+                    dw.classList.remove('d-none'); // 隱藏時間選擇框
+                });
+            }
+        });
+        dayAfternoonToggle.addEventListener('click', e => {
+            allDayToggle.checked = false;
+            dayMorningToggle.checked = false;
+            dayNightToggle.checked = false;
+            if (e.target.checked) {
+                // 如果勾選
+                $("[name='startTime']").val('13:00');
+                $("[name='endTime']").val('16:00');
+                datepickerWrappers.forEach(dw => {
+                    dw.classList.remove('d-none'); // 隱藏時間選擇框
+                });
+            }
+        });
+        dayNightToggle.addEventListener('click', e => {
+            allDayToggle.checked = false;
+            dayMorningToggle.checked = false;
+            dayAfternoonToggle.checked = false;
+            if (e.target.checked) {
+                // 如果勾選
+                $("[name='startTime']").val('18:00');
+                $("[name='endTime']").val('22:00');
+                datepickerWrappers.forEach(dw => {
+                    dw.classList.remove('d-none'); // 隱藏時間選擇框
+                });
+            }
         });
     }
 
     // Handle add new event
     const handleNewEvent = () => {
-        // Update modal title
-        modalTitle.innerText = "Add a New Event";
+        $('#modal_name').text("新增事件");
 
         modal.show();
-
-        // Select datepicker wrapper elements
-        const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
-
-        // Handle all day toggle
-        const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
-        allDayToggle.addEventListener('click', e => {
-            if (e.target.checked) {
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.add('d-none');
-                });
-            } else {
-                endFlatpickr.setDate(data.startDate, true, 'Y-m-d');
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.remove('d-none');
-                });
-            }
-        });
+        HandleInputControl();
 
         populateForm(data);
-
-        // Handle submit form
-        submitButton.addEventListener('click', function (e) {
-            // Prevent default button action
-            e.preventDefault();
-
-            // Validate form before submit
-            if (validator) {
-                validator.validate().then(function (status) {
-                    console.log('validated!');
-
-                    if (status == 'Valid') {
-                        // Show loading indication
-                        submitButton.setAttribute('data-kt-indicator', 'on');
-
-                        // Disable submit button whilst loading
-                        submitButton.disabled = true;
-
-                        // Simulate form submission
-                        setTimeout(function () {
-                            // Simulate form submission
-                            submitButton.removeAttribute('data-kt-indicator');
-
-                            // Show popup confirmation 
-                            Swal.fire({
-                                text: "New event added to calendar!",
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn btn-primary"
-                                }
-                            }).then(function (result) {
-                                if (result.isConfirmed) {
-                                    modal.hide();
-
-                                    // Enable submit button after loading
-                                    submitButton.disabled = false;
-
-                                    // Detect if is all day event
-                                    let allDayEvent = false;
-                                    if (allDayToggle.checked) { allDayEvent = true; }
-                                    if (startTimeFlatpickr.selectedDates.length === 0) { allDayEvent = true; }
-
-                                    // Merge date & time
-                                    var startDateTime = moment(startFlatpickr.selectedDates[0]).format();
-                                    var endDateTime = moment(endFlatpickr.selectedDates[endFlatpickr.selectedDates.length - 1]).format();
-                                    if (!allDayEvent) {
-                                        const startDate = moment(startFlatpickr.selectedDates[0]).format('YYYY-MM-DD');
-                                        const endDate = startDate;
-                                        const startTime = moment(startTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
-                                        const endTime = moment(endTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
-
-                                        startDateTime = startDate + 'T' + startTime;
-                                        endDateTime = endDate + 'T' + endTime;
-                                    }
-
-                                    // Add new event to calendar
-                                    calendar.addEvent({
-                                        id: uid(),
-                                        title: eventName.value,
-                                        description: eventDescription.value,
-                                        location: eventLocation.value,
-                                        start: startDateTime,
-                                        end: endDateTime,
-                                        allDay: allDayEvent
-                                    });
-                                    calendar.render();
-
-                                    // Reset form for demo purposes only
-                                    form.reset();
-                                }
-                            });
-
-                            //form.submit(); // Submit form
-                        }, 2000);
-                    } else {
-                        // Show popup warning 
-                        Swal.fire({
-                            text: "Sorry, looks like there are some errors detected, please try again.",
-                            icon: "error",
-                            buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
-                            customClass: {
-                                confirmButton: "btn btn-primary"
-                            }
-                        });
-                    }
-                });
-            }
-        });
     }
 
     // Handle edit event
     const handleEditEvent = () => {
         // Update modal title
-        modalTitle.innerText = "Edit an Event";
-
         modal.show();
+        HandleInputControl();
 
-        // Select datepicker wrapper elements
-        const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
-
-        // Handle all day toggle
-        const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
-        allDayToggle.addEventListener('click', e => {
-            if (e.target.checked) {
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.add('d-none');
-                });
-            } else {
-                endFlatpickr.setDate(data.startDate, true, 'Y-m-d');
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.remove('d-none');
-                });
-            }
-        });
-
-        populateForm(data);
-
-        // Handle submit form
-        submitButton.addEventListener('click', function (e) {
-            // Prevent default button action
-            e.preventDefault();
-
-            // Validate form before submit
-            if (validator) {
-                validator.validate().then(function (status) {
-                    console.log('validated!');
-
-                    if (status == 'Valid') {
-                        // Show loading indication
-                        submitButton.setAttribute('data-kt-indicator', 'on');
-
-                        // Disable submit button whilst loading
-                        submitButton.disabled = true;
-
-                        // Simulate form submission
-                        setTimeout(function () {
-                            // Simulate form submission
-                            submitButton.removeAttribute('data-kt-indicator');
-
-                            // Show popup confirmation 
-                            Swal.fire({
-                                text: "New event added to calendar!",
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn btn-primary"
-                                }
-                            }).then(function (result) {
-                                if (result.isConfirmed) {
-                                    modal.hide();
-
-                                    // Enable submit button after loading
-                                    submitButton.disabled = false;
-
-                                    // Remove old event
-                                    calendar.getEventById(data.id).remove();
-
-                                    // Detect if is all day event
-                                    let allDayEvent = false;
-                                    if (allDayToggle.checked) { allDayEvent = true; }
-                                    if (startTimeFlatpickr.selectedDates.length === 0) { allDayEvent = true; }
-
-                                    // Merge date & time
-                                    var startDateTime = moment(startFlatpickr.selectedDates[0]).format();
-                                    var endDateTime = moment(endFlatpickr.selectedDates[endFlatpickr.selectedDates.length - 1]).format();
-                                    if (!allDayEvent) {
-                                        const startDate = moment(startFlatpickr.selectedDates[0]).format('YYYY-MM-DD');
-                                        const endDate = startDate;
-                                        const startTime = moment(startTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
-                                        const endTime = moment(endTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
-
-                                        startDateTime = startDate + 'T' + startTime;
-                                        endDateTime = endDate + 'T' + endTime;
-                                    }
-
-                                    // Add new event to calendar
-                                    calendar.addEvent({
-                                        id: uid(),
-                                        title: eventName.value,
-                                        description: eventDescription.value,
-                                        location: eventLocation.value,
-                                        start: startDateTime,
-                                        end: endDateTime,
-                                        allDay: allDayEvent
-                                    });
-                                    calendar.render();
-
-                                    // Reset form for demo purposes only
-                                    form.reset();
-                                }
-                            });
-
-                            //form.submit(); // Submit form
-                        }, 2000);
-                    } else {
-                        // Show popup warning 
-                        Swal.fire({
-                            text: "Sorry, looks like there are some errors detected, please try again.",
-                            icon: "error",
-                            buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
-                            customClass: {
-                                confirmButton: "btn btn-primary"
-                            }
-                        });
-                    }
-                });
+        // data.id
+        $.ajax({
+            url: '/xkRotaract/api/manage/calendar/findById',
+            method: 'POST',
+            data: JSON.stringify({ 'id': data.id }), // 修改为适合你的代码
+            processData: false,
+            contentType: 'application/json',
+            success: function(response) {
+                console.log('AJAX 请求成功：', response);
+                readyToEdit(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX 请求失败：', error);
             }
         });
     }
@@ -664,13 +580,18 @@ var KTAppCalendar = function () {
             endDateMod = moment(data.endDate).format('Do MMM, YYYY - h:mm a');
         }
 
-        // Populate view data
-        viewEventName.innerText = data.eventName;
-        viewAllDay.innerText = eventNameMod;
-        viewEventDescription.innerText = data.eventDescription ? data.eventDescription : '--';
-        viewEventLocation.innerText = data.eventLocation ? data.eventLocation : '--';
-        viewStartDate.innerText = startDateMod;
-        viewEndDate.innerText = endDateMod;
+        $('#modal_name').text("新增事件");
+        $("[name='id']").val(null);
+        $("[name='viewEventName']").text(data.eventName);
+        $("[name='viewAllDay']").text(eventNameMod);
+        $("[name='viewEventDescription']").text(data.eventDescription ? data.eventDescription : '--');
+        $("[name='viewEventLocation']").text(data.eventLocation ? data.eventLocation : '--');
+
+        // 取得當前日期，並設置為 ISO 格式的日期字符串
+        const today = new Date().toISOString().slice(0, 10); // 格式為 YYYY-MM-DDTHH:mm
+        const now = new Date().toISOString().slice(11, 16); // 格式為 YYYY-MM-DDTHH:mm
+        $("[name='viewStartDate']").text(startDateMod);
+        $("[name='viewEndDate']").text(endDateMod);
     }
 
     // Handle delete event
@@ -719,78 +640,6 @@ var KTAppCalendar = function () {
         });
     }
 
-    // Handle cancel button
-    const handleCancelButton = () => {
-        // Edit event modal cancel button
-        cancelButton.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            Swal.fire({
-                text: "Are you sure you would like to cancel?",
-                icon: "warning",
-                showCancelButton: true,
-                buttonsStyling: false,
-                confirmButtonText: "Yes, cancel it!",
-                cancelButtonText: "No, return",
-                customClass: {
-                    confirmButton: "btn btn-primary",
-                    cancelButton: "btn btn-active-light"
-                }
-            }).then(function (result) {
-                if (result.value) {
-                    form.reset(); // Reset form	
-                    modal.hide(); // Hide modal				
-                } else if (result.dismiss === 'cancel') {
-                    Swal.fire({
-                        text: "Your form has not been cancelled!.",
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: "Ok, got it!",
-                        customClass: {
-                            confirmButton: "btn btn-primary",
-                        }
-                    });
-                }
-            });
-        });
-    }
-
-    // Handle close button
-    const handleCloseButton = () => {
-        // Edit event modal close button
-        closeButton.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            Swal.fire({
-                text: "Are you sure you would like to cancel?",
-                icon: "warning",
-                showCancelButton: true,
-                buttonsStyling: false,
-                confirmButtonText: "Yes, cancel it!",
-                cancelButtonText: "No, return",
-                customClass: {
-                    confirmButton: "btn btn-primary",
-                    cancelButton: "btn btn-active-light"
-                }
-            }).then(function (result) {
-                if (result.value) {
-                    form.reset(); // Reset form	
-                    modal.hide(); // Hide modal				
-                } else if (result.dismiss === 'cancel') {
-                    Swal.fire({
-                        text: "Your form has not been cancelled!.",
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: "Ok, got it!",
-                        customClass: {
-                            confirmButton: "btn btn-primary",
-                        }
-                    });
-                }
-            });
-        });
-    }
-
     // Handle view button
     const handleViewButton = () => {
         const viewButton = document.querySelector('#kt_calendar_event_view_button');
@@ -817,31 +666,41 @@ var KTAppCalendar = function () {
 
     // Populate form 
     const populateForm = () => {
-        eventName.value = data.eventName ? data.eventName : '';
-        eventDescription.value = data.eventDescription ? data.eventDescription : '';
-        eventLocation.value = data.eventLocation ? data.eventLocation : '';
+
+        $("[name='id']").val(data.id);
+        $("[name='eventName']").val(data.eventName ? data.eventName : '');
+        $("[name='eventDescription']").val(data.eventDescription ? data.eventDescription : '');
+        $("[name='eventLocation']").val(data.eventLocation ? data.eventLocation : '');
+
         startFlatpickr.setDate(data.startDate, true, 'Y-m-d');
-
         // Handle null end dates
-        const endDate = data.endDate ? data.endDate : moment(data.startDate).format();
-        endFlatpickr.setDate(endDate, true, 'Y-m-d');
+        // const endDate = data.endDate ? data.endDate : moment(data.startDate).format();
+        endFlatpickr.setDate(data.startDate, true, 'Y-m-d');
 
-        const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
-        const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
-        if (data.allDay) {
-            allDayToggle.checked = true;
-            datepickerWrappers.forEach(dw => {
-                dw.classList.add('d-none');
-            });
-        } else {
-            startTimeFlatpickr.setDate(data.startDate, true, 'Y-m-d H:i');
-            endTimeFlatpickr.setDate(data.endDate, true, 'Y-m-d H:i');
-            endFlatpickr.setDate(data.startDate, true, 'Y-m-d');
-            allDayToggle.checked = false;
-            datepickerWrappers.forEach(dw => {
-                dw.classList.remove('d-none');
-            });
-        }
+//        const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
+//        if (data.allDay) {
+//            $("[name='allDay']").prop('checked', true);
+//            // 如果勾選 allDay，清空時間並隱藏時間選擇
+//            $("[name='startTime']").val('');
+//            $("[name='endTime']").val('');
+//            datepickerWrappers.forEach(dw => {
+//                dw.classList.add('d-none');
+//            });
+//        } else {
+//            const startDate = new Date(data.startDate).toISOString().slice(0, 10); // 格式為 YYYY-MM-DDTHH:mm
+//            const startTime = new Date(data.startDate).toISOString().slice(11, 16); // 格式為 YYYY-MM-DDTHH:mm
+//            const endDate = new Date(data.endDate).toISOString().slice(0, 10); // 格式為 YYYY-MM-DDTHH:mm
+//            const endTime = new Date(data.endDate).toISOString().slice(11, 16); // 格式為 YYYY-MM-DDTHH:mm
+//            $("[name='startDate']").val(startDate);
+//            $("[name='endDate']").val(endDate);
+//            $("[name='startTime']").val(startTime);
+//            $("[name='endTime']").val(endTime);
+//            $("[name='allDay']").prop('checked', false);
+            // 如果未勾選 allDay，顯示時間選擇框
+//            datepickerWrappers.forEach(dw => {
+//                dw.classList.remove('d-none');
+//            });
+//        }
     }
 
     // Format FullCalendar reponses
@@ -865,42 +724,36 @@ var KTAppCalendar = function () {
         init: function () {
             // Define variables
             // Add event modal
-            const element = document.getElementById('kt_modal_add_event');
+            const element = document.getElementById('kt_modal_input_add_event');
             form = element.querySelector('#kt_modal_add_event_form');
-            eventName = form.querySelector('[name="calendar_event_name"]');
-            eventDescription = form.querySelector('[name="calendar_event_description"]');
-            eventLocation = form.querySelector('[name="calendar_event_location"]');
             startDatepicker = form.querySelector('#kt_calendar_datepicker_start_date');
             endDatepicker = form.querySelector('#kt_calendar_datepicker_end_date');
             startTimepicker = form.querySelector('#kt_calendar_datepicker_start_time');
             endTimepicker = form.querySelector('#kt_calendar_datepicker_end_time');
-            addButton = document.querySelector('[data-kt-calendar="add"]');
-            submitButton = form.querySelector('#kt_modal_add_event_submit');
-            cancelButton = form.querySelector('#kt_modal_add_event_cancel');
-            closeButton = element.querySelector('#kt_modal_add_event_close');
+            addButton = document.querySelector('[name="add_btn"]');
             modalTitle = form.querySelector('[data-kt-calendar="title"]');
             modal = new bootstrap.Modal(element);
+        handleCancelButton(element, form, modal);
+        handleCloseButton(element, modal);
+//        submitButton = element.querySelector('[data-kt-modal-action="submit"]');
+        handleFormSubmit(element, form, validator, modal);
+        // 初始化加载地区
+        loadDistricts('dropdown_DISTRICT');
+        dropdown('dropdown_CALENDAR_TYPE', 'inputGroupSelect_type', 'type');
 
             // View event modal
-            const viewElement = document.getElementById('kt_modal_view_event');
+            const viewElement = document.getElementById('kt_modal_input_view_event');
             viewModal = new bootstrap.Modal(viewElement);
-            viewEventName = viewElement.querySelector('[data-kt-calendar="event_name"]');
-            viewAllDay = viewElement.querySelector('[data-kt-calendar="all_day"]');
-            viewEventDescription = viewElement.querySelector('[data-kt-calendar="event_description"]');
-            viewEventLocation = viewElement.querySelector('[data-kt-calendar="event_location"]');
-            viewStartDate = viewElement.querySelector('[data-kt-calendar="event_start_date"]');
-            viewEndDate = viewElement.querySelector('[data-kt-calendar="event_end_date"]');
             viewEditButton = viewElement.querySelector('#kt_modal_view_event_edit');
             viewDeleteButton = viewElement.querySelector('#kt_modal_view_event_delete');
 
-            initCalendarApp();
+            initData();
+            // initCalendarApp();
             initValidator();
             initDatepickers();
-            handleEditButton();
             handleAddButton();
+            handleEditButton();
             handleDeleteEvent();
-            handleCancelButton();
-            handleCloseButton();
             resetFormValidator(element);
         }
     };
@@ -910,3 +763,5 @@ var KTAppCalendar = function () {
 KTUtil.onDOMContentLoaded(function () {
     KTAppCalendar.init();
 });
+
+

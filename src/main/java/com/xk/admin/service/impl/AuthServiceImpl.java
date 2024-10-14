@@ -153,28 +153,27 @@ public class AuthServiceImpl implements AuthService {
      * left_tree
      */
     @Override
-    public List listPermission(Long systemId) {
+    public List listPermission(Long systemId, Byte type) {
         // 获取用户权限 ID 集合
         Set<Long> permissionIds = (Set<Long>) userPermissions(); // 确保 userPermissions() 返回的是 Set<Long>
 
         // 查找所有活动的权限
-        List<UpmsPermission> allActivePermissions = upmsPermissionRepository.findBySystemIdAndStatus(systemId, true);
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<UpmsPermission> query = cb.createQuery(UpmsPermission.class);
+        Root<UpmsPermission> root = query.from(UpmsPermission.class);
 
-        // 从所有活动权限中筛选出用户拥有的权限
-        List<UpmsPermission> activePermissions = allActivePermissions.stream()
-                .filter(permission -> permissionIds.contains(permission.getId()))
-                .collect(Collectors.toList());
+        List<Predicate> predicates = new ArrayList<>();
+        if (systemId != null) {
+            predicates.add(cb.equal(root.get("systemId"), systemId));
+        }
+        predicates.add(cb.equal(root.get("status"), true));
 
-        return activePermissions;
-    }
+        if (type != null) {
+            predicates.add(cb.equal(root.get("type"), type));
+        }
 
-    @Override
-    public List checkPermissionType2() {
-        // 获取用户权限 ID 集合
-        Set<Long> permissionIds = (Set<Long>) userPermissions(); // 确保 userPermissions() 返回的是 Set<Long>
-
-        // 查找所有活动的权限
-        List<UpmsPermission> allActivePermissions = upmsPermissionRepository.findByStatusAndType(true, (byte) 2);
+        query.where(predicates.toArray(new Predicate[0]));
+        List<UpmsPermission> allActivePermissions = entityManager.createQuery(query).getResultList();
 
         // 从所有活动权限中筛选出用户拥有的权限
         List<UpmsPermission> activePermissions = allActivePermissions.stream()

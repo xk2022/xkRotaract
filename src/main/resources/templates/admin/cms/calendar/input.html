@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+<script th:inline="javascript">
+    // Insert
+    $("[name='add_btn']").click(function(){
+        $('#modal_name').text("新增扶青社");
+        $("[name='id']").val(null);
+        $("[name='district']").val(null);
+        $("[name='name']").val(null);
+        $("[name='registrationDate']").val(null);
+        $("[name='status']")[0].checked = true;
+    });
+
+    // Update
+    var readyToEdit = function(row) {
+        $('#modal_name').text("更新扶青社");
+        $("[name='id']").val(row[1].innerText);
+        // 设置默认选中项
+        var selectedDistrictId = row[2].innerText;
+        if (selectedDistrictId) {
+            $('#inputGroupSelect_district').val(selectedDistrictId);
+            $("[name='district']").val(selectedDistrictId);
+        }
+        $("[name='name']").val(row[3].innerText);
+        $("[name='registrationDate']").val(row[4].innerText);
+        var btnradio_status_ = row[5].innerText == '啟用';
+        $("#btnradio_status_"+btnradio_status_).prop('checked', true);
+    }
+
+    // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+    var validator = FormValidation.formValidation( form,
+        {
+            fields: {
+                'name': { validators: { notEmpty: {
+                            message: 'Club name is required' } } },
+                'district': { validators: { notEmpty: {
+                            message: 'Club district is required' } } },
+            },
+            plugins: {
+                trigger: new FormValidation.plugins.Trigger(),
+                bootstrap: new FormValidation.plugins.Bootstrap5({
+                    rowSelector: '.fv-row',
+                    eleInvalidClass: '',
+                    eleValidClass: ''
+                })
+            }
+        }
+    );
+</script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+<!--begin::Modal body-->
+<div th:fragment="form" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+    <!--begin::Form-->
+    <form id="kt_modal_input_form" class="form" action="#" th:action="@{/admin/cms/manage/club/save}" method="post" th:object="${entity}" >
+        <input type="hidden" name="id">
+        <input type="hidden" name="district" th:value="${entity.district}">
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span class="required">所屬地區</span>
+                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                       data-bs-trigger="hover" data-bs-html="true"
+                       data-bs-content="必填"></i>
+                </label>
+                <!--end::Label-->
+                <!--begin::Select-->
+                <select class="form-select form-control form-control-solid" id="inputGroupSelect_district">
+                    <option value="0">請選擇</option>
+                </select>
+                <!--end::Select-->
+            </div>
+        </div>
+        <div class="row fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span>扶青社名稱</span>
+                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                       data-bs-trigger="hover" data-bs-html="true"
+                       data-bs-content="必填"></i>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" placeholder="Enter a Club name" name="name" />
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span>RI註冊日期</span>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" name="registrationDate" placeholder="YYYY/MM/DD"/>
+                <!--end::Input-->
+            </div>
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span>狀態</span>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <div class="btn-group form-control form-control-solid mb-3 mb-lg-0" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="btnradio_status_true" id="btnradio_status_true" value="true" th:field="*{status}" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="btnradio_status_true" th:text="啟用">Radio 1</label>
+
+                    <input type="radio" class="btn-check" name="btnradio_status_false" id="btnradio_status_false" value="false" th:field="*{status}" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio_status_false" th:text="禁用">Radio 2</label>
+                </div>
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Actions-->
+        <div th:replace="admin/_fragments/input_basic :: Actions"></div>
+        <!--end::Actions-->
+    </form>
+    <!--end::Form-->
+</div>
+<!--end::Modal body-->
+
+</html>

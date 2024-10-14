@@ -1,16 +1,27 @@
 package com.xk.cms.controller.web;
 
+import com.xk.admin.model.dto.UserExample;
+import com.xk.cms.model.bo.CmsCalendarSaveReq;
+import com.xk.cms.model.vo.CmsCalendarSaveResp;
+import com.xk.cms.service.CmsCalendarService;
 import com.xk.common.base.BaseController;
 import io.swagger.annotations.Api;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * 行事曆 Controller
+ * @author yuan
  * Created by yuan on 2024/08/26
  */
 @Api(value = "行事曆管理")
@@ -21,6 +32,8 @@ public class CmsCalendarController extends BaseController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CmsCalendarController.class);
 
 	private static final String REDIRECT_ADDR = "redirect:/admin/cms/manage/calendar";
+	@Autowired
+	private CmsCalendarService cmsCalendarService;
 
 	/**
 	 * 查詢 行事曆 首頁
@@ -28,12 +41,67 @@ public class CmsCalendarController extends BaseController {
 	@GetMapping()
 	public String index(Model model) {
 		this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
-		model.addAttribute("fragmentName", "calendar");
+//		model.addAttribute("fragmentPackage", "calendar");
+		model.addAttribute("fragmentName", "list");
 
-//		model.addAttribute("page_list", cmsCompanyService.list());
-//		model.addAttribute("entity", new UpmsSystemExample());
-//		model.addAttribute("chunkedIndustries", cmsSelfService.getChunkedIndustries());
+		model.addAttribute("calendar_range", "all");
+		model.addAttribute("entity", new CmsCalendarSaveReq());
 		return ADMIN_INDEX;
+	}
+
+	@GetMapping("/club")
+	public String indexClub(Model model, HttpSession session) {
+		this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0] + "/club");
+		model.addAttribute("fragmentPackage", "calendar");
+		model.addAttribute("fragmentName", "list");
+
+		model.addAttribute("calendar_range", "club");
+		UserExample user = (UserExample) session.getAttribute("user");
+		if (StringUtils.isBlank(user.getRotaract_id()) || "0".equals(user.getRotaract_id())) {
+			return this.errorMsg(model, "查無所屬社", "請先至“我的資料”，選擇您的所屬社！");
+		}
+		model.addAttribute("rotaract_id", user.getRotaract_id());
+		model.addAttribute("entity", new CmsCalendarSaveReq());
+		return ADMIN_INDEX;
+	}
+
+	@GetMapping("/district")
+	public String indexDistrict(Model model, HttpSession session) {
+		this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0] + "/district");
+		model.addAttribute("fragmentPackage", "calendar");
+		model.addAttribute("fragmentName", "list");
+
+		model.addAttribute("calendar_range", "district");
+		UserExample user = (UserExample) session.getAttribute("user");
+		if (StringUtils.isBlank(user.getDistrict_id()) || "0".equals(user.getDistrict_id())) {
+			return this.errorMsg(model, "查無所屬地區", "請先至“我的資料”，選擇您的所屬地區！");
+		}
+		model.addAttribute("district_id", user.getDistrict_id());
+		model.addAttribute("entity", new CmsCalendarSaveReq());
+		return ADMIN_INDEX;
+	}
+
+
+	/**
+	 * 新增/修改 社團 Create/Update
+	 */
+	@PostMapping("/save")
+	public String post(CmsCalendarSaveReq resources, RedirectAttributes attributes) {
+		CmsCalendarSaveResp result;
+
+		if (StringUtils.isBlank(resources.getId())) {
+			result = cmsCalendarService.create(resources);
+			LOGGER.info("新增用户，主键：userId={}", result.getId());
+		} else {
+			result = cmsCalendarService.update(resources);
+		}
+
+		if (result == null) {
+			attributes.addFlashAttribute("message", "操作失敗");
+		} else {
+			attributes.addFlashAttribute("message", "操作成功");
+		}
+		return REDIRECT_ADDR;
 	}
 
 }

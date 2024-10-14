@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
-
 /**
  * 公司管理 Controller
  * Created by yuan on 2024/04/24
@@ -58,7 +56,7 @@ public class CmsCompanyController extends BaseController {
      * 新增/修改 公司 Create/Update
      */
     @PostMapping("/save")
-    public String post(CmsCompanySaveReq resources, RedirectAttributes attributes, HttpSession session) {
+    public String post(CmsCompanySaveReq resources, RedirectAttributes attributes) {
         CmsCompanySaveResp result;
 
         if (resources.getId() == null) {

@@ -7,6 +7,8 @@ import lombok.Setter;
 @Setter
 public class UserExample {
 
+    private Long id; // upms_user_id
+
     private String username;
 
     private String email;
@@ -17,7 +19,7 @@ public class UserExample {
 
     private String district_id;
 
-    private String roctoract_id;
+    private String rotaract_id;
 
     private String avatar;
 

@@ -18,7 +18,6 @@ public interface AuthService {
 
     List listSystemByAuth();
 
-    List listPermission(Long systemId);
+    List listPermission(Long systemId, Byte type);
 
-    List checkPermissionType2();
 }

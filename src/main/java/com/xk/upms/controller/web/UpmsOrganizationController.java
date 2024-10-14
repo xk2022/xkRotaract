@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
-
 /**
  * 組織 Controller
  * Created by yuan on 2022/06/24, 2024/08/28
@@ -68,7 +66,7 @@ public class UpmsOrganizationController extends BaseController {
      * 新增/修改 組織 Create/Update
      */
     @PostMapping("/save")
-    public String post(UpmsOrganizationSaveReq resources, RedirectAttributes attributes, HttpSession session) {
+    public String post(UpmsOrganizationSaveReq resources, RedirectAttributes attributes) {
         UpmsOrganizationSaveResp result;
         if (resources.getId() == null) {
             result = upmsOrganizationService.create(resources);

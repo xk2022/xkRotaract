@@ -1,6 +1,7 @@
 package com.xk.upms.service.impl;
 
 import com.xk.common.util.NotFoundException;
+import com.xk.common.util.XkBeanUtils;
 import com.xk.upms.dao.repository.UpmsPermissionRepository;
 import com.xk.upms.dao.repository.UpmsRolePermissionRepository;
 import com.xk.upms.model.bo.UpmsPermissionReq;
@@ -10,7 +11,6 @@ import com.xk.upms.model.po.UpmsSystem;
 import com.xk.upms.model.vo.UpmsPermissionResp;
 import com.xk.upms.model.vo.UpmsPermissionSaveResp;
 import com.xk.upms.model.vo.UpmsPermissionTreeResp;
-import com.xk.upms.model.vo.UpmsRolePermissionResp;
 import com.xk.upms.service.UpmsPermissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,34 +43,24 @@ public class UpmsPermissionServiceImpl implements UpmsPermissionService {
 
     @Override
     public List list() {
-        List<UpmsPermissionResp> result = new ArrayList<>();
+        List<UpmsPermissionResp> resultList;
 
         List<UpmsPermission> entities = upmsPermissionRepository.findAll();
-
-        for (UpmsPermission entity : entities) {
-            UpmsPermissionResp temp  = new UpmsPermissionResp();
-            BeanUtils.copyProperties(entity, temp);
-            result.add(temp);
-        }
-        return result;
+        resultList = XkBeanUtils.copyListProperties(entities, UpmsPermissionResp::new);
+        return resultList;
     }
 
     @Override
     public List listBy(UpmsPermissionReq resources) {
-        List<UpmsRolePermissionResp> result = new ArrayList<>();
+        List<UpmsPermissionResp> resultList;
 
         UpmsPermission req = new UpmsPermission();
         BeanUtils.copyProperties(resources, req);
         Example<UpmsPermission> example = Example.of(req);
 
         List<UpmsPermission> entities = upmsPermissionRepository.findAll(example);
-
-        for (UpmsPermission entity : entities) {
-            UpmsRolePermissionResp temp  = new UpmsRolePermissionResp();
-            BeanUtils.copyProperties(entity, temp);
-            result.add(temp);
-        }
-        return result;
+        resultList = XkBeanUtils.copyListProperties(entities, UpmsPermissionResp::new);
+        return resultList;
     }
 
     @Override

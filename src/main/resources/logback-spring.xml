@@ -6,6 +6,7 @@
 
     <!-- 定义日志文件路径 -->
     <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-log/log-pro.log}}" />
+<!--    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-/opt/tomcat/logs/log-pro.log}}" />-->
 
     <!-- 定义文件日志的 RollingFileAppender -->
     <appender name="TIME_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -17,6 +18,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件命名模式：按日期和大小滚动 -->
             <fileNamePattern>log/log-pro.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+<!--            <fileNamePattern>/opt/tomcat/logs/log-pro.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
             <!-- 保留 30 天的日志 -->
             <maxHistory>30</maxHistory>
             <!-- 每个文件最大 10MB -->

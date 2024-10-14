@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
-
 /**
  * 系統 Controller
  * Created by yuan on 2022/06/10
@@ -60,7 +58,7 @@ public class UpmsSystemController extends BaseController {
      * 新增/修改 系統 Create/Update
      */
     @PostMapping("/save")
-    public String post(UpmsSystemSaveReq resources, RedirectAttributes attributes, HttpSession session) {
+    public String post(UpmsSystemSaveReq resources, RedirectAttributes attributes) {
         UpmsSystemSaveResp result;
         if (resources.getId() == null) {
             result = upmsSystemService.create(resources);

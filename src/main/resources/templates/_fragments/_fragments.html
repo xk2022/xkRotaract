@@ -2,10 +2,14 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <th:block th:fragment="head">
     <title th:text="${title != null ? title : 'Rotaract Kaleidoscope'}"></title>
-    <meta charset="utf-8" />
+
+    <meta charset="UTF-8">
+    <!--    加入<meta>標籤來設定視窗寬度-->
+    <!--    首先，在<head>中加入<meta>標籤來正確設定視窗的寬度，這有助於響應式設計的正常顯示-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--    <meta name="description" content="Good admin dashboard live demo. Check out all the features of the admin panel. A large number of settings, additional services and widgets." />-->
 <!--    <meta name="keywords" content="Good, bootstrap, bootstrap 5, admin themes, Asp.Net Core & Django starter kits, admin themes, bootstrap admin, bootstrap dashboard, bootstrap dark mode" />-->
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
 <!--    <meta property="og:locale" content="en_US" />-->
 <!--    <meta property="og:type" content="article" />-->
 <!--    <meta property="og:title" content="Good – Bootstrap 5 HTML Asp.Net Core, Blazor, Django & Flask Admin Dashboard Template by KeenThemes" />-->
@@ -19,35 +23,75 @@
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
     <link rel="stylesheet" type="text/css" th:href="@{/plugins/global/plugins.bundle.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.bundle.css}"/>
+
+    <style>
+        /* 讓頁面內容最小高度佔滿視窗高度 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 讓flex布局將內容區域撐開，頁腳固定底部 */
+        .d-flex-root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .footer {
+            padding: 20px 0;
+            width: 100%;
+        }
+
+        @media (max-width: 576px) {
+            .icon-group {
+                flex-direction: column;
+                text-align: center;
+                display: none;
+            }
+
+            .main-content .row {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .main-content h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <style>
+        /* 使用 flexbox 將主內容推到頁面底部 */
+<!--        .container-wrapper {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            align-items: center; /* 垂直置中 */-->
+<!--            min-height: 88vh; /* 讓 container 充滿整個瀏覽器高度 */-->
+<!--        }-->
+    </style>
     <!--end::Global Stylesheets Bundle-->
     <script>// Frame-busting to prevent site from being loaded within a frame without permission (click-jacking) if (window.top != window.self) { window.top.location.replace(window.self.location.href); }</script>
 </th:block>
 <body>
 
 <!--nav導航-->
-<nav th:fragment="navbar" id="kt_nav" class="navbar navbar-expand-lg text-danger">
+<nav th:fragment="navbar" class="navbar navbar-expand-lg" id="kt_nav">
     <div th:class="${title != null} ? 'container-fluid' : 'container'">
-<!--    <div class="container-fluid">-->
-        <div class="col-8">
-            <span class="display-6 indicator-label">
-<!--                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-house-gear-fill" viewBox="0 0 16 16">-->
-                <!--                            <path d="M7.293 1.5a1 1 0 0 1 1.414 0L11 3.793V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v3.293l2.354 2.353a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708z"/>-->
-                <!--                            <path d="M11.07 9.047a1.5 1.5 0 0 0-1.742.26l-.02.021a1.5 1.5 0 0 0-.261 1.742 1.5 1.5 0 0 0 0 2.86 1.5 1.5 0 0 0-.12 1.07H3.5A1.5 1.5 0 0 1 2 13.5V9.293l6-6 4.724 4.724a1.5 1.5 0 0 0-1.654 1.03"/>-->
-                <!--                            <path d="m13.158 9.608-.043-.148c-.181-.613-1.049-.613-1.23 0l-.043.148a.64.64 0 0 1-.921.382l-.136-.074c-.561-.306-1.175.308-.87.869l.075.136a.64.64 0 0 1-.382.92l-.148.045c-.613.18-.613 1.048 0 1.229l.148.043a.64.64 0 0 1 .382.921l-.074.136c-.306.561.308 1.175.869.87l.136-.075a.64.64 0 0 1 .92.382l.045.149c.18.612 1.048.612 1.229 0l.043-.15a.64.64 0 0 1 .921-.38l.136.074c.561.305 1.175-.309.87-.87l-.075-.136a.64.64 0 0 1 .382-.92l.149-.044c.612-.181.612-1.049 0-1.23l-.15-.043a.64.64 0 0 1-.38-.921l.074-.136c.305-.561-.309-1.175-.87-.87l-.136.075a.64.64 0 0 1-.92-.382ZM12.5 14a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>-->
-                <!--                        </svg>-->
-                <!--                        Rotaract-->
-                <!--begin::Logo-->
-                <a href="#" class="link-item py-9 pt-lg-20 text-danger">
-<!--                            <img th:src="@{/media/logos/default.png}" alt="Logo" src="assets/media/logos/default.svg" class="h-60px" />-->
-                    <!--                            <span>Rotaract Insights</span>-->
-<!--                    <span th:text="${title != null ? title : 'Rotaract Kaleidoscope'}"></span>-->
-                    <span th:text="${title != null ? title : 'Rotaract 萬花筒'}"></span>
-                </a>
-                <!--end::Logo-->
-            </span>
-        </div>
+        <!--begin::Logo-->
+        <a class="display-6 text-danger" href="#">
+            <!--                <img th:src="@{/media/logos/default.png}" alt="Logo" src="assets/media/logos/default.svg" class="h-60px" />-->
+            <!--                <span>Rotaract Insights / Rotaract Kaleidoscope / Rotaract 萬花筒</span>-->
+            <span th:text="${title != null ? title : 'Rotaract 萬花筒'}"></span>
+        </a>
+        <!--end::Logo-->
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <!-- Navbar Toggler (for mobile view) -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarIcons" aria-controls="navbarIcons" aria-expanded="false" aria-label="Toggle navigation">
             <!--begin::Svg Icon | path: icons/duotune/abstract/abs015.svg-->
             <span class="svg-icon svg-icon-1" />
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -55,7 +99,8 @@
                 <path opacity="0.3" d="M21 14H3C2.4 14 2 13.6 2 13V11C2 10.4 2.4 10 3 10H21C21.6 10 22 10.4 22 11V13C22 13.6 21.6 14 21 14ZM22 20V18C22 17.4 21.6 17 21 17H3C2.4 17 2 17.4 2 18V20C2 20.6 2.4 21 3 21H21C21.6 21 22 20.6 22 20Z" fill="black" />
             </svg>
         </button>
-        <div class="col-4 collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+        <!-- Navbar Collapsible Content -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarIcons">
             <div class="flex-equal text-end ms-1 position-relative z-index-2">
                 <a th:href="@{/}" class="btn text-danger">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
@@ -74,7 +119,7 @@
                         </svg>
                     </a>
                 </th:block>
-                <a th:href="@{/}" class="btn text-danger">
+                <a th:href="@{/Calendar}" class="btn text-danger">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">
                         <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>
                     </svg>
@@ -93,64 +138,8 @@
                 </th:block>
             </div>
         </div>
-
-<!--        <div class="collapse navbar-collapse" id="navbarSupportedContent">-->
-<!--            <div class="flex-equal ms-1 position-relative z-index-2">-->
-<!--                <ul class="navbar-nav mr-auto">-->
-<!--                    <li class="nav-item">-->
-<!--                        <a th:href="@{/}" class="btn text-danger">-->
-<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">-->
-<!--                                <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>-->
-<!--                            </svg>-->
-<!--                            <span style="font-size: 1.5em;">　Home　-　首頁</span>-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a th:href="@{/BizMap}" class="btn text-danger">-->
-<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">-->
-<!--                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>-->
-<!--                            </svg>-->
-<!--                            <span style="font-size: 1.5em;">　BizMap　-　產業地圖</span>-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item" th:if="${iInfo != 'false'}">-->
-<!--                        <a href="https://www.facebook.com/taiwanrotaract?locale=zh_TW" class="btn text-danger" target="_blank">-->
-<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-square-fill" viewBox="0 0 16 16">-->
-<!--                                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm8.93 4.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>-->
-<!--                            </svg>-->
-<!--                            <span style="font-size: 1.5em;">　News　-　最新快訊</span>-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a th:href="@{/}" class="btn text-danger">-->
-<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">-->
-<!--                                <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>-->
-<!--                            </svg>-->
-<!--                            <span style="font-size: 1.5em;">　Kalendar　-　聯合行事曆</span>-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a th:href="@{/admin/signIn}" class="btn text-danger">-->
-<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">-->
-<!--                                <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>-->
-<!--                            </svg>-->
-<!--                            <span style="font-size: 1.5em;">　Admin　-　註冊/登入</span>-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item" th:if="${iSearch != 'false'}">-->
-<!--                        <a class="btn text-danger" data-bs-toggle="modal" data-bs-target="#kt_modal_input" name="add_btn">-->
-<!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">-->
-<!--                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>-->
-<!--                            </svg>-->
-<!--                            <span style="font-size: 1.5em;">　Filter　-　塞選</span>-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
 </nav>
-
 <!--nav導航-->
 
 <!--header頂部-->
@@ -165,11 +154,14 @@
 <!--header頂部-->
 
 <!--footer底部-->
-<div th:fragment="footer" class="footer py-4 d-flex flex-lg-column" id="kt_footer">
-    <!--begin::Container-->
-    <div th:replace="admin/_fragments/_footer :: _footer"></div>
-    <!--end::Container-->
-</div>
+
+<footer th:fragment="footer" class="footer text-start py-5 mt-auto">
+    <div class="container">
+        <!--begin::Logo image-->
+        <span class="mx-5 fs-6 fw-semibold text-gray-700 pt-1" href="https://keenthemes.com">Copyright © XploreKaleido 2024</span>
+        <!--end::Logo image-->
+    </div>
+</footer>
 <!--footer底部-->
 
 <!--js資源引入-->

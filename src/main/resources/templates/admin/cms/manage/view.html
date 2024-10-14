@@ -12,6 +12,7 @@
 <th:block th:fragment="script"><!--<div>-->
     <!--begin::Page Vendors Javascript(used by this page)-->
     <!--General - DataTables-->
+    <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}" defer></script>
     <!--end::Page Vendors Javascript-->
     <!--begin::Page Custom Javascript(used by this page)-->
     <!--end::Page Custom Javascript-->
@@ -22,7 +23,32 @@
 <!--js資源引入-->
 
 <div th:fragment="list" id="kt_content_container" class="container-fluid">
-
+    <!--begin::Row-->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-5 g-xl-9">
+        <!--begin::Col-->
+        <div th:each="data : ${page_list}" class="col-md-4">
+            <!--begin::Card-->
+            <div class="card card-flush h-md-100">
+                <!--begin::Card header-->
+                <div class="card-header">
+                    <!--begin::Card title-->
+                    <div class="card-title">
+                        <h2 th:text="${data.name}">Administrator</h2>
+                    </div>
+                    <!--end::Card title-->
+                </div>
+                <!--end::Card header-->
+                <!--begin::Card footer-->
+                <div class="card-footer flex-wrap pt-0">
+                    <a th:href="@{${data.uri}}" class="btn btn-light btn-active-primary my-1 me-2">Go Function</a>
+                </div>
+                <!--end::Card footer-->
+            </div>
+            <!--end::Card-->
+        </div>
+        <!--end::Col-->
+    </div>
+    <!--end::Row-->
 </div>
 
 </html>

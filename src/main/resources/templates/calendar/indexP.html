@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!-- /good_html_v1.1.4/theme/landing.html -->
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--begin::Head-->
+<head>
+    <!--/*/<th:block th:replace="_fragments/_fragments :: head">/*/-->
+    <!--/*/</th:block>/*/-->
+
+    <!--begin::Vendor Stylesheets(used for this page only)-->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/custom/evocalendar/evo-calendar.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/custom/datatables/datatables.bundle.css}"/>
+    <style>
+        /* 子元素 .evo-calendar */
+        .evo-calendar {
+            position: relative;
+            background-color: #fbfbfb;
+            color: #5a5a5a;
+            width: 100%;
+            height: 100%;
+            // max-width: 1200px; /* 限制日曆的最大寬度 */
+            // height: 65vh; /* 保持原本的高度 */
+            -webkit-box-shadow: 0 10px 50px -20px #8773c1;
+            box-shadow: 0 10px 50px -20px #8773c1;
+            margin: 0 auto;
+            overflow: hidden;
+            z-index: 1;
+            padding: 0;
+        }
+    </style>
+    <!--end::Vendor Stylesheets-->
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+<body id="kt_app_body" data-bs-spy="scroll" data-bs-target="#kt_landing_menu" data-bs-offset="200" data-kt-app-layout="light-sidebar" class="body-bg position-relative app-blank">
+<!--begin::Root-->
+<div class="d-flex flex-column flex-root" id="kt_app_root">
+    <!--begin::Header Section-->
+    <!--/*/<th:block th:replace="_fragments/_fragments :: navbar(title='Rotaract 行事曆', iSearch='false')">/*/-->
+    <!--/*/</th:block>/*/-->
+    <!--end::Header Section-->
+
+    <!-- 主內容 -->
+
+    <div id="mainContent" class="container-fluid main-content d-flex align-items-center justify-content-center">
+<!--        <div class="flex-grow-1 calendar-wrapper content">-->
+            <div id="calendar"></div>
+<!--        </div>-->
+    </div>
+
+    <!--begin::Footer Section-->
+    <div class="separator separator-solid"></div>
+    <!--/*/<th:block th:replace="_fragments/_fragments :: footer">/*/-->
+    <!--/*/</th:block>/*/-->
+    <!--end::Footer Section-->
+</div>
+<!--end::Root-->
+
+<!--begin::Javascript-->
+<!--/*/<th:block th:replace="_fragments/_fragments :: script">/*/-->
+<!--/*/</th:block>/*/-->
+
+<!--begin::Vendors Javascript(used for this page only)-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script th:src="@{/plugins/custom/evocalendar/evo-calendar.js}"></script>
+<!--end::Vendors Javascript-->
+<!--begin::Page Custom Javascript(used by this page)-->
+<script>
+    $(document).ready(function() {
+        var today = new Date();
+        var week_date = [];
+        var calendarData;
+        var formattedEvents;
+
+        $.ajax({
+            url: '/xkRotaract/api/manage/calendar/showEvo',
+            method: 'POST',
+            data: JSON.stringify({
+                }),
+            processData: false,
+            contentType: 'application/json',
+            success: function(response) {
+                console.log('AJAX 请求成功：', response);
+
+                calendarData = response; // 将数据存储在全局变量中
+<!--                // 將資料轉換為 FullCalendar 所需的格式-->
+<!--                formattedEvents = calendarData.map(function(event) {-->
+<!--                    return {-->
+<!--                        id: event.id,-->
+<!--                        title: event.title,-->
+<!--                        start: event.start,  // 移除不需要的時間部分-->
+<!--                        end: event.end,-->
+<!--                        className: event.className || "fc-event-primary",  // 如果 className 是 null, 則設置一個預設的 class-->
+<!--                        description: event.description || '',  // 如果 description 缺失, 則設置為空字串-->
+<!--                        location: event.location-->
+<!--                    };-->
+<!--                });-->
+                initCalendarApp();
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX 请求失败：', error);
+            }
+        });
+
+        // Private functions
+        var initCalendarApp = function () {
+            $("#calendar").evoCalendar({
+                theme: 'Royal Navy', // 可选主题
+                language: 'tw', // 支持多语言
+                todayHighlight: true,
+
+                format: "MM dd, yyyy",
+                titleFormat: "MM",
+                firstDayOfWeek: 1,
+                calendarEvents: calendarData
+            });
+        }
+
+    });
+
+<!--     [{-->
+<!--            id: "d8jai7s",-->
+<!--            name: "Author's Birthday",-->
+<!--            description: "Author's note: Thank you for using EvoCalendar! :)",-->
+<!--            date: "October/15/2024",-->
+<!--            type: "birthday",-->
+<!--            everyYear: !0-->
+<!--        }, {-->
+<!--            id: "sKn89hi",-->
+<!--            name: "1-Week Coding Bootcamp",-->
+<!--            description: "Lorem ipsum dolor sit amet.",-->
+<!--            badge: "5-day event",-->
+<!--            date: today,-->
+<!--            type: "event",-->
+<!--            everyYear: !0-->
+<!--        }, {-->
+<!--            id: "in8bha4",-->
+<!--            name: "Holiday #2",-->
+<!--            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",-->
+<!--            date: today,-->
+<!--            type: "holiday"-->
+<!--        }, {-->
+<!--            id: "in8bha4",-->
+<!--            name: "Event #2",-->
+<!--            date: today,-->
+<!--            type: "event"-->
+<!--    }]-->
+</script>
+<!--end::Page Custom Javascript-->
+<!--end::Javascript-->
+</body>
+<!--end::Body-->
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- /good_html_v1.1.4/theme/landing.html -->
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--begin::Head-->
+<head>
+	<!--/*/<th:block th:replace="_fragments/_fragments :: head">/*/-->
+	<!--/*/</th:block>/*/-->
+<!--	<base href="../../">-->
+<!--	<title>Good – Bootstrap 5 HTML Admin Dashboard Template by Keenthemes</title>-->
+<!--	<meta charset="utf-8" />-->
+<!--	<meta name="description" content="Good admin dashboard live demo. Check out all the features of the admin panel. A large number of settings, additional services and widgets." />-->
+<!--	<meta name="keywords" content="Good, bootstrap, bootstrap 5, admin themes, free admin themes, bootstrap admin, bootstrap dashboard, bootstrap dark mode" />-->
+<!--	<meta name="viewport" content="width=device-width, initial-scale=1" />-->
+<!--	<meta property="og:locale" content="en_US" />-->
+<!--	<meta property="og:type" content="article" />-->
+<!--	<meta property="og:title" content="Good - Bootstrap 5 HTML Admin Dashboard Template" />-->
+<!--	<meta property="og:url" content="https://themes.getbootstrap.com/product/good-bootstrap-5-admin-dashboard-template" />-->
+<!--	<meta property="og:site_name" content="Keenthemes | Good" />-->
+<!--	<link rel="canonical" href="https://preview.keenthemes.com/good" />-->
+<!--	<link rel="shortcut icon" href="assets/media/logos/favicon.ico" />-->
+<!--	&lt;!&ndash;begin::Fonts&ndash;&gt;-->
+<!--	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />-->
+<!--	&lt;!&ndash;end::Fonts&ndash;&gt;-->
+<!--	&lt;!&ndash;begin::Global Stylesheets Bundle(used by all pages)&ndash;&gt;-->
+<!--	<link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />-->
+<!--	<link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />-->
+<!--	&lt;!&ndash;end::Global Stylesheets Bundle&ndash;&gt;-->
+</head>
+<!--end::Head-->
+
+<!--begin::Body-->
+<body id="kt_body" class="auth-bg">
+	<!--begin::Main-->
+	<!--begin::Root-->
+	<div class="d-flex flex-column flex-root">
+		<!--begin::Authentication - Error 500 -->
+		<div class="d-flex flex-column flex-column-fluid">
+			<!--begin::Content-->
+			<div class="d-flex flex-row-fluid flex-column flex-column-fluid text-center p-10 py-lg-20">
+				<!--begin::Logo-->
+				<a th:href="@{/}" class="pt-lg-20 mb-12">
+					<img alt="Logo" th:src="@{/media/logos/default.svg}" class="h-40px" />
+				</a>
+				<!--end::Logo-->
+				<!--begin::Logo-->
+				<h1 class="fw-bolder fs-2qx text-gray-800 mb-10" th:text="${title}">系統錯誤</h1>
+				<!--end::Logo-->
+				<!--begin::Message-->
+				<div class="fw-bold fs-3 text-muted mb-15" th:text="${content}">我們發現了一些問題!
+				<br />請稍後再試一次．</div>
+				<!--end::Message-->
+				<!--begin::Action-->
+				<div class="text-center">
+					<a href="javascript:history.back()" class="btn btn-lg btn-primary fw-bolder">回上一頁</a>
+				</div>
+				<!--end::Action-->
+			</div>
+			<!--end::Content-->
+			<!--begin::Illustration-->
+			<div class="d-flex flex-row-auto bgi-no-repeat bgi-position-x-center bgi-size-contain bgi-position-y-bottom min-h-150px min-h-lg-350px"
+				 th:style="|background-image: url('@{/media/illustrations/sketchy-1/7.png}')|">
+			</div>
+			<!--end::Illustration-->
+		</div>
+		<!--end::Authentication - Error 500-->
+	</div>
+	<!--end::Root-->
+	<!--end::Main-->
+
+
+
+	<!--begin::Javascript-->
+	<!--/*/<th:block th:replace="_fragments/_fragments :: script">/*/-->
+	<!--/*/</th:block>/*/-->
+	<!--end::Javascript-->
+</body>
+<!--end::Body-->
+</html>

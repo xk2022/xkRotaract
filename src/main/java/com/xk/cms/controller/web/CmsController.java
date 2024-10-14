@@ -1,7 +1,12 @@
 package com.xk.cms.controller.web;
 
+import com.xk.admin.service.AuthService;
+import com.xk.upms.model.po.UpmsPermission;
+import com.xk.upms.model.po.UpmsSystem;
+import com.xk.upms.service.UpmsSystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +16,12 @@ import com.xk.common.base.BaseController;
 
 import io.swagger.annotations.Api;
 
+import java.util.List;
+
 /**
- * 資本資料管理系統 Controller Created by yuan on 2023/12/27
+ * 資本資料管理系統 Controller
+ * @author yuan
+ * Created by yuan on 2023/12/27
  */
 @Api(value = "CMS管理")
 @Controller
@@ -21,16 +30,25 @@ public class CmsController extends BaseController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CmsController.class);
 
-	private static final String REDIRECT_ADDR = "redirect:/admin/cms/manage";
-	private static final int PAGE_SIZE = 8;
+	@Autowired
+	private AuthService authService;
+	@Autowired
+	private UpmsSystemService upmsSystemService;
 
 	/**
 	 * 查詢 角色 首頁
 	 */
 	@GetMapping()
 	public String index(Model model) {
-//		this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
-		return "redirect:/admin/cms/manage/self";
+		this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
+
+		if (model.getAttribute("tree_only") != null) {
+			return "redirect:" + model.getAttribute("tree_only");
+		}
+		UpmsSystem system = (UpmsSystem) upmsSystemService.findOneByName("cms");
+		List<UpmsPermission> permissions = authService.listPermission(system.getId(), (byte) 2);
+		model.addAttribute("page_list", permissions);
+		return ADMIN_INDEX;
 	}
 
 }

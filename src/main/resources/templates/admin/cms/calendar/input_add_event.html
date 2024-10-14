@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+<script th:inline="javascript">
+    /*
+     * Shared variables
+     */
+    const element = document.getElementById('kt_modal_input_add_event');
+    const form = element.querySelector('#kt_modal_add_event_form');
+    const modal = new bootstrap.Modal(element);
+
+    // Insert
+    $("[name='add_btn']").click(function(){
+        $('#modal_name').text("新增事件");
+
+        $("[name='id']").val(null);
+        $("[name='eventName']").val(null);
+        $("[name='eventDescription']").val(null);
+        $("[name='startDate']").val(null);
+        $("[name='allDay']").val(null);
+    });
+
+    // Update
+    var readyToEdit = function(response) {
+        $('#modal_name').text("編輯事件");
+
+        $("[name='id']").val(response.id);
+        $("[name='type']").val(response.type);
+        $('#inputGroupSelect_type').val(response.type).trigger('change');
+        $("[name='district_id']").val(response.district_id);
+        $('#inputGroupSelect_district').val(response.district_id).trigger('change');
+        $("[name='rotaract_id']").val(response.rotaract_id);
+        $('#inputGroupSelect_club').val(response.rotaract_id).trigger('change');
+        $("[name='eventName']").val(response.eventName);
+        $("[name='eventDescription']").val(response.eventDescription);
+        $("[name='eventLocation']").val(response.eventLocation);
+        $("[name='startDate']").val(response.startDateStr);
+        $("[name='startTime']").val(response.startTime);
+        $("[name='endDate']").val(response.endDateStr);
+        $("[name='endTime']").val(response.endTime);
+    }
+
+    // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+    var validator = FormValidation.formValidation( form,
+        {
+            fields: {
+                'name': { validators: { notEmpty: {
+                            message: 'Club name is required' } } },
+                'district': { validators: { notEmpty: {
+                            message: 'Club district is required' } } },
+            },
+            plugins: {
+                trigger: new FormValidation.plugins.Trigger(),
+                bootstrap: new FormValidation.plugins.Bootstrap5({
+                    rowSelector: '.fv-row',
+                    eleInvalidClass: '',
+                    eleValidClass: ''
+                })
+            }
+        }
+    );
+
+
+    // 监听下拉选单变化事件
+    $('#inputGroupSelect_type').change(function() {
+        var selected = $(this).val();
+        $('input[name="type"]').val(selected);
+    });
+</script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+<!--begin::Modal body-->
+<div th:fragment="form" class="modal-body py-10 px-lg-17">
+    <!--begin::Form-->
+    <form id="kt_modal_add_event_form" class="form" th:action="@{/admin/cms/manage/calendar/save}" method="post" th:object="${entity}" >
+        <input type="hidden" name="id">
+        <input type="hidden" name="district_id">
+        <input type="hidden" name="rotaract_id">
+        <input type="hidden" name="type">
+        <!--begin::Input group-->
+        <div class="fv-row mb-9">
+            <!--begin::Label-->
+            <label class="fs-6 fw-bold required mb-2" th:text="活動類型"></label>
+            <!--end::Label-->
+            <!--begin::Select-->
+            <select class="form-select form-control form-control-solid" id="inputGroupSelect_type">
+                <option value="0">請選擇</option>
+            </select>
+            <!--end::Select-->
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row mb-9">
+            <!--begin::Col-->
+            <div class="col-md-6">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold required mb-2">所屬地區</label>
+                <!--end::Label-->
+                <!--begin::Select-->
+                <select class="form-select form-control form-control-solid" id="inputGroupSelect_district">
+                    <option value="0">請選擇</option>
+                </select>
+                <!--end::Select-->
+            </div>
+            <!--end::Col-->
+            <!--begin::Col-->
+            <div class="col-md-6">
+                <!--end::Label-->
+                <label class="fs-6 fw-bold mb-2">所屬扶青社</label>
+                <!--end::Label-->
+                <!--begin::Select-->
+                <select class="form-select form-control form-control-solid" id="inputGroupSelect_club">
+                    <option value="0">請選擇</option>
+                </select>
+                <!--end::Select-->
+            </div>
+            <!--end::Col-->
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="fv-row mb-9">
+            <!--begin::Label-->
+            <label class="fs-6 fw-bold required mb-2" th:text="活動名稱">Event Name</label>
+            <!--end::Label-->
+            <!--begin::Input-->
+            <input type="text" class="form-control form-control-solid" placeholder="" name="eventName" />
+            <!--end::Input-->
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="fv-row mb-9">
+            <!--begin::Label-->
+            <label class="fs-6 fw-bold mb-2" th:text="活動說明">Event Description</label>
+            <!--end::Label-->
+            <!--begin::Input-->
+            <input type="text" class="form-control form-control-solid" placeholder="" name="eventDescription" />
+            <!--end::Input-->
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="fv-row mb-9">
+            <!--begin::Label-->
+            <label class="fs-6 fw-bold mb-2" th:text="活動地點">Event Location</label>
+            <!--end::Label-->
+            <!--begin::Input-->
+            <input type="text" class="form-control form-control-solid" placeholder="" name="eventLocation" />
+            <!--end::Input-->
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row mb-9">
+            <div class="col">
+                <!--begin::Checkbox-->
+                <label class="form-check form-check-custom form-check-solid">
+                    <input class="form-check-input" name="allDay" type="checkbox" value="" id="kt_calendar_datepicker_allday" />
+                    <span class="form-check-label fw-bold" for="kt_calendar_datepicker_allday" th:text="全天">All Day</span>
+                </label>
+                <!--end::Checkbox-->
+            </div>
+            <div class="col">
+                <!--begin::Checkbox-->
+                <label class="form-check form-check-custom form-check-solid">
+                    <input class="form-check-input" name="dayMorning" type="checkbox" value="" id="kt_calendar_datepicker_dayMorning" />
+                    <span class="form-check-label fw-bold" for="kt_calendar_datepicker_dayMorning" th:text="上午"></span>
+                </label>
+                <!--end::Checkbox-->
+            </div>
+            <div class="col"><!--begin::Checkbox-->
+                <label class="form-check form-check-custom form-check-solid">
+                    <input class="form-check-input" name="dayAfternoon" type="checkbox" value="" id="kt_calendar_datepicker_dayAfternoon" />
+                    <span class="form-check-label fw-bold" for="kt_calendar_datepicker_dayAfternoon" th:text="下午"></span>
+                </label>
+                <!--end::Checkbox-->
+            </div>
+            <div class="col"><!--begin::Checkbox-->
+                <label class="form-check form-check-custom form-check-solid">
+                    <input class="form-check-input" name="dayNight" type="checkbox" value="" id="kt_calendar_datepicker_dayNight" />
+                    <span class="form-check-label fw-bold" for="kt_calendar_datepicker_dayNight" th:text="晚上"></span>
+                </label>
+                <!--end::Checkbox-->
+            </div>
+            <div class="col"></div>
+            <div class="col"></div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row row-cols-lg-2 g-10">
+            <div class="col">
+                <div class="fv-row mb-9">
+                    <!--begin::Label-->
+                    <label class="fs-6 fw-bold mb-2 required" th:text="活動開始日期">Event Start Date</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input class="form-control form-control-solid" name="startDate" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date" />
+                    <!--end::Input-->
+                </div>
+            </div>
+            <div class="col" data-kt-calendar="datepicker">
+                <div class="fv-row mb-9">
+                    <!--begin::Label-->
+                    <label class="fs-6 fw-bold mb-2" th:text="活動開始時間">Event Start Time</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input class="form-control form-control-solid" name="startTime" placeholder="Pick a start time" id="kt_calendar_datepicker_start_time" />
+                    <!--end::Input-->
+                </div>
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row row-cols-lg-2 g-10">
+            <div class="col">
+                <div class="fv-row mb-9">
+                    <!--begin::Label-->
+                    <label class="fs-6 fw-bold mb-2 required" th:text="活動結束日期">Event End Date</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input class="form-control form-control-solid" name="endDate" placeholder="Pick a end date" id="kt_calendar_datepicker_end_date" />
+                    <!--end::Input-->
+                </div>
+            </div>
+            <div class="col" data-kt-calendar="datepicker">
+                <div class="fv-row mb-9">
+                    <!--begin::Label-->
+                    <label class="fs-6 fw-bold mb-2" th:text="活動結束時間">Event End Time</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input class="form-control form-control-solid" name="endTime" placeholder="Pick a end time" id="kt_calendar_datepicker_end_time" />
+                    <!--end::Input-->
+                </div>
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Actions-->
+        <div th:replace="admin/_fragments/input_basic :: Actions"></div>
+        <!--end::Actions-->
+    </form>
+    <!--end::Form-->
+</div>
+<!--end::Modal body-->
+
+</html>

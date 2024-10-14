@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * 用户 Controller
@@ -80,10 +79,8 @@ public class UpmsUserController extends BaseController {
     /**
      * 新增/修改 用户 Create/Update
      */
-//    @RequiresPermissions("upms:user:create")
-//    @RequiresPermissions("upms:user:update")
     @PostMapping("/save")
-    public String post(UpmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) throws Exception {
+    public String post(UpmsUserSaveReq resources, RedirectAttributes attributes) throws Exception {
         UpmsUserSaveResp result;
 
         if (resources.getId() == null) {
@@ -107,9 +104,8 @@ public class UpmsUserController extends BaseController {
     /**
      * 刪除 用户 Delete
      */
-//    @RequiresPermissions("upms:user:delete")
     @GetMapping("/delete/{ids}")
-    public String delete(@PathVariable("ids") String ids, RedirectAttributes attributes) {
+    public String delete(@PathVariable("ids") String ids) {
         upmsUserService.deleteByPrimaryKeys(ids);
         return REDIRECT_ADDR;
     }

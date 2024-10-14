@@ -7,6 +7,8 @@ import com.xk.upms.model.po.UpmsSystem;
 import com.xk.upms.service.UpmsPermissionService;
 import com.xk.upms.service.UpmsRolePermissionService;
 import com.xk.upms.service.UpmsSystemService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -21,9 +23,11 @@ import java.util.List;
 @Controller
 public class BaseController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
+
     public static final String DIR_INDEX = "/index/index";
-    public static final String DIR_MAP_INDEX = "/bizmap/index";
     public static final String ADMIN_INDEX = "/admin/index";
+    public static final String ERROR_MSG = "/error/msg";
     public static final String R_ADMIN_INDEX = "redirect:/admin/index"; // REDIRECT_ADDR
     private static final String R_AUTH_LOGOUT = "redirect:/admin/logout";
 
@@ -64,7 +68,7 @@ public class BaseController {
         /**TODO
          * 單功能快速進入管道
          */
-        List<UpmsPermission> permissions = authService.checkPermissionType2();
+        List<UpmsPermission> permissions = authService.listPermission(null, (byte) 2);
         if (permissions.size() == 1 ) {
             UpmsPermission onlyPermissionType2 = permissions.get(0);
             model.addAttribute("tree_only", onlyPermissionType2.getUri());
@@ -80,6 +84,12 @@ public class BaseController {
         return model;
     }
 
+    public String errorMsg(Model model, String title, String content) {
+        model.addAttribute("title", title);
+        model.addAttribute("content", content);
+        return ERROR_MSG;
+    }
+
     private Model versionBasic(Model model) {
 
         /* Aside data Setting */
@@ -89,7 +99,7 @@ public class BaseController {
         UpmsSystem system = (UpmsSystem) model.getAttribute("system");
 //        model.addAttribute("left_tree", upmsPermissionService.buildTree(upmsPermissionService.selectBySystemIdAndRole(system, 1)));
         if (system != null) {
-            model.addAttribute("left_tree", upmsPermissionService.buildTree(authService.listPermission(system.getId())));
+            model.addAttribute("left_tree", upmsPermissionService.buildTree(authService.listPermission(system.getId(), null)));
         }
 
         return model;

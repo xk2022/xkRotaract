@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * IndexMapController
+ * @author yuan
  * Created by yuan on 2024/08/01
  */
 @Controller
@@ -24,6 +25,7 @@ public class IndexMapController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexMapController.class);
 
+    public static final String DIR_MAP_INDEX = "/bizmap/index";
     @Autowired
     private CmsSelfService cmsSelfService;
 

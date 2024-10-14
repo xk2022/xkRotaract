@@ -3,11 +3,14 @@ package com.xk.upms.service.impl;
 import com.xk.upms.dao.mapper.UpmsRolePermissionMapper;
 import com.xk.upms.dao.repository.UpmsPermissionRepository;
 import com.xk.upms.dao.repository.UpmsRolePermissionRepository;
+import com.xk.upms.model.bo.UpmsPermissionReq;
 import com.xk.upms.model.bo.UpmsRolePermissionReq;
+import com.xk.upms.model.bo.UpmsRolePermissionSaveReq;
 import com.xk.upms.model.enums.PermissionAction;
 import com.xk.upms.model.po.UpmsPermission;
 import com.xk.upms.model.po.UpmsRolePermission;
 import com.xk.upms.model.vo.UpmsPermissionResp;
+import com.xk.upms.model.vo.UpmsRolePermissionSaveResp;
 import com.xk.upms.model.vo.UpmsRolePermissionWithActiveResp;
 import com.xk.upms.service.UpmsPermissionService;
 import com.xk.upms.service.UpmsRolePermissionService;
@@ -46,17 +49,39 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
         long cntAllPermission = upmsPermissionRepository.count();
         int cntPermissionOfRole = upmsRolePermissionRepository.findByRoleId(roleId).size();
 
-        if (cntPermissionOfRole == cntAllPermission) {
+        if (cntPermissionOfRole == cntAllPermission * PermissionAction.size()) {
             return;
         }
-        List<UpmsPermissionResp> permissions = upmsPermissionService.list();
+        UpmsPermissionReq req = new UpmsPermissionReq();
+        req.setType((byte) 2);
+        List<UpmsPermissionResp> permissions = upmsPermissionService.listBy(req);
 
         // 将 id 转换为 String[]
-        String[] checkBoxValues = permissions.stream()
+        String[] permissionIds = permissions.stream()
                 .map(UpmsPermissionResp::getId)
                 .map(String::valueOf) // 转换为字符串
                 .toArray(String[]::new);
-        this.rolePermission(roleId, null, checkBoxValues);
+        this.rolePermission(roleId, null, permissionIds);
+    }
+
+    @Override
+    public UpmsRolePermissionSaveResp create(UpmsRolePermissionSaveReq resources) {
+        UpmsRolePermissionSaveResp result = new UpmsRolePermissionSaveResp();
+
+        for (PermissionAction action : PermissionAction.values()) {
+            // 创建一个新的角色权限实体，并将其保存到数据库中
+            UpmsRolePermission rolePermission = new UpmsRolePermission();
+            rolePermission.setRoleId(resources.getRoleId());
+            rolePermission.setPermissionId(resources.getPermissionId()); // 确保 permissionId 转换为 long
+            rolePermission.setAction(action); // 设置当前的权限操作（READ, WRITE, CREATE 等）
+            // admin預設開啟，其他預設關閉
+            rolePermission.setActive(resources.getRoleId() == (long) 1 ? true : false); // 激活权限
+
+            // 保存到数据库
+            UpmsRolePermission entity = upmsRolePermissionRepository.save(rolePermission);
+        }
+
+        return null;
     }
 
     @Override
@@ -68,8 +93,21 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
     }
 
     @Override
-    public List rolePermission(long roleId, String systemCode, String[] checkBoxValues) {
+    public List rolePermission(long roleId, String systemCode, String[] permissionIds) {
         List<UpmsRolePermission> result = new ArrayList<>();
+
+        // 使用 HashSet 去重複
+        Set<Long> reqIds = new HashSet<>();
+
+        // 循環每個值，提取數字並添加到 Set 中
+        for (String value : permissionIds) {
+            // 提取字符串中的數字部分
+            String number = value.replaceAll("\\D+", "");
+            if (!number.isEmpty()) {
+                reqIds.add(Long.parseLong(number));
+            }
+        }
+
 
         // 检查是否是首次创建角色（假设服务层有一个方法可以检查角色是否已存在权限）
         boolean isFirstRoleCreation = upmsRolePermissionRepository.findByRoleId(roleId).isEmpty();
@@ -78,12 +116,12 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
         if (isFirstRoleCreation) {
             LOGGER.info("First time creating role with ID: {}. Inserting all permissions with CREATE action.", roleId);
 
-            for (String permissionId : checkBoxValues) {
+            for (Long permissionId : reqIds) {
                 for (PermissionAction action : PermissionAction.values()) {
                     // 创建一个新的角色权限实体，并将其保存到数据库中
                     UpmsRolePermission rolePermission = new UpmsRolePermission();
                     rolePermission.setRoleId(roleId);
-                    rolePermission.setPermissionId(Long.parseLong(permissionId)); // 确保 permissionId 转换为 long
+                    rolePermission.setPermissionId(permissionId); // 确保 permissionId 转换为 long
                     rolePermission.setAction(action); // 设置当前的权限操作（READ, WRITE, CREATE 等）
                     // admin預設開啟，其他預設關閉
                     rolePermission.setActive(roleId == (long) 1 ? true : false); // 激活权限
@@ -98,23 +136,48 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
 
         /**
          * 若已經有權限存在
+         * 0. 仍要判斷是否有新頁面
          * 1. 撈出所有該角色所屬系統權限設定
          * 2. 與前端回傳資料比對
          * 3. 若有更新，協助更新資料
+         * 4. 最後反向網parent曾開啟權限（多次）
          */
-        if (checkBoxValues != null) {
+        if (permissionIds != null) {
             List<UpmsRolePermission> saveEntities = new ArrayList<>();
+            // * 0. 仍要判斷是否有新頁面
+            List<Long> beenPermissionIds = upmsRolePermissionRepository.findPermissionIdsByRoleId(roleId);
+            // 把 beenPermissionIds 转换为 Set 用于快速查找
+            Set<Long> permissionIdSet = new HashSet<>(beenPermissionIds);
+            List<Long> additionalIds = new ArrayList<>();
+
+            for (String permissionKey : permissionIds) {
+                String[] permissionArr = permissionKey.split("_");
+                Long lp = Long.parseLong(permissionArr[0]);
+                // 如果 permissionId 不在 permissionIdSet 中，添加到 additionalIds 中
+                if (!permissionIdSet.contains(lp)) {
+                    UpmsRolePermissionSaveReq req = new UpmsRolePermissionSaveReq();
+                    req.setRoleId(roleId);
+                    req.setPermissionId(lp);
+                    try {
+                        PermissionAction action = PermissionAction.valueOf(permissionArr[1]);
+                        req.setAction(action);
+                    } catch (IllegalArgumentException e) {
+                        // 如果 permissionArr[1] 不在 PermissionAction 枚舉中，會捕捉到例外
+                        System.out.println("無效的 PermissionAction 值: " + permissionArr[1]);
+                    }
+                    this.create(req);
+                }
+            }
+//         * 1. 撈出所有該角色所屬系統權限設定
             List<UpmsRolePermissionWithActiveResp> allPermissionList = upmsRolePermissionMapper.findBy(roleId, systemCode);
 
             for (UpmsRolePermissionWithActiveResp urp : allPermissionList) {
                 boolean isCheckBoxValuesRtn = false;
-
-                String checkActionCode = urp.getId() + "_" + urp.getAction();
                 Boolean isCheckActionActive = urp.getActive();
 
                 // 迭代每个复选框的值
-                for (String value : checkBoxValues) {
-                    if (value.equals(checkActionCode)) {
+                for (String value : permissionIds) {
+                    if (value.equals(urp.getId()+"_"+urp.getAction())) {
                         isCheckBoxValuesRtn = true;
                     }
                 }
@@ -127,10 +190,13 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
                     entity.setPermissionId(urp.getId());
                     entity.setAction(urp.getAction());
 
-                    entity = this.safeSaveURP(roleId, entity, isCheckBoxValuesRtn);
+                    entity = this.safeSaveURP(entity, isCheckBoxValuesRtn);
                     saveEntities.add(entity);
                 }
             }
+
+
+
             upmsRolePermissionRepository.saveAll(saveEntities);
         }
         this.checkPermissionLevelOne(roleId);
@@ -152,7 +218,7 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
         return result;
     }
 
-    private UpmsRolePermission safeSaveURP(long roleId, UpmsRolePermission entity, boolean setActive) {
+    private UpmsRolePermission safeSaveURP(UpmsRolePermission entity, boolean setActive) {
         // 使用 Example 对象查找数据库中的匹配实体
         Example<UpmsRolePermission> example = Example.of(entity);
         Optional<UpmsRolePermission> optionalEntity = upmsRolePermissionRepository.findOne(example);
@@ -195,7 +261,7 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
             entity.setPermissionId(parentId);
             entity.setAction(PermissionAction.READ); // 假设使用 READ 权限
 
-            entity = this.safeSaveURP(roleId, entity, true);
+            entity = this.safeSaveURP(entity, true);
             saveEntities.add(entity);
         }
         // 5. 保存更新后的父菜单权限

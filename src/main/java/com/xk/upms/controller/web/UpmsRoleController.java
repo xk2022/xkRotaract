@@ -83,8 +83,6 @@ public class UpmsRoleController extends BaseController {
     /**
      * 新增/修改 角色 Create/Update
      */
-//    @RequiresPermissions("upms:role:create")
-//    @RequiresPermissions("upms:role:update")
     @PostMapping("/save")
     public String post(UpmsRoleSaveReq resources, RedirectAttributes attributes) {
         UpmsRoleSaveResp result;
