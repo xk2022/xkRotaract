@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * UpmsUserService 接口
- * Created by yuan on 2022/06/10
+ * UpmsUserService interface for managing UPMS users.
+ * Provides methods for CRUD operations on UpmsUser entities.
+ *
+ * @author yuan Created on 2022/06/10.
  */
 public interface UpmsUserService {
 

@@ -115,9 +115,15 @@ public class UpmsUserServiceImpl implements UpmsUserService {
 //        req.setPassword(MD5Utils.code(req.getPassword() + req.getSalt()));
         req.setLocked(false);
         req.setCreateTime(new Date());
-//        req.setCreateTime(new java.sql.Date(new Date().getTime()));
         UpmsUser entity = upmsUserRepository.save(req);
 
+        // 角色寫入
+        UpmsUserRole upmsUserRole = new UpmsUserRole();
+        upmsUserRole.setUserId(entity.getId());
+        upmsUserRole.setRoleId(resources.getUserRole());
+        upmsUserRoleRepository.save(upmsUserRole);
+
+        // 推薦人紀錄
         if (StringUtils.isNotBlank(resources.getReferralCode())) {
             List<UpmsUser> referraler = upmsUserRepository.findByCellPhoneLike(resources.getReferralCode());
 

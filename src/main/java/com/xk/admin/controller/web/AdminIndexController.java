@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * 後台管理頁面
+ * @author yuan
  * Created by yuan on 2022/06/10
  */
 @Controller
@@ -38,12 +39,6 @@ public class AdminIndexController extends BaseController {
     public String index(Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
 
-        /** TODO
-         * 20240804 讓角色繞過畫面，直接進入個人資料填寫
-         */
-        if (model.getAttribute("tree_only") != null) {
-            return "redirect:" + model.getAttribute("tree_only");
-        }
 //        model.addAttribute("page_list", upmsSystemService.listActive());
         model.addAttribute("page_list", authService.listSystemByAuth());
         return ADMIN_INDEX;

@@ -19,6 +19,7 @@
         <if test="system_name != null and system_name != ''">
             AND us.`name` = #{system_name}
         </if>
+        ORDER BY up.`system_id`, up.`orders`
     </select>
 
 </mapper>

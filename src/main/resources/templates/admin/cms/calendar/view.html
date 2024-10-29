@@ -41,6 +41,26 @@
                     });
                 }
             });
+
+            var elementD = document.getElementById('inputGroupSelect_district');
+            var elementC = document.getElementById('inputGroupSelect_club');
+            if ($('#calendar_range').val() === 'club') {
+                elementD.style.display = 'block';
+                elementC.style.display = 'block';
+                elementD.disabled = true;
+                elementC.disabled = true;
+            } else if ($('#calendar_range').val() === 'district') {
+                elementD.style.display = 'block';
+                elementC.style.display = 'none';
+                elementD.disabled = true;
+                // elementC.disabled = true;
+            } else {
+                elementD.style.display = 'block';
+                elementC.style.display = 'block';
+                elementD.disabled = false;
+                elementC.disabled = false;
+            }
+
         });
 
     </script>
@@ -65,8 +85,8 @@
         <!--begin::Card body-->
         <div class="card-body">
             <input type="hidden" id="calendar_range" th:value="${calendar_range}">
-            <input type="hidden" id="district_id" th:value="${district_id}">
-            <input type="hidden" id="rotaract_id" th:value="${rotaract_id}">
+            <input type="hidden" id="district_id" name="district_id" th:value="${district_id}">
+            <input type="hidden" id="rotaract_id" name="rotaract_id" th:value="${rotaract_id}">
             <!--begin::Calendar-->
             <div id="kt_calendar_app"></div>
             <!--end::Calendar-->

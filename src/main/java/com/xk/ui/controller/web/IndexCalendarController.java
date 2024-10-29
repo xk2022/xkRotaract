@@ -37,4 +37,18 @@ public class IndexCalendarController extends BaseController {
 
         return DIR_CALENDAR_INDEX+"P";
     }
+
+    @GetMapping("/r")
+    public String indexR(Model model) {
+        this.info(model);
+
+        return DIR_CALENDAR_INDEX+"EvoR";
+    }
+
+    @GetMapping("/full")
+    public String indexFull(Model model) {
+        this.info(model);
+
+        return DIR_CALENDAR_INDEX+"Full";
+    }
 }

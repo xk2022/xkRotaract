@@ -14,6 +14,6 @@ import java.util.List;
 @Mapper
 public interface UpmsRolePermissionMapper {
 
-    public List<UpmsRolePermissionWithActiveResp> findBy(long role_id, String system_name);
+    List<UpmsRolePermissionWithActiveResp> findBy(long role_id, String system_name);
 
 }

@@ -15,19 +15,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Created by yuan on 2022/06/10
- * 基本信息
+ * 用戶實體類，代表UPMS系統中的用戶。
+ * 提供用戶的基本信息，包括用戶名、郵箱、電話號碼、密碼以及帳戶狀態等。
  *
- * 用戶ID
- * 姓名
- * 工號
- * 所在部門
- * 職位
+ * @author yuan Created on 2022/06/10.
+ * @author yuan Updated on 2024/10/25 with code optimization based on GPT recommendations.
  */
 @Entity
 @Getter
 @Setter
-//@EqualsAndHashCode //不能用@EqualsAndHashCode和@ToString，否则死循环内存溢出
 @Table(name = "upms_user")
 public class UpmsUser extends BaseEntity implements Serializable {
 
@@ -40,12 +36,12 @@ public class UpmsUser extends BaseEntity implements Serializable {
     private Long id;
 
     @NotBlank(message = "用戶名稱不能為空")
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     @Comment("01_用戶名稱")
     private String username;
 
     @NotBlank(message = "郵箱不能為空")
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     @Comment("02_郵箱")
     @Pattern(regexp = ".+@.+\\..+", message = "請輸入有效的郵箱地址")
     private String email;
@@ -61,7 +57,7 @@ public class UpmsUser extends BaseEntity implements Serializable {
     @Comment("05_密碼MD5(密碼+鹽)")
     private String password;
 
-    // last_login: 記錄上次登錄時間，可以是NULL。
+    // 記錄用戶的最後登入時間
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Comment("06_最後登入時間")
@@ -71,11 +67,7 @@ public class UpmsUser extends BaseEntity implements Serializable {
 //    @Comment("07_登入失敗次數")
 //    private String failedAttempts;
 
-    /**
-     * account_locked: 布林值，標記帳戶是否被鎖定。
-     * 状态(0:正常,1:锁定)
-     */
-    @Comment("09_状态")
+    @Comment("92_狀態(0:正常,1:锁定)")
     @Column(columnDefinition = "boolean default false")
     private Boolean locked;
 

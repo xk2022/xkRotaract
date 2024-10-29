@@ -3,17 +3,20 @@ package com.xk.upms.service.impl;
 import com.xk.upms.dao.mapper.UpmsRolePermissionMapper;
 import com.xk.upms.dao.repository.UpmsPermissionRepository;
 import com.xk.upms.dao.repository.UpmsRolePermissionRepository;
+import com.xk.upms.dao.repository.UpmsSystemRepository;
 import com.xk.upms.model.bo.UpmsPermissionReq;
 import com.xk.upms.model.bo.UpmsRolePermissionReq;
 import com.xk.upms.model.bo.UpmsRolePermissionSaveReq;
 import com.xk.upms.model.enums.PermissionAction;
 import com.xk.upms.model.po.UpmsPermission;
 import com.xk.upms.model.po.UpmsRolePermission;
+import com.xk.upms.model.po.UpmsSystem;
 import com.xk.upms.model.vo.UpmsPermissionResp;
 import com.xk.upms.model.vo.UpmsRolePermissionSaveResp;
 import com.xk.upms.model.vo.UpmsRolePermissionWithActiveResp;
 import com.xk.upms.service.UpmsPermissionService;
 import com.xk.upms.service.UpmsRolePermissionService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,8 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
     private UpmsRolePermissionMapper upmsRolePermissionMapper;
     @Autowired
     private UpmsPermissionService upmsPermissionService;
+    @Autowired
+    private UpmsSystemRepository upmsSystemRepository;
 
     @Override
     public void checkCountSameWithPermission(long roleId) {
@@ -84,12 +89,64 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
         return null;
     }
 
+    /**
+     * 1. 找到選中系統的功能數量
+     * 2. 尋找對應主要資料內容（main）
+     * 3. 若數量對不上找出未對上的功能，預設false
+     * @param resource
+     * @return
+     */
     @Override
     public List listBy(UpmsRolePermissionReq resource) {
-        List<UpmsRolePermissionWithActiveResp> result = new ArrayList<>();
+        List<UpmsRolePermissionWithActiveResp> result;
+        UpmsSystem checkSystem = null;
+        long cntPermission = 0;
 
+        // 檢查參數
+        if (StringUtils.isNotBlank(resource.getSystemCode())) {
+            checkSystem = upmsSystemRepository.findOneByName(resource.getSystemCode());
+            if (checkSystem == null) {
+//                throw new NullPointerException("UpmsRolePermissionService.listBy()中，systemCode參數錯誤");
+            } else {
+                // 1. 找到選中系統的功能數量
+                UpmsPermission entity = new UpmsPermission();
+                entity.setType((byte) 2);
+                entity.setSystemId(checkSystem.getId());
+                Example<UpmsPermission> example = Example.of(entity);
+                cntPermission = upmsPermissionRepository.count(example);
+            }
+        }
+
+        // 2. 尋找對應主要資料內容（main）
         Long roleId = Long.valueOf(resource.getRoleId());
-        return upmsRolePermissionMapper.findBy(roleId, resource.getSystemCode());
+        result = upmsRolePermissionMapper.findBy(roleId, resource.getSystemCode());
+        // 3. 若數量對不上找出未對上的功能，預設false
+        if (StringUtils.isNotBlank(resource.getSystemCode()) && cntPermission != result.size() / PermissionAction.size()) {
+            List<Long> ids = result.stream()
+                .collect(Collectors.toMap(
+                        UpmsRolePermissionWithActiveResp::getId, // 以 `id` 作為 key
+                        permission -> permission, // 以原始對象作為 value
+                        (existing, replacement) -> existing // 如果有重複的 key，保留原始對象
+                ))
+                .values()
+                .stream()
+                .map(UpmsRolePermissionWithActiveResp::getId) // 直接提取每個去重後對象的 `id`
+                .collect(Collectors.toList()); // 收集到一個 List 中
+
+
+            List<UpmsPermission> permissions = upmsPermissionRepository.findByIdNotInAndTypeAndSystemId(ids, (byte) 2, checkSystem.getId());
+            for (UpmsPermission permission : permissions) {
+                for (PermissionAction action : PermissionAction.values()) {
+                    UpmsRolePermissionWithActiveResp resp = new UpmsRolePermissionWithActiveResp();
+                    resp.setId(permission.getId());
+                    resp.setName(permission.getName());
+                    resp.setActive(false);
+                    resp.setAction(action);
+                    result.add(resp);
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -145,29 +202,29 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
         if (permissionIds != null) {
             List<UpmsRolePermission> saveEntities = new ArrayList<>();
             // * 0. 仍要判斷是否有新頁面
-            List<Long> beenPermissionIds = upmsRolePermissionRepository.findPermissionIdsByRoleId(roleId);
-            // 把 beenPermissionIds 转换为 Set 用于快速查找
-            Set<Long> permissionIdSet = new HashSet<>(beenPermissionIds);
-            List<Long> additionalIds = new ArrayList<>();
-
-            for (String permissionKey : permissionIds) {
-                String[] permissionArr = permissionKey.split("_");
-                Long lp = Long.parseLong(permissionArr[0]);
-                // 如果 permissionId 不在 permissionIdSet 中，添加到 additionalIds 中
-                if (!permissionIdSet.contains(lp)) {
-                    UpmsRolePermissionSaveReq req = new UpmsRolePermissionSaveReq();
-                    req.setRoleId(roleId);
-                    req.setPermissionId(lp);
-                    try {
-                        PermissionAction action = PermissionAction.valueOf(permissionArr[1]);
-                        req.setAction(action);
-                    } catch (IllegalArgumentException e) {
-                        // 如果 permissionArr[1] 不在 PermissionAction 枚舉中，會捕捉到例外
-                        System.out.println("無效的 PermissionAction 值: " + permissionArr[1]);
-                    }
-                    this.create(req);
-                }
-            }
+//            List<Long> beenPermissionIds = upmsRolePermissionRepository.findPermissionIdsByRoleId(roleId);
+//            // 把 beenPermissionIds 转换为 Set 用于快速查找
+//            Set<Long> permissionIdSet = new HashSet<>(beenPermissionIds);
+//            List<Long> additionalIds = new ArrayList<>();
+//
+//            for (String permissionKey : permissionIds) {
+//                String[] permissionArr = permissionKey.split("_");
+//                Long lp = Long.parseLong(permissionArr[0]);
+//                // 如果 permissionId 不在 permissionIdSet 中，添加到 additionalIds 中
+//                if (!permissionIdSet.contains(lp)) {
+//                    UpmsRolePermissionSaveReq req = new UpmsRolePermissionSaveReq();
+//                    req.setRoleId(roleId);
+//                    req.setPermissionId(lp);
+//                    try {
+//                        PermissionAction action = PermissionAction.valueOf(permissionArr[1]);
+//                        req.setAction(action);
+//                    } catch (IllegalArgumentException e) {
+//                        // 如果 permissionArr[1] 不在 PermissionAction 枚舉中，會捕捉到例外
+//                        System.out.println("無效的 PermissionAction 值: " + permissionArr[1]);
+//                    }
+//                    this.create(req);
+//                }
+//            }
 //         * 1. 撈出所有該角色所屬系統權限設定
             List<UpmsRolePermissionWithActiveResp> allPermissionList = upmsRolePermissionMapper.findBy(roleId, systemCode);
 

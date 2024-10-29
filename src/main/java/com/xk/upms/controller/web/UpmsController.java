@@ -43,9 +43,6 @@ public class UpmsController extends BaseController {
     public String index(Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
 
-        if (model.getAttribute("tree_only") != null) {
-            return "redirect:" + model.getAttribute("tree_only");
-        }
         UpmsSystem system = (UpmsSystem) upmsSystemService.findOneByName("upms");
         List<UpmsPermission> permissions = authService.listPermission(system.getId(), (byte) 2);
         model.addAttribute("page_list", permissions);

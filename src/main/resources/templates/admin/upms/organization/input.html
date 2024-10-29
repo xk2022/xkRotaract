@@ -9,16 +9,11 @@
         $('#modal_name').text("新增組織");
         $("[name='id']").val(null);
         var selectElement = document.getElementById('selectMode_3').value;
-        $("[name='district']").val(selectElement);
         $("[name='name']").val(null);
+        $("[name='code']").val(null);
         $("[name='description']").val(null);
-        $("[name='status']")[0].checked = true;
         $("[name='orders']").val(null);
-    });
-
-
-    // Update
-    $("[name='add_btn']").click(function(){
+        $("[name='status']")[0].checked = true;
     });
 
     // Update
@@ -26,22 +21,22 @@
         $('#modal_name').text("更新組織");
 
         $("[name='id']").val(row[1].innerText);
-        $("[name='district']").val(row[2].innerText);
-        $("[name='name']").val(row[3].innerText);
+        $("[name='name']").val(row[2].innerText);
+        $("[name='code']").val(row[3].innerText);
         $("[name='description']").val(row[4].innerText);
+        $("[name='orders']").val(row[5].innerText);
         $("[name='status']")[0].checked = true;
-        var btnradio_status_ = row[5].innerText == '啟用';
+        var btnradio_status_ = row[6].innerText == '啟用';
         $("#btnradio_status_"+btnradio_status_).prop('checked', true);
-        $("[name='orders']").val(row[6].innerText);
     }
 
     // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
     var validator = FormValidation.formValidation( form,
         {
             fields: {
-                'district': { validators: { notEmpty: {
-                            message: 'Organization district is required' } } },
                 'name': { validators: { notEmpty: {
+                            message: 'Organization district is required' } } },
+                'code': { validators: { notEmpty: {
                             message: 'Organization name is required' } } },
             },
             plugins: {
@@ -70,12 +65,13 @@
             <div class="col-md">
                 <!--begin::Label-->
                 <label class="fs-6 fw-bold form-label mb-2">
-                    <span th:text="所屬地區"></span>
+                    <span th:text="所屬上層"></span>
                 </label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <select class="form-select form-control form-control-solid" id="inputGroupSelect_district" name="district">
-                    <option value="0">請選擇</option>
+                <select class="form-select form-control form-control-solid" id="inputGroupSelect_parent" name="pid">
+                    <option value="" selected>請選擇</option>
+                    <option th:each="data : ${select_organization}" th:value="${data.id}" th:text="${data.name}"></option>
                 </select>
                 <!--end::Input-->
             </div>
@@ -86,13 +82,29 @@
             <div class="col-md">
                 <!--begin::Label-->
                 <label class="fs-6 fw-bold form-label mb-2">
-                    <span class="required" th:text="所屬名稱（地區or社名）"></span>
+                    <span class="required" th:text="組織名稱"></span>
                     <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
                        data-bs-trigger="hover" data-bs-html="true" data-bs-content="組織名稱為必填項"></i>
                 </label>
                 <!--end::Label-->
                 <!--begin::Input-->
                 <input class="form-control form-control-solid" placeholder="Enter a organization name" name="name"/>
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span class="required" th:text="組織編碼"></span>
+                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
+                       data-bs-trigger="hover" data-bs-html="true" data-bs-content="組織編碼為必填項"></i>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" placeholder="Enter a organization code" name="code"/>
                 <!--end::Input-->
             </div>
         </div>

@@ -24,4 +24,6 @@ public interface UpmsPermissionRepository extends JpaRepository<UpmsPermission, 
     UpmsPermission findByUri(String uri);
 
     List findByPid(Long pid);
+
+    List findByIdNotInAndTypeAndSystemId(List<Long> ids, Byte type, Long systemId);
 }

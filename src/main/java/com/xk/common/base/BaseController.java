@@ -15,9 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
+ * @author yuan 
  * Created by yuan on 2022/05/24
  */
 @Controller
@@ -65,22 +65,6 @@ public class BaseController {
         model.addAttribute("system", system);
         model = this.versionBasic(model);
 
-        /**TODO
-         * 單功能快速進入管道
-         */
-        List<UpmsPermission> permissions = authService.listPermission(null, (byte) 2);
-        if (permissions.size() == 1 ) {
-            UpmsPermission onlyPermissionType2 = permissions.get(0);
-            model.addAttribute("tree_only", onlyPermissionType2.getUri());
-        } else {
-            model.addAttribute("tree_only", null);
-        }
-
-//        model.addAttribute("system_title", null);
-//        model.addAttribute("system_list", null);
-//        model.addAttribute("user_menus", null);
-//        model.addAttribute("user", null);
-//        model.addAttribute("menus", null);
         return model;
     }
 

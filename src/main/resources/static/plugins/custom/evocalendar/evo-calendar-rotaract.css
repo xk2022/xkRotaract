@@ -1,0 +1,819 @@
+
+/* 讓頁面內容最小高度佔滿視窗高度 */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background:#eee;
+}
+
+/* 讓flex布局將內容區域撐開，頁腳固定在mainContent內容之後 */
+.d-flex-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* mainContent區域會撐開剩餘空間，footer會自動在mainContent的下面 */
+.main-content {
+    flex-grow: 1;
+}
+/* footer基本樣式，保持與mainContent底部連接 */
+footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    width: 100%;
+    height: 10vh; /* 定義 footer 高度 */
+    color: red;
+    text-align: center;
+}
+/* 設置nav的高度 */
+nav {
+    height: 10vh;
+}
+
+.icon-group {
+    justify-content: flex-end;
+}
+
+:root {
+    --calendar-main-color: #8773c1;
+    --calendar-main-bg-color: #8773c1;
+    --calendar-main-text-color: white;
+    --calendar-main-text-color-hover: #a692e0;
+    --calendar-main-text-color-active: #755eb5;
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+
+
+
+    --indicator-bullet-event-color: #ff7575;
+    --indicator-bullet-holiday-color: #ffc107;
+    --indicator-bullet-birthday-color: #3ca8ff;
+}
+.main-shadow {
+    /*box-shadow: [水平偏移量] [垂直偏移量] [模糊半徑] [擴展半徑] [陰影顏色];*/
+    transform: translateX(0);
+    box-shadow: 5px 0 18px -3px var(--calendar-main-color);
+}
+
+
+
+
+
+/* 內部區塊比例調整 */
+#mainContent {
+    height: 80vh;
+}
+#calendar {
+    height: 80vh; /* 根據螢幕高度的80% */
+    width: 95vw;  /* 根據螢幕寬度的95% */
+    margin-left: auto;
+    margin-right: auto; /* 左右置中 */
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+/* A_block 區塊 */
+.calendar-headbar {
+}
+.calendar-headbar > .district-list {
+    display: flex;
+    align-items: flex-end; /* 使子元素貼齊底部 */
+    overflow-x: scroll; /* 強制顯示水平滾動條 */
+    white-space: nowrap; /* 防止子元素換行 */
+}
+/* overflow樣式 */
+.calendar-headbar > .district-list::-webkit-scrollbar {
+    height: 8px; /* 滾動條高度 */
+}
+.calendar-headbar > .district-list::-webkit-scrollbar-thumb {
+    background-color: var(--calendar-main-text-color-hover); /* 滾動條顏色 */
+    border-radius: 10px; /* 滾動條圓角 */
+}
+.calendar-headbar > .district-list::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* 滾動條背景 */
+}
+/* 按鈕樣式 */
+.calendar-headbar > .district-list > .tab-btn {
+    min-width: 8.7vw; /* 固定按鈕寬度 */
+    padding: 10px 15px;
+    background-color: var(--calendar-main-bg-color);
+    color: var(--calendar-theme-text, white); /* 主題文字顏色 */
+    text-align: center;
+    border-radius: 10px 10px 0 0; /* 上圓角、下直角 */
+    flex: 0 0 auto; /* 不會隨容器大小變化 */
+}
+.calendar-headbar > .district-list > .tab-btn:hover {
+    background-color: var(--calendar-main-text-color-hover);
+}
+.calendar-headbar > .district-list > .tab-btn.active {
+    background-color: var(--calendar-main-text-color-active);
+    border-color: transparent; /* 移除邊框顏色 */
+}
+
+
+
+
+
+/** B 區塊（含C、D、E區塊） - 主要區域設置 */
+.calendar-body {
+    display: flex;
+    justify-content: space-between;
+    height: 100%; /* 撐滿日曆高度 */
+    white-space: nowrap; /* 禁止換行 */
+}
+
+/* 全局設置，讓 calendar-sidebar 填滿 20% 寬度 */
+.calendar-sidebar {
+    width: 15%; /* 設定寬度 */
+    height: 100%; /* 讓sidebar充滿父元素 */
+    display: flex;
+    flex-direction: column; /* 垂直佈局 */
+    background-color: var(--calendar-main-bg-color);
+    padding: 10px;
+}
+
+/* C_block 區塊、E_block 區塊 */
+.calendar-sidebar-left {
+    justify-content: space-around;
+}
+.calendar-year {
+    display: flex;
+    justify-content: center; /* 水平置中 */
+    align-items: center; /* 垂直置中 */
+    width: 100%;
+    /*padding: 10px;*/
+    color: white;
+    font-weight: bold;
+    text-align: center; /* 文字置中 */
+}
+.calendar-year > div > p {
+    margin: 0;
+    font-size: calc(0.8vw + 0.8vh); /* 根據視窗寬度和高度自適應字體大小 */
+    line-height: 1.2; /* 避免字體過於擁擠 */
+}
+.calendar-year > div:hover {
+    background-color: var(--calendar-main-text-color-hover);
+}
+.calendar-year > .years_icon {
+    display: flex;
+    justify-content: center; /* 水平置中 */
+    align-items: center; /* 垂直置中 */
+    width: 40px;
+    height: auto !important; /* 移除強制高度 */
+    aspect-ratio: 1 / 1; /* 使用 aspect-ratio 保持寬高比為1，即正方形 */
+    border-radius: 50%; /* 圓形 */
+}
+.calendar-months {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around; /* 月份均勻分佈 */
+    height: 90%;
+    overflow-y: auto;
+}
+.calendar-months > .calendar-month {
+    text-align: center;
+    padding: 10px;
+    color: white;
+    margin: 2px 0;
+    /*border: 1px solid #ddd;*/
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+.calendar-months > .calendar-month:hover {
+    background-color: var(--calendar-main-text-color-hover);
+}
+.calendar-months > .calendar-month.active-month {
+    background-color: var(--calendar-main-text-color-active);
+    border-color: transparent; /* 移除邊框顏色 */
+}
+
+
+
+/* D_block 區塊 */
+.calendar-middle {
+    /*background-color: #6c757d;*/
+    flex-grow: 1; /* 確保中間區域佔據剩餘空間 */
+    width: 70%; /* D 區塊寬度 */
+    height: 100%; /* 撐滿高度 */
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    /* 調整 D 區塊的寬度時 */
+    transition: width 0.3s ease; /* 添加動畫過渡效果 */
+}
+.radius-item {
+    width: 50%; /* 設置寬度為容器的 50% */
+    height: auto; /* 讓高度自適應 */
+    aspect-ratio: 1 / 1; /* 保持正方形 */
+    display: flex; /* 使用 flexbox */
+    align-items: center; /* 垂直置中 */
+    justify-content: center; /* 水平置中 */
+    border-radius: 50%; /* 圓形 */
+    text-align: center;
+    color: var(--calendar-main-color);
+    margin: 0 auto;
+    /*font-size: calc(1.275rem + .3vw);*/
+}
+.radius-item:hover {
+    background-color: #dadada;
+    color: var(--calendar-main-color);
+}
+/* 當 C 區塊被折疊時、當 E 區塊被折疊時 */
+.collapsed {
+    width: 0;
+    transition: width 0.3s ease; /* 添加動畫效果 */
+}
+
+
+
+/* F_block 區塊 */
+.calendar-inner {
+    /*background-color: #ffc107;*/
+    flex: 1; /* 區塊F應該擴展以填滿中間區域 */
+    padding: 15px;
+    margin-top: 0;
+}
+.calendar-table {
+    /*background-color: #fff; /* 可以選擇背景顏色 */
+    background-color: white;
+    padding: 20px; /* 內縮10px */
+    border-radius: 5px; /* 圓角效果可選 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 加上陰影效果可選 */
+    text-align: center;
+}
+/* 當 calendar-table 被收起時 */
+.calendar-table-header .collapsed {
+    max-height: 0; /* 當收起時，將高度設為0，實現滑動收起的效果 */
+}.calendar-table-body .collapsed {
+    max-height: 0; /* 當收起時，將高度設為0，實現滑動收起的效果 */
+}
+.calendar-header-dline {
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--calendar-main-color);
+    font-size: calc(1.275rem + .3vw);
+    align-items: center !important;
+}
+.calendar-header-dline::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    width: 50px;
+    height: 5px;
+    -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+            transform: translateX(-50%);
+    background-color: rgba(135, 115, 193, 0.15);
+}
+.calendar-table-inner > .calendar-table-header, .calendar-table-body {
+    white-space: nowrap; /* 禁止換行 */
+}
+.calendar-table-inner > .calendar-table-header > .calendar-header-day, 
+.calendar-table-inner > .calendar-table-body > .calendar-day {
+    padding: 0 !important;
+    border: none; /* 移除邊框 */
+}
+.calendar-table-inner > .calendar-table-header > .calendar-header-day > .week, 
+.calendar-table-inner > .calendar-table-body > .calendar-day > .day {
+    width: calc(3.5rem + .3vw); /* 寬度自適應螢幕 */
+    height: auto !important; /* 移除固定高度 */
+    aspect-ratio: 1 / 1; /* 使用 aspect-ratio 保持寬高比為1，即正方形 */
+    display: flex; /* 使用 flexbox */
+    align-items: center; /* 垂直置中 */
+    justify-content: center; /* 水平置中 */
+    border-radius: 50%;
+    margin: 0 auto;
+    color: #5a5a5a;
+    position: relative;
+}
+.calendar-table-inner > .calendar-table-body > .calendar-day > .day:hover {
+    background-color: #dadada;
+}
+.calendar-table-inner > .calendar-table-body > .calendar-day > .day:active {
+    -webkit-transform: scale(0.9);
+        -ms-transform: scale(0.9);
+            transform: scale(0.9);
+}
+.calendar-day > .day.calendar-active,
+.calendar-day > .day.calendar-active:hover {
+    color: #5a5a5a;
+    border-color: rgba(0, 0, 0, 0.5);
+}
+.calendar-day > .day.calendar-today {
+    color: #fff !important;
+    background-color: #8773c1;
+}
+.calendar-day > .day.calendar-today:hover {
+    background-color: #755eb5;
+}
+
+
+
+
+/* G_block 區塊 */
+.calendar-events {
+    /*background-color: #28a745;*/
+    flex: 1; /* 區塊F應該擴展以填滿中間區域 */
+    padding: 15px;
+    height: 100%; /* 高度固定，保持隨螢幕變化 */
+    overflow-y: auto; /* 當內容超出時，允許滾動 */
+}
+.event-header {
+    font-size: 18px;
+    color: #8773c1;
+    margin-bottom: 15px;
+    padding-left: 30px;
+    display: flex;
+    align-items: center; /* 垂直置中 */
+    justify-content: center; /* 水平置中 */
+}
+/* 適用於內部的 row */
+.event-header .row {
+    width: 100%; /* 撐滿容器 */
+    align-items: center; /* 垂直置中 */
+}
+.event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* 每個事件之間的間距 */
+}
+.event-container {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.event-container:hover {
+    background-color: #f9f9f9;
+}
+.event-icon {
+    margin-right: 15px;
+}
+.event-header > p {
+    font-size: calc(2rem + .3vw);
+    font-weight: 600;
+    color: #5a5a5a;
+    padding: 15px 10px 0;
+}
+
+.event-list::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+.event-list > .event-empty {
+    padding: 15px 10px;
+    background-color: rgba(135,115,193,.15);
+    border: 1px solid #8773c1;
+}
+.event-list > .event-empty > p {
+    margin: 0;
+    color: #755eb5;
+}
+
+/* 事件指示器的樣式 */
+.event-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 0.1vw; /* 各個指示器之間的間隔 */
+}
+.event-indicator {
+    position: absolute;
+    width: -moz-max-content;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    top: 100%;
+    left: 50%;
+    -webkit-transform: translate(-50%, calc(-100% + -5px));
+        -ms-transform: translate(-50%, calc(-100% + -5px));
+            transform: translate(-50%, calc(-100% + -5px));
+}
+.event-indicator > .type-bullet {
+    float: left;
+    padding: 2px;
+}
+.event-indicator > .type-bullet > div {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;                                                                                           
+}
+.event-container > .event-icon > div {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+/* fallback color */
+.event-container > .event-icon > div[class^="event-bullet-"],
+.event-indicator > .type-bullet > div[class^="type-"] {
+    background-color: #8773c1;
+}
+.event-container > .event-icon > div.event-bullet-event,
+.event-indicator > .type-bullet > div.type-event {
+    background-color: var(--indicator-bullet-event-color);
+}
+.event-container > .event-icon > div.event-bullet-holiday,
+.event-indicator > .type-bullet > div.type-holiday {
+    background-color: var(--indicator-bullet-holiday-color);
+}
+.event-container > .event-icon > div.event-bullet-birthday,
+.event-indicator > .type-bullet > div.type-birthday {
+    background-color: var(--indicator-bullet-birthday-color);
+}
+
+        
+
+/* 手機版排列，使用 Bootstrap RWD 排版 */
+@media (max-width: 768px) {
+    .calendar-body {
+        display: contents;
+        flex-direction: column;
+    }
+    /**
+     * .calendar-headbar 
+     */
+    .district-list {
+        flex-wrap: nowrap;
+    }
+    .calendar-sidebar, .calendar-middle, .calendar-inner, .calendar-events {
+        width: 100%;
+    }
+    .calendar-middle {
+        display: list-item;
+    }
+    /**
+     * .calendar-body 
+     */
+    .calendar-sidebar {
+        width: 100%; /* 手機版橫向填滿 */
+        height: auto; /* 手機版設置為自適應高度 */
+        padding: 10px; /* 添加一些內邊距 */
+        flex-direction: row;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+    /**
+     * .calendar-year
+     */
+    /* calendar-year 和月列表垂直堆疊 */
+    .calendar-year {
+        width: 100%; /* 寬度100% */
+        height: auto; /* 手機版讓年份區塊自適應高度 */
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 5px;
+    }
+    /**
+     * calendar-months
+     */
+    /* 隱藏月份列表，sidebarToggler 控制顯示 */
+    .calendar-months {
+        display: none;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 100%;
+        /* 滑動效果 */
+        max-height: 0;
+        padding: 10px;
+        transition: max-height 0.3s ease-out; /* 添加過渡效果 */
+    }
+    .calendar-months.active {
+        display: flex; /* 顯示為彈性布局 */
+    }
+
+    /* 顯示側邊欄按鈕 */
+    .calendar-year::after {
+        content: '☰';
+         /* 側邊欄圖示 */
+        font-size: 20px;
+        cursor: pointer;
+        margin-left: 5vh;
+    }
+    /* 當按鈕點擊時顯示月份 */
+    .calendar-year.active + .calendar-months {
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .calendar-year > div > p {
+        font-size: calc(1.8vw + 1.8vh); /* 根據視窗寬度和高度自適應字體大小 */
+    }
+    .tab-btn {
+        flex: 1 0 10%;
+    }
+
+
+
+
+    .calendar-table-header, .calendar-table-body {
+        flex-wrap: nowrap;
+    }
+    
+    .week, .day {
+        width: 100% !important; /* 在小螢幕時，讓寬度填滿容器 */
+        aspect-ratio: 1 / 1; /* 強制正方形 */
+    }
+    #toggleC, #toggleE {
+        display: none;
+    }
+
+}
+
+/* 手機版橫向滑動 */
+@media (max-width: 767.98px) {
+    #blockA {
+        flex-wrap: nowrap;
+        overflow-x: scroll;
+    }
+
+    .tab-btn {
+        flex: 0 0 auto;
+        width: auto;
+    }
+}
+
+
+
+
+/* 行中列的樣式 */
+.row {
+    margin-bottom: 10px;
+}
+
+/* 週一～週日的列 */
+.row .col {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+/* 日期區塊的列 */
+.row .col {
+    background-color: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+
+/* 顯示 blockG 的按鈕 */
+#toggleG {
+    font-size: 18px;
+}
+
+/* 顯示 blockA 的按鈕 */
+#toggleA {
+    font-size: 18px;
+}
+
+/* 滑動開關效果 */
+.collapsed {
+    display: none;
+}
+
+/* 動畫效果 */
+@keyframes slideDown {
+    from { max-height: 0; opacity: 0; }
+    to { max-height: 100%; opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { max-height: 100%; opacity: 1; }
+    to { max-height: 0; opacity: 0; }
+}
+
+
+
+
+.timeline {
+    position: relative;
+    padding: 10px;
+    margin: 0 auto;
+    overflow: hidden;
+    color: #ffffff;
+}
+
+.timeline:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -1px;
+    border-right: 2px dashed #c4d2e2;
+    height: 100%;
+    display: block;
+}
+
+.timeline-row {
+    padding-left: 50%;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-row .timeline-time {
+    position: absolute;
+    right: 50%;
+    top: 31px;
+    text-align: right;
+    margin-right: 20px;
+    color: #000000;
+    font-size: 1.5rem;
+}
+
+.timeline-row .timeline-content {
+    position: relative;
+    padding: 20px 30px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.timeline-row .timeline-content:after {
+    content: "";
+    position: absolute;
+    top: 20px;
+    height: 3px;
+    width: 40px;
+}
+
+.timeline-row .timeline-content:before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    right: -50px;
+    width: 20px;
+    height: 20px;
+    -webkit-border-radius: 100px;
+    -moz-border-radius: 100px;
+    border-radius: 100px;
+    z-index: 100;
+        background-color: var(--indicator-bullet-event-color);
+
+    border: 2px dashed #c4d2e2;
+}
+
+.timeline-row .timeline-content h4 {
+    /*width: 20vw;*/
+    margin: 0 0 20px 0;
+    overflow: hidden;
+    line-height: 150%;
+    text-align: right; /* 文字靠右對齊 */
+    white-space: normal;
+}
+
+.timeline-row .timeline-content p {
+    margin-bottom: 30px;
+    line-height: 150%;
+}
+
+.timeline-row:nth-child(even) .timeline-content {
+    background-color: #ff5000;
+    /* Fallback Color */
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fc6d4c), to(#ff5000));
+    /* Saf4+, Chrome */
+    background-image: -webkit-linear-gradient(top, #fc6d4c, #ff5000);
+    /* Chrome 10+, Saf5.1+, iOS 5+ */
+    background-image: -moz-linear-gradient(top, #fc6d4c, #ff5000);
+    /* FF3.6 */
+    background-image: -ms-linear-gradient(top, #fc6d4c, #ff5000);
+    /* IE10 */
+    background-image: -o-linear-gradient(top, #fc6d4c, #ff5000);
+    /* Opera 11.10+ */
+    background-image: linear-gradient(top, #fc6d4c, #ff5000);
+    margin-left: 40px;
+    text-align: left;
+}
+
+.timeline-row:nth-child(even) .timeline-content:after {
+    left: -39px;
+    border-right: 18px solid #ff5000;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+.timeline-row:nth-child(even) .timeline-content:before {
+    left: -50px;
+    right: initial;
+}
+
+.timeline-row:nth-child(odd) {
+    padding-left: 0;
+    padding-right: 50%;
+}
+
+.timeline-row:nth-child(odd) .timeline-time {
+    right: auto;
+    left: 50%;
+    text-align: left;
+    margin-right: 0;
+    margin-left: 20px;
+}
+
+.timeline-row:nth-child(odd) .timeline-content {
+    background-color: #5a99ee;
+    /* Fallback Color */
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#1379bb), to(#5a99ee));
+    /* Saf4+, Chrome */
+    background-image: -webkit-linear-gradient(top, #1379bb, #5a99ee);
+    /* Chrome 10+, Saf5.1+, iOS 5+ */
+    background-image: -moz-linear-gradient(top, #1379bb, #5a99ee);
+    /* FF3.6 */
+    background-image: -ms-linear-gradient(top, #1379bb, #5a99ee);
+    /* IE10 */
+    background-image: -o-linear-gradient(top, #1379bb, #5a99ee);
+    /* Opera 11.10+ */
+    background-image: linear-gradient(top, #1379bb, #5a99ee);
+    margin-right: 40px;
+    margin-left: 0;
+    text-align: right;
+}
+
+.timeline-row:nth-child(odd) .timeline-content:after {
+    right: -39px;
+    border-left: 18px solid #1379bb;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+@media (max-width: 767px) {
+    .timeline {
+        padding: 15px 10px;
+    }
+    .timeline:after {
+        left: 28px;
+    }
+    .timeline .timeline-row {
+        padding-left: 0;
+        margin-bottom: 16px;
+    }
+    .timeline .timeline-row .timeline-time {
+        position: relative;
+        right: auto;
+        top: 0;
+        text-align: left;
+        margin: 0 0 6px 56px;
+    }
+    .timeline .timeline-row .timeline-time strong {
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .timeline .timeline-row .timeline-icon {
+        top: 52px;
+        left: -2px;
+        margin-left: 0;
+    }
+    .timeline .timeline-row .timeline-content {
+        padding: 15px;
+        margin-left: 56px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+    .timeline .timeline-row .timeline-content:after {
+        right: auto;
+        left: -39px;
+        top: 32px;
+    }
+    .timeline .timeline-row:nth-child(odd) {
+        padding-right: 0;
+    }
+    .timeline .timeline-row:nth-child(odd) .timeline-time {
+        position: relative;
+        right: auto;
+        left: auto;
+        top: 0;
+        text-align: left;
+        margin: 0 0 6px 56px;
+    }
+    .timeline .timeline-row:nth-child(odd) .timeline-content {
+        margin-right: 0;
+        margin-left: 55px;
+    }
+    .timeline .timeline-row:nth-child(odd) .timeline-content:after {
+        right: auto;
+        left: -39px;
+        top: 32px;
+        border-right: 18px solid #5a99ee;
+        border-left: inherit;
+    }
+    .timeline.animated .timeline-row:nth-child(odd) .timeline-content {
+        left: 20px;
+    }
+    .timeline.animated .timeline-row.active:nth-child(odd) .timeline-content {
+        left: 0;
+    }
+}

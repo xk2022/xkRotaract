@@ -60,6 +60,7 @@ public class CmsCalendarController extends BaseController {
 		if (StringUtils.isBlank(user.getRotaract_id()) || "0".equals(user.getRotaract_id())) {
 			return this.errorMsg(model, "查無所屬社", "請先至“我的資料”，選擇您的所屬社！");
 		}
+		model.addAttribute("district_id", user.getDistrict_id());
 		model.addAttribute("rotaract_id", user.getRotaract_id());
 		model.addAttribute("entity", new CmsCalendarSaveReq());
 		return ADMIN_INDEX;

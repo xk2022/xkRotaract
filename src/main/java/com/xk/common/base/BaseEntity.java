@@ -24,6 +24,18 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity implements Serializable {
 
+//    @Column(name = "orders")
+//    @Comment("90_資料排序")
+//    private Long orders;
+
+//    @Column(name = "status", columnDefinition = "boolean default true")
+//    @Comment("91_狀態，表示是否有效或啟用")
+//    private Boolean status;
+
+//    @Column(name = "locked", columnDefinition = "boolean default false")
+//    @Comment("92_狀態(0:正常,1:锁定)")
+//    private Boolean locked;
+
     @ApiModelProperty(value = "創建者", required = true, example = "王小明")
     @CreatedBy
     @Column(name = "create_by", updatable = false)

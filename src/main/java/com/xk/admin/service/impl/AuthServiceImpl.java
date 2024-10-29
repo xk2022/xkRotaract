@@ -170,9 +170,15 @@ public class AuthServiceImpl implements AuthService {
 
         if (type != null) {
             predicates.add(cb.equal(root.get("type"), type));
+            if (type == 2) {
+                predicates.add(cb.le(root.get("orders"), 100));
+            }
         }
-
+        // 应用条件
         query.where(predicates.toArray(new Predicate[0]));
+        // 按 orders 排序（升序）
+        query.orderBy(cb.asc(root.get("orders")));
+        // 执行查询并获取结果
         List<UpmsPermission> allActivePermissions = entityManager.createQuery(query).getResultList();
 
         // 从所有活动权限中筛选出用户拥有的权限
