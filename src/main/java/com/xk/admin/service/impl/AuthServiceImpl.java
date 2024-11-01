@@ -78,13 +78,14 @@ public class AuthServiceImpl implements AuthService {
             BeanUtils.copyProperties(cuEntity, result);
         }
         // user role
-        List<UpmsUserRole> uurList = upmsUserRoleRepository.findByUserId(uuEntity.getId());
-        if (uurList == null) {
+        Optional<UpmsUserRole> uur = upmsUserRoleRepository.findByUserId(uuEntity.getId());
+        List<Long> list = new ArrayList<>();
+        if (!uur.isPresent()) {
             throw new NotFoundException("查無使用者對應角色");
         }
-        List<Long> list = new ArrayList<>();
-        for(UpmsUserRole temp : uurList) {
-            list.add(temp.getRoleId());
+        else {
+        	UpmsUserRole upmsUserRole = uur.get();
+        	 list.add(upmsUserRole.getRoleId());
         }
         long[] roleIds = list.stream().mapToLong(Long::longValue).toArray();
         result.setRoleId(roleIds);
@@ -118,7 +119,7 @@ public class AuthServiceImpl implements AuthService {
      * aside_system
      */
     @Override
-    public List listSystemByAuth() {
+    public List<UpmsSystem> listSystemByAuth() {
         Set<Long> permissionIds = (Set<Long>) userPermissions();
         // 查询所有權限
         List<UpmsPermission> permissions = upmsPermissionRepository.findByStatusAndIdInOrPidIn(true, new ArrayList<>(permissionIds), new ArrayList<>(permissionIds));

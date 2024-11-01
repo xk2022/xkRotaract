@@ -1,10 +1,11 @@
 package com.xk.upms.dao.repository;
 
-import com.xk.upms.model.po.UpmsUserRole;
+import java.io.Serializable;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.io.Serializable;
-import java.util.List;
+import com.xk.upms.model.po.UpmsUserRole;
 
 public interface UpmsUserRoleRepository extends JpaRepository<UpmsUserRole, Long>, Serializable {
 
@@ -13,5 +14,7 @@ public interface UpmsUserRoleRepository extends JpaRepository<UpmsUserRole, Long
     // 統計具有特定 roleId 的用戶數量
     Long countByRoleId(Long roleId);
 
-    List<UpmsUserRole> findByUserId(Long userId);
+//    List<UpmsUserRole> findByUserId(Long userId);
+    
+    Optional<UpmsUserRole>findByUserId(Long userIde);
 }
