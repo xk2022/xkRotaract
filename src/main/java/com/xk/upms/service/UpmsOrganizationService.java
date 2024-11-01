@@ -62,4 +62,6 @@ public interface UpmsOrganizationService {
      * @return a list of organization responses associated with the user
      */
     List<UpmsOrganizationResp> findOrganizationsByUserId(long userId);
+
+    List buildTree(List<UpmsOrganizationResp> organizations);
 }

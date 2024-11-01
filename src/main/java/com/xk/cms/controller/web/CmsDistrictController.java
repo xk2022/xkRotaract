@@ -75,7 +75,6 @@ public class CmsDistrictController extends BaseController {
             LOGGER.info("Updated district, ID: {}", resources.getId());
         }
 
-        // 根據操作結果設置提示訊息
         attributes.addFlashAttribute("message", (result == null) ? "操作失敗" : "操作成功");
         return REDIRECT_URL;
     }

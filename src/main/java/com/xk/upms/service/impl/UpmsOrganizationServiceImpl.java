@@ -10,7 +10,9 @@ import com.xk.upms.model.bo.UpmsOrganizationSaveReq;
 import com.xk.upms.model.po.UpmsOrganization;
 import com.xk.upms.model.vo.UpmsOrganizationResp;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
+import com.xk.upms.model.vo.UpmsOrganizationTreeResp;
 import com.xk.upms.service.UpmsOrganizationService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -20,9 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,14 +44,10 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
 
     @Override
     public List<UpmsOrganizationResp> list(UpmsOrganizationReq resources) {
-        List<UpmsOrganization> organizations = upmsOrganizationRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        return organizations.stream()
-                .map(org -> {
-                    UpmsOrganizationResp resp = new UpmsOrganizationResp();
-                    BeanUtils.copyProperties(org, resp);
-                    return resp;
-                })
-                .collect(Collectors.toList());
+        List<UpmsOrganization> organizations = upmsOrganizationRepository.findAll(
+                Sort.by(Sort.Order.asc("level"), Sort.Order.asc("orders")));
+        // 使用 XkBeanUtils.copyListProperties 進行集合屬性拷貝
+        return XkBeanUtils.copyListProperties(organizations, UpmsOrganizationResp::new);
     }
     // convertToResp
 
@@ -64,15 +60,25 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
         Long cntUser = upmsOrganizationUserRepository.countByOrganizationId(entity.getId());
 
         BeanUtils.copyProperties(entity, resp);
-        resp.setCountUser(cntUser);
+//        resp.setCountUser(cntUser);
 
         return resp;
     }
 
     @Override
     public UpmsOrganizationSaveResp create(UpmsOrganizationSaveReq resources) {
+        // 創建 Entity 實體並複製屬性
         UpmsOrganization req = XkBeanUtils.copyProperties(resources, UpmsOrganization::new);
+        if (StringUtils.isNotBlank(resources.getParentId())) {
+            UpmsOrganization pEntity = upmsOrganizationRepository.findById(req.getParentId())
+                    .orElseThrow(() -> new EntityNotFoundException("UpmsOrganization with ID " + req.getParentId() + " not found"));
+            req.setLevel(pEntity.getLevel()+1);
+        } else {
+            req.setLevel(1);
+        }
+        // 保存實體到數據庫
         UpmsOrganization savedEntity = upmsOrganizationRepository.save(req);
+        // 創建並返回 UpmsOrganizationSaveResp
         return XkBeanUtils.copyProperties(savedEntity, UpmsOrganizationSaveResp::new);
     }
 
@@ -106,6 +112,50 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
     @Override
     public List<UpmsOrganizationResp> findOrganizationsByUserId(long userId) {
         return null;
+    }
+
+    @Override
+    public List<UpmsOrganizationTreeResp> buildTree(List<UpmsOrganizationResp> organizations) {
+        if (organizations == null) {
+            return null;
+        }
+
+        // 使用 Map 將組織按 parentId 分組
+        Map<String, List<UpmsOrganizationTreeResp>> organizationMap = new HashMap<>();
+        List<UpmsOrganizationTreeResp> rootNodes = new ArrayList<>();
+
+        for (UpmsOrganizationResp organization : organizations) {
+            UpmsOrganizationTreeResp node = new UpmsOrganizationTreeResp();
+            BeanUtils.copyProperties(organization, node);
+
+            // 找到根節點
+            if (node.getParentId() == null || node.getParentId().isEmpty()) {
+                rootNodes.add(node);
+            } else {
+                // 將組織節點加入 map，按 parentId 分組
+                organizationMap.computeIfAbsent(node.getParentId(), k -> new ArrayList<>()).add(node);
+            }
+        }
+
+        // 建立樹結構
+        for (UpmsOrganizationTreeResp rootNode : rootNodes) {
+            buildChildren(rootNode, organizationMap);
+        }
+
+        return rootNodes;
+    }
+
+    /**
+     * 遞歸構建子節點，從 Map 中獲取子節點
+     */
+    private void buildChildren(UpmsOrganizationTreeResp parent, Map<String, List<UpmsOrganizationTreeResp>> organizationMap) {
+        List<UpmsOrganizationTreeResp> children = organizationMap.get(parent.getId());
+        if (children != null) {
+            parent.setChildren(children);
+            for (UpmsOrganizationTreeResp child : children) {
+                buildChildren(child, organizationMap);  // 遞歸構建子節點
+            }
+        }
     }
 
 }

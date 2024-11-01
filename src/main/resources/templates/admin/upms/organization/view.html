@@ -51,11 +51,14 @@
         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
             <th class="w-10px pe-2">
                 <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                    <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_table .form-check-input" value="1"/>
+                    <input class="form-check-input" type="checkbox" data-kt-check="true"
+                           data-kt-check-target="#kt_table .form-check-input" value="1"/>
                 </div>
             </th>
+            <th class="min-w-99px"></th>
             <!--                    <th th:each="i : ${page_thead}" class="min-w-125px" th:text="${i}">Name</th>-->
             <th style="display:none" class="min-w-99px">ID</th>
+            <th style="display:none" class="min-w-99px">PID</th>
             <th class="min-w-99px">組織名稱</th>
             <th class="min-w-299px">組織代碼</th>
             <th class="min-w-299px">組織描述</th>
@@ -71,43 +74,78 @@
         <!--end::Table head-->
         <!--begin::Table body-->
         <tbody class="text-gray-600 fw-bold">
-        <!--begin::SubTable template-->
-            <tr th:each="data : ${page_list}">
-                <td>
-                    <div class="form-check form-check-sm form-check-custom form-check-solid">
-                        <input class="form-check-input" type="checkbox" value="1"/>
-                    </div>
-                </td>
-                <td style="display:none" class="id" th:text="${data.id}"></td>
-                <td>
-                    <div class="d-flex flex-column">
-                        <a th:href="@{'/admin/upms/manage/organization/'+${data.id}}" class="text-gray-800 text-hover-primary mb-1" th:text="${data.name}"></a>
-                    </div>
-                </td>
-                <td th:text="${data.code}"></td>
-                <td th:text="${data.description}"></td>
-                <td th:text="${data.orders}"></td>
-                <td>
-                    <div class="badge fw-bolder"
-                         th:text="${data.status==true ? '啟用' : '禁用'}" th:value="${data.status}"
-                         th:classappend="${data.status==true ? 'badge-light-success' : 'badge-light-danger'}" >Enabled</div>
-                </td>
-                <!--begin::Action=-->
-                <th:block th:each="permission : ${session.permissionAction}">
-                    <td th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
-                        class="text-end">
-                        <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
-                        <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
-                    </td>
+            <th:block th:each="data : ${page_list}">
+                <!-- 調用遞歸片段來顯示頂層節點及其子節點 -->
+                <th:block th:replace="this :: tableRow(${data}, 0)">
+                    <tr></tr>
                 </th:block>
-                <!--end::Action=-->
-            </tr>
-        <!--end::SubTable template-->
+            </th:block>
         </tbody>
         <!--end::Table body-->
     </table>
     <!--end::Table-->
 </div>
 <!--end::Card toolbar-->
+<th:block th:fragment="tableRow(data, level)">
+    <!-- 顯示當前節點 -->
+    <tr data-kt-docs-datatable-subtable="subtable_template" th:class="'subtable_template_'+${data.parentId}" th:attr="style=${level == 0} ? 'display:table-row;' : 'display:none;'" >
+        <td class="id">
+            <div class="form-check form-check-sm form-check-custom form-check-solid">
+                <input class="form-check-input" type="checkbox" th:value="${data.id}"/>
+            </div>
+        </td>
+        <!--begin::Actions-->
+        <td>
+            <th:block th:if="${data.children != null and #lists.size(data.children) > 0}">
+                <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                        data-kt-docs-datatable-subtable="expand_row">
+                    <span class="svg-icon svg-icon-3 m-0 toggle-off">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="currentColor"></rect>
+                            <rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
+                        </svg>
+                    </span>
+                    <span class="svg-icon svg-icon-3 m-0 toggle-on">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
+                        </svg>
+                    </span>
+                </button>
+            </th:block>
+        </td>
+        <!--end::Actions-->
+        <td style="display:none" class="id" th:text="${data.id}"></td>
+        <td style="display:none" class="parentId" th:text="${data.parentId}"></td>
+        <td>
+            <div class="d-flex flex-column">
+                <a th:href="@{'/admin/upms/manage/organization/'+${data.id}}" class="text-gray-800 text-hover-primary mb-1" th:text="${data.name}"></a>
+            </div>
+        </td>
+        <td th:text="${data.code}"></td>
+        <td th:text="${data.description}"></td>
+        <td th:text="${data.orders}"></td>
+        <td>
+            <div class="badge fw-bolder"
+                 th:text="${data.status=='true' ? '啟用' : '禁用'}" th:value="${data.status}"
+                 th:classappend="${data.status=='true' ? 'badge-light-success' : 'badge-light-danger'}" >Enabled</div>
+        </td>
+        <!--begin::Action=-->
+        <th:block th:each="permission : ${session.permissionAction}">
+            <td th:if="${permission.action != null and permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                class="text-end">
+                <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
+                <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
+            </td>
+        </th:block>
+        <!--end::Action=-->
+    </tr>
+
+    <!-- 遞歸顯示子節點 -->
+    <th:block th:if="${data.children}">
+        <th:block th:each="child : ${data.children}">
+            <th:block th:replace="this :: tableRow(${child}, ${level + 1})"></th:block>
+        </th:block>
+    </th:block>
+</th:block>
 
 </html>

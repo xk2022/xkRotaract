@@ -8,7 +8,6 @@
     $("[name='add_btn']").click(function(){
         $('#modal_name').text("新增組織");
         $("[name='id']").val(null);
-        var selectElement = document.getElementById('selectMode_3').value;
         $("[name='name']").val(null);
         $("[name='code']").val(null);
         $("[name='description']").val(null);
@@ -21,12 +20,13 @@
         $('#modal_name').text("更新組織");
 
         $("[name='id']").val(row[1].innerText);
-        $("[name='name']").val(row[2].innerText);
-        $("[name='code']").val(row[3].innerText);
-        $("[name='description']").val(row[4].innerText);
-        $("[name='orders']").val(row[5].innerText);
+        $("[name='parentId']").val(row[2].innerText);
+        $("[name='name']").val(row[3].innerText);
+        $("[name='code']").val(row[4].innerText);
+        $("[name='description']").val(row[5].innerText);
+        $("[name='orders']").val(row[6].innerText);
         $("[name='status']")[0].checked = true;
-        var btnradio_status_ = row[6].innerText == '啟用';
+        var btnradio_status_ = row[7].innerText == '啟用';
         $("#btnradio_status_"+btnradio_status_).prop('checked', true);
     }
 
@@ -69,7 +69,7 @@
                 </label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <select class="form-select form-control form-control-solid" id="inputGroupSelect_parent" name="pid">
+                <select class="form-select form-control form-control-solid" id="inputGroupSelect_parent" name="parentId">
                     <option value="" selected>請選擇</option>
                     <option th:each="data : ${select_organization}" th:value="${data.id}" th:text="${data.name}"></option>
                 </select>

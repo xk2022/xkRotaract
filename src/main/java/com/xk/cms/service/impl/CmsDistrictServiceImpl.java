@@ -68,24 +68,21 @@ public class CmsDistrictServiceImpl implements CmsDistrictService {
     @Override
     public CmsDistrictSaveResp create(CmsDistrictSaveReq resources) {
         // 創建 CmsDistrict 實體並複製屬性
-        CmsDistrict req = new CmsDistrict();
-        BeanUtils.copyProperties(resources, req);
+        CmsDistrict req = XkBeanUtils.copyProperties(resources, CmsDistrict::new);
         // 保存實體到數據庫
-        CmsDistrict entity = cmsDistrictRepository.save(req);
+        CmsDistrict savedEntity = cmsDistrictRepository.save(req);
         // 創建並返回 CmsDistrictSaveResp
-        return XkBeanUtils.copyProperties(entity, CmsDistrictSaveResp::new);
+        return XkBeanUtils.copyProperties(savedEntity, CmsDistrictSaveResp::new);
     }
 
     @Override
     public CmsDistrictSaveResp update(Long id, CmsDistrictSaveReq resources) {
-        CmsDistrictSaveResp result = new CmsDistrictSaveResp();
-
         // 查找指定 ID 的 CmsDistrict，如果不存在則拋出異常
-        CmsDistrict cmsDistrict = cmsDistrictRepository.findById(id)
+        CmsDistrict entity = cmsDistrictRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Entity<CmsDistrict> with ID " + id + " not found"));
         // 使用通用更新服務更新實體
         GenericUpdateService<CmsDistrict> updateService = new GenericUpdateService<>();
-        CmsDistrict updatedEntity = updateService.updateEntity(cmsDistrict, resources);
+        CmsDistrict updatedEntity = updateService.updateEntity(entity, resources);
         // 保存更新後的實體
         CmsDistrict savedEntity = cmsDistrictRepository.save(updatedEntity);
         // 創建並返回 CmsDistrictSaveResp
@@ -94,7 +91,6 @@ public class CmsDistrictServiceImpl implements CmsDistrictService {
 
     @Override
     public void deleteByPrimaryKeys(String ids) {
-
         // 將 IDs 字符串分割並轉換為 Long 列表
         List<Long> idList = Arrays.stream(ids.split("-"))
                 .map(XkTypeUtils::parseLongOrNull) // 使用輔助方法進行安全轉換

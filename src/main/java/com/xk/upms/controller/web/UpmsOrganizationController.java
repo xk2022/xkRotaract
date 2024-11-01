@@ -1,6 +1,7 @@
 package com.xk.upms.controller.web;
 
 import com.xk.common.base.BaseController;
+import com.xk.common.util.XkTypeUtils;
 import com.xk.upms.model.bo.UpmsOrganizationSaveReq;
 import com.xk.upms.model.po.UpmsOrganization;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
@@ -9,6 +10,7 @@ import com.xk.upms.service.UpmsUserOrganizationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,10 +62,10 @@ public class UpmsOrganizationController extends BaseController {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
         model.addAttribute("fragmentName", "list");
 
-        model.addAttribute("page_list", upmsOrganizationService.list(null));
-        model.addAttribute("entity", new UpmsOrganization());
+//        model.addAttribute("page_list", upmsOrganizationService.list(null));
+        model.addAttribute("page_list", upmsOrganizationService.buildTree(upmsOrganizationService.list(null)));
+        model.addAttribute("entity", new UpmsOrganizationSaveReq());
         model.addAttribute("select_organization", upmsOrganizationService.list(null));
-
         return ADMIN_INDEX;
     }
 
@@ -104,11 +106,12 @@ public class UpmsOrganizationController extends BaseController {
     public String saveOrUpdate(UpmsOrganizationSaveReq resources, RedirectAttributes attributes) {
         UpmsOrganizationSaveResp result;
 
-        if (resources.getId() == null) {
+        if (StringUtils.isBlank(resources.getId())) {
             result = upmsOrganizationService.create(resources);
             LOGGER.info("Created new Organization, ID: {}", result.getId());
         } else {
-            result = upmsOrganizationService.update(resources.getId(), resources);
+            Long id = XkTypeUtils.parseLongOrNull(resources.getId());
+            result = upmsOrganizationService.update(id, resources);
             LOGGER.info("Updated Organization, ID: {}", resources.getId());
         }
 

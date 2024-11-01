@@ -1,5 +1,4 @@
 package com.xk.common.util;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
@@ -14,7 +13,7 @@ public class GenericUpdateService<T> {
         String[] nullPropertyNames = getNullPropertyNames(request);
 
         // 仅复制非 null 属性
-        BeanUtils.copyProperties(request, entity, nullPropertyNames);
+        XkBeanUtils.copyPropertiesAutoConvert(request, entity, nullPropertyNames);
 
         return entity;
     }
