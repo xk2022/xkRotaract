@@ -202,29 +202,29 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
         if (permissionIds != null) {
             List<UpmsRolePermission> saveEntities = new ArrayList<>();
             // * 0. 仍要判斷是否有新頁面
-//            List<Long> beenPermissionIds = upmsRolePermissionRepository.findPermissionIdsByRoleId(roleId);
-//            // 把 beenPermissionIds 转换为 Set 用于快速查找
-//            Set<Long> permissionIdSet = new HashSet<>(beenPermissionIds);
-//            List<Long> additionalIds = new ArrayList<>();
-//
-//            for (String permissionKey : permissionIds) {
-//                String[] permissionArr = permissionKey.split("_");
-//                Long lp = Long.parseLong(permissionArr[0]);
-//                // 如果 permissionId 不在 permissionIdSet 中，添加到 additionalIds 中
-//                if (!permissionIdSet.contains(lp)) {
-//                    UpmsRolePermissionSaveReq req = new UpmsRolePermissionSaveReq();
-//                    req.setRoleId(roleId);
-//                    req.setPermissionId(lp);
-//                    try {
-//                        PermissionAction action = PermissionAction.valueOf(permissionArr[1]);
-//                        req.setAction(action);
-//                    } catch (IllegalArgumentException e) {
-//                        // 如果 permissionArr[1] 不在 PermissionAction 枚舉中，會捕捉到例外
-//                        System.out.println("無效的 PermissionAction 值: " + permissionArr[1]);
-//                    }
-//                    this.create(req);
-//                }
-//            }
+            List<Long> beenPermissionIds = upmsRolePermissionRepository.findPermissionIdsByRoleId(roleId);
+            // 把 beenPermissionIds 转换为 Set 用于快速查找
+            Set<Long> permissionIdSet = new HashSet<>(beenPermissionIds);
+            List<Long> additionalIds = new ArrayList<>();
+
+            for (String permissionKey : permissionIds) {
+                String[] permissionArr = permissionKey.split("_");
+                Long lp = Long.parseLong(permissionArr[0]);
+                // 如果 permissionId 不在 permissionIdSet 中，添加到 additionalIds 中
+                if (!permissionIdSet.contains(lp)) {
+                    UpmsRolePermissionSaveReq req = new UpmsRolePermissionSaveReq();
+                    req.setRoleId(roleId);
+                    req.setPermissionId(lp);
+                    try {
+                        PermissionAction action = PermissionAction.valueOf(permissionArr[1]);
+                        req.setAction(action);
+                    } catch (IllegalArgumentException e) {
+                        // 如果 permissionArr[1] 不在 PermissionAction 枚舉中，會捕捉到例外
+                        System.out.println("無效的 PermissionAction 值: " + permissionArr[1]);
+                    }
+                    this.create(req);
+                }
+            }
 //         * 1. 撈出所有該角色所屬系統權限設定
             List<UpmsRolePermissionWithActiveResp> allPermissionList = upmsRolePermissionMapper.findBy(roleId, systemCode);
 

@@ -79,6 +79,10 @@
 </th:block><!--</div>-->
 <!--js資源引入-->
 
+<th:block th:fragment="dashboard">
+    <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/'+${fragmentName} :: view"></div>
+</th:block>
+
 <div th:fragment="list" id="kt_content_container" class="container-fluid">
     <!--begin::Card-->
     <div th:replace="admin/_fragments/table_basic :: basic"></div>

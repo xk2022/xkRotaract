@@ -1,6 +1,6 @@
 package com.xk.upms.controller.rest;
 
-import com.xk.common.base.BaseRepostitory;
+import com.xk.common.base.BaseRepository;
 import com.xk.upms.model.bo.UpmsSystemSaveReq;
 import com.xk.upms.service.UpmsSystemService;
 import io.swagger.annotations.Api;
@@ -24,7 +24,7 @@ public class UpmsSystemRestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsSystemRestController.class);
 
     @Autowired
-    private BaseRepostitory baseRepostitory;
+    private BaseRepository baseRepository;
     @Autowired
     private UpmsSystemService upmsSystemService;
 
@@ -37,7 +37,7 @@ public class UpmsSystemRestController {
     @ApiOperation(value = "系统列表")
     @GetMapping("/page_head")
     public Object page_head() {
-        return baseRepostitory.queryTableComent("upms_system");
+        return baseRepository.queryTableComment("upms_system");
     }
 
     /**

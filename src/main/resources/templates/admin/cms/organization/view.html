@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--css資源引入-->
+<th:block th:fragment="head"><!--<div>-->
+    <!--begin::Page Vendor Stylesheets(used by this page)-->
+    <!--General - DataTables-->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/custom/datatables/datatables.bundle.css}"/>
+    <!--end::Page Vendor Stylesheets-->
+</th:block><!--</div>-->
+<!--css資源引入-->
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+    <!--begin::Page Vendors Javascript(used by this page)-->
+    <!--General - DataTables-->
+    <script th:src="@{/plugins/custom/datatables/datatables.bundle.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+    <!--end::Page Vendors Javascript-->
+    <!--begin::Page Custom Javascript(used by this page)-->
+    <script th:src="@{/js/custom/datatables/table.js}"></script>
+    <script th:src="@{/js/custom/datatables/shared.js}"></script>
+    <script th:src="@{/js/custom/datatables/input.js}"></script>
+    <!--/*/<th:block th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/input' :: script">/*/-->
+    <!--/*/</th:block>/*/-->
+    <!--end::Page Custom Javascript-->
+    <script th:inline="javascript">
+        var deleteUrl = '/admin/upms/manage/organization/delete/';
+
+    </script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+
+<div th:fragment="list" id="kt_content_container" class="container-fluid">
+    <!--begin::Card-->
+    <div th:replace="admin/_fragments/table_basic :: basic"></div>
+    <!--end::Card-->
+
+    <!--begin::Modal - Add task-->
+    <div th:replace="admin/_fragments/input_basic :: basic"></div>
+    <!--end::Modal - Add task-->
+</div>
+
+
+<!--begin::Card toolbar-->
+<div th:fragment="table" class="card-body py-4">
+    <input type="hidden" id="sessionDistrict" th:value="${session.user.district_id}">
+    <!--begin::Table-->
+    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table">
+        <!--begin::Table head-->
+        <thead>
+        <!--begin::Table row-->
+        <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+            <th class="w-10px pe-2">
+                <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
+                    <input class="form-check-input" type="checkbox" data-kt-check="true"
+                           data-kt-check-target="#kt_table .form-check-input" value="1"/>
+                </div>
+            </th>
+            <!--                    <th th:each="i : ${page_thead}" class="min-w-125px" th:text="${i}">Name</th>-->
+            <th style="display:none" class="min-w-99px">ID</th>
+            <th style="display:none" class="min-w-99px">PID</th>
+            <th class="min-w-99px">組織名稱</th>
+            <th class="min-w-299px">組織代碼</th>
+            <th class="min-w-299px">組織描述</th>
+            <th class="min-w-99px">排序</th>
+            <th class="min-w-99px">狀態</th>
+            <th:block th:fragment="btn_delete" th:each="permission : ${session.permissionAction}">
+                <th th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                    class="text-end min-w-100px">Actions</th>
+            </th:block>
+        </tr>
+        <!--end::Table row-->
+        </thead>
+        <!--end::Table head-->
+        <!--begin::Table body-->
+        <tbody class="text-gray-600 fw-bold">
+            <th:block th:each="data : ${page_list}">
+                <tr>
+                    <td class="id">
+                        <div class="form-check form-check-sm form-check-custom form-check-solid">
+                            <input class="form-check-input" type="checkbox" th:value="${data.id}"/>
+                        </div>
+                    </td>
+                    <td style="display:none" class="id" th:text="${data.id}"></td>
+                    <td style="display:none" class="parentId" th:text="${data.parentId}"></td>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <a th:href="@{'/admin/cms/manage/organization/'+${data.id}}" class="text-gray-800 text-hover-primary mb-1" th:text="${data.name}"></a>
+                        </div>
+                    </td>
+                    <td th:text="${data.code}"></td>
+                    <td th:text="${data.description}"></td>
+                    <td th:text="${data.orders}"></td>
+                    <td>
+                        <div class="badge fw-bolder"
+                             th:text="${data.status=='true' ? '啟用' : '禁用'}" th:value="${data.status}"
+                             th:classappend="${data.status=='true' ? 'badge-light-success' : 'badge-light-danger'}" >Enabled</div>
+                    </td>
+                    <!--begin::Action=-->
+                    <th:block th:each="permission : ${session.permissionAction}">
+                        <td th:if="${permission.action != null and permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                            class="text-end">
+                            <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
+                            <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
+                        </td>
+                    </th:block>
+                    <!--end::Action=-->
+                </tr>
+            </th:block>
+        </tbody>
+        <!--end::Table body-->
+    </table>
+    <!--end::Table-->
+</div>
+<!--end::Card toolbar-->
+</html>

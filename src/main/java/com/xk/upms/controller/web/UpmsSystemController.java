@@ -2,7 +2,6 @@ package com.xk.upms.controller.web;
 
 import com.xk.admin.service.AuthService;
 import com.xk.common.base.BaseController;
-import com.xk.common.base.BaseRepostitory;
 import com.xk.upms.model.bo.UpmsSystemSaveReq;
 import com.xk.upms.model.dto.UpmsSystemExample;
 import com.xk.upms.model.vo.UpmsSystemSaveResp;
@@ -33,8 +32,6 @@ public class UpmsSystemController extends BaseController {
     private static final String REDIRECT_ADDR = "redirect:/admin/upms/manage/system";
     private static final int PAGE_SIZE = 8;
 
-    @Autowired
-    private BaseRepostitory baseRepostitory;
     @Autowired
     private UpmsSystemService upmsSystemService;
     @Autowired

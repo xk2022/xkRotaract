@@ -33,14 +33,13 @@ import javax.validation.constraints.NotNull;
  * @author yuan Updated on 2022/08/28 init logic of organization.
  * @author yuan Updated on 2024/10/28 with code optimization based on GPT recommendations.
  */
-@Api(value = "組織管理")
+@Api(value = "District Management")
 @Controller
 @RequestMapping("/admin/upms/manage/organization")
 public class UpmsOrganizationController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsOrganizationController.class);
     private static final String REDIRECT_URL = "redirect:/admin/upms/manage/organization";
-    private static final int PAGE_SIZE = 8;
 
     @Autowired
     private UpmsOrganizationService upmsOrganizationService;

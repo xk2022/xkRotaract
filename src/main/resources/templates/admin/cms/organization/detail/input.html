@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--js資源引入-->
+<th:block th:fragment="script"><!--<div>-->
+    <script th:inline="javascript">
+    // Update
+    function edit_btn(id, title) {
+        $('#modal_name').text("編輯角色");
+        $("[name='id']").val(id);
+        $("[name='title']").val(title);
+    };
+
+    // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+    var validator = FormValidation.formValidation( form,
+        {
+            fields: {
+                'name': { validators: { notEmpty: {
+                            message: 'Role name is required' } } },
+            },
+            plugins: {
+                trigger: new FormValidation.plugins.Trigger(),
+                bootstrap: new FormValidation.plugins.Bootstrap5({
+                    rowSelector: '.fv-row',
+                    eleInvalidClass: '',
+                    eleValidClass: ''
+                })
+            }
+        }
+    );
+    </script>
+</th:block><!--</div>-->
+<!--js資源引入-->
+
+<!--begin::Modal body-->
+<div th:fragment="form" class="modal-body scroll-y mx-5 my-7">
+    <!--begin::Form-->
+    <form id="kt_modal_input_form" class="form" action="#" th:action="@{/admin/upms/manage/role/permission/{id}(id=${role.id})}" method="post" th:object="${entity}">
+        <input type="hidden" name="id">
+        <!--begin::Scroll-->
+        <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_update_role_scroll" data-kt-scroll="true"
+             data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
+             data-kt-scroll-dependencies="#kt_modal_update_role_header" data-kt-scroll-wrappers="#kt_modal_update_role_scroll" data-kt-scroll-offset="300px">
+            <!--begin::Input group-->
+            <div class="fv-row mb-10">
+                <!--begin::Label-->
+                <label class="fs-5 fw-bolder form-label mb-2">
+                    <span class="required">角色名稱</span>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" placeholder="Enter a role name" name="name" value="Developer" th:value="${role.title}"/>
+                <!--end::Input-->
+            </div>
+            <!--end::Input group-->
+            <!--begin::Permissions-->
+            <div class="fv-row">
+                <!--begin::Label-->
+                <label class="fs-5 fw-bolder form-label mb-2">角色權限</label>
+                <!--end::Label-->
+                <!--begin::Table wrapper-->
+                <div class="table-responsive">
+                    <!--begin::Table-->
+                    <table class="table align-middle table-row-dashed fs-6 gy-5">
+                        <!--begin::Table body-->
+                        <tbody class="text-gray-600 fw-bold">
+                        <!--begin::Table row-->
+                        <tr>
+                            <td class="text-gray-800">Administrator Access
+                                <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Allows a full access to the system"></i>
+                            </td>
+                            <td>
+                                <!--begin::Checkbox-->
+                                <label class="form-check form-check-sm form-check-custom form-check-solid me-9">
+                                    <input class="form-check-input" type="checkbox" value="" id="kt_select_all" th:name="permission_id"/>
+                                    <span class="form-check-label" for="kt_select_all">Select all</span>
+                                </label>
+                                <!--end::Checkbox-->
+                            </td>
+                        </tr>
+                        <!--end::Table row-->
+                        <!--begin::Table row-->
+                        <tr th:each="data : ${permissions}">
+                            <!--begin::Label-->
+                            <td class="text-gray-800" th:text="${data.name}">User Management</td>
+                            <!--end::Label-->
+                            <!--begin::Input group-->
+                            <td>
+                                <!--begin::Wrapper-->
+                                <div class="d-flex">
+                                    <!--begin::Checkbox-->
+                                    <label class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
+                                        <input class="form-check-input" type="checkbox" th:value="${data.id}+'_read'" name="checkBox" />
+                                        <span class="form-check-label">Read</span>
+                                    </label>
+                                    <!--end::Checkbox-->
+                                    <!--begin::Checkbox-->
+                                    <label class="form-check form-check-custom form-check-solid me-5 me-lg-20">
+                                        <input class="form-check-input" type="checkbox" th:value="${data.id}+'_write'" name="checkBox" />
+                                        <span class="form-check-label">Write</span>
+                                    </label>
+                                    <!--end::Checkbox-->
+                                    <!--begin::Checkbox-->
+                                    <label class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input" type="checkbox" th:value="${data.id}+'_create'" name="checkBox" />
+                                        <span class="form-check-label">Create</span>
+                                    </label>
+                                    <!--end::Checkbox-->
+                                </div>
+                                <!--end::Wrapper-->
+                            </td>
+                            <!--end::Input group-->
+                        </tr>
+                        <!--end::Table row-->
+
+                        </tbody>
+                        <!--end::Table body-->
+                    </table>
+                    <!--end::Table-->
+                </div>
+                <!--end::Table wrapper-->
+            </div>
+            <!--end::Permissions-->
+        </div>
+        <!--end::Scroll-->
+        <!--begin::Actions-->
+        <div th:replace="admin/_fragments/input_basic :: Actions"></div>
+        <!--end::Actions-->
+    </form>
+    <!--end::Form-->
+</div>
+<!--end::Modal body-->
+
+</html>

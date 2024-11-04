@@ -1,10 +1,8 @@
 package com.xk.upms.controller.web;
 
 import com.xk.common.base.BaseController;
-import com.xk.common.base.BaseRepostitory;
 import com.xk.upms.model.dto.UpmsSystemExample;
 import com.xk.upms.service.UpmsLogService;
-import com.xk.upms.service.UpmsSystemService;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

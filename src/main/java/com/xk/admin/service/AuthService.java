@@ -14,6 +14,8 @@ public interface AuthService {
 
     Boolean checkUser(String email);
 
+    Boolean checkPassNullable(String email);
+
     UpmsUser resetPassword(String email, String password);
 
     List listSystemByAuth();

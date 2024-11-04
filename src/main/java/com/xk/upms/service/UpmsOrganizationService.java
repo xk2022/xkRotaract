@@ -64,4 +64,6 @@ public interface UpmsOrganizationService {
     List<UpmsOrganizationResp> findOrganizationsByUserId(long userId);
 
     List buildTree(List<UpmsOrganizationResp> organizations);
+
+    List findChildren(String code);
 }

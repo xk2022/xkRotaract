@@ -44,7 +44,10 @@
     <div class="d-flex justify-content-end" data-kt-table-toolbar="base">
         <!-- 使用 th:each 遍历 session.permissionAction -->
         <div th:each="permission : ${session.permissionAction}">
-            <input type="hidden" id="PermissionAction_CREATE" th:value="${permission.active}" th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).CREATE}">
+
+
+<!--            <input type="hidden" id="PermissionAction_CREATE" th:value="${permission.active}" th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).CREATE}">-->
+            <input type="hidden" id="PermissionAction_CREATE" th:value="${permission.active}" th:if="${permission != null and upInfo != null and permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).CREATE}">
             <!-- 检查当前遍历的权限对象是否满足条件 -->
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" name="add_btn"
                     th:attr="data-bs-target=${modal_id != null ? '#kt_modal_input_' + modal_id : '#kt_modal_input'}"

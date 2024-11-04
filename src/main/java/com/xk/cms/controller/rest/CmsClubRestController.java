@@ -2,7 +2,7 @@ package com.xk.cms.controller.rest;
 
 import com.xk.cms.model.bo.CmsClubReq;
 import com.xk.cms.service.CmsClubService;
-import com.xk.common.base.BaseRepostitory;
+import com.xk.common.base.BaseRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class CmsClubRestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CmsClubRestController.class);
 
     @Autowired
-    private BaseRepostitory baseRepostitory;
+    private BaseRepository baseRepository;
     @Autowired
     private CmsClubService cmsClubService;
 
@@ -44,7 +44,7 @@ public class CmsClubRestController {
     @ApiOperation(value = "系统列表")
     @GetMapping("/page_head")
     public Object page_head() {
-        return baseRepostitory.queryTableComent("cms_club");
+        return baseRepository.queryTableComment("cms_club");
     }
 
 

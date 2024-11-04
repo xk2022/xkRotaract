@@ -7,4 +7,6 @@ import java.io.Serializable;
 
 public interface UpmsOrganizationRepository extends JpaRepository<UpmsOrganization, Long>, Serializable {
 
+    UpmsOrganization findByCode(String code);
+
 }

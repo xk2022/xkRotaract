@@ -32,4 +32,6 @@ public class UpmsOrganizationSaveReq {
     private String orders;
     private String status;
 
+    private String parentCode;
+
 }

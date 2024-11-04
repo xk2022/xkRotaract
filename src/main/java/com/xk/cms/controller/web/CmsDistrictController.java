@@ -23,9 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * Controller for managing districts in the CMS system.
  * Provides endpoints for creating, updating, listing, and deleting district entities.
  *
- * Created on 2024/10/24.
- *
- * @author yuan
+ * @author yuan Created on 2024/10/24.
  */
 @Api(value = "District Management")
 @Controller
@@ -48,7 +46,7 @@ public class CmsDistrictController extends BaseController {
     public String index(Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
 
-        model.addAttribute("fragmentName", "list");
+        model.addAttribute("fragmentName", "dashboard");
         model.addAttribute("page_list", cmsDistrictService.list());
         model.addAttribute("entity", new CmsDistrict());
 

@@ -2,7 +2,7 @@ package com.xk.cms.controller.rest;
 
 import com.xk.cms.model.bo.CmsCalendarReq;
 import com.xk.cms.service.CmsCalendarService;
-import com.xk.common.base.BaseRepostitory;
+import com.xk.common.base.BaseRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class CmsCalendarRestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CmsCalendarRestController.class);
 
     @Autowired
-    private BaseRepostitory baseRepostitory;
+    private BaseRepository baseRepository;
     @Autowired
     private CmsCalendarService cmsCalendarService;
 
@@ -38,7 +38,7 @@ public class CmsCalendarRestController {
     @ApiOperation(value = "系统列表")
     @GetMapping("/page_head")
     public Object page_head() {
-        return baseRepostitory.queryTableComent("cms_company");
+        return baseRepository.queryTableComment("cms_company");
     }
 
 

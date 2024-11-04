@@ -2,7 +2,7 @@ package com.xk.cms.controller.rest;
 
 import com.xk.cms.model.vo.CmsCompanyWithUserResp;
 import com.xk.cms.service.CmsCompanyService;
-import com.xk.common.base.BaseRepostitory;
+import com.xk.common.base.BaseRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class CmsCompanyRestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CmsCompanyRestController.class);
 
     @Autowired
-    private BaseRepostitory baseRepostitory;
+    private BaseRepository baseRepository;
     @Autowired
     private CmsCompanyService cmsCompanyService;
 
@@ -37,7 +37,7 @@ public class CmsCompanyRestController {
     @ApiOperation(value = "系统列表")
     @GetMapping("/page_head")
     public Object page_head() {
-        return baseRepostitory.queryTableComent("cms_company");
+        return baseRepository.queryTableComment("cms_company");
     }
 
     @ApiOperation(value = "公司詳情")

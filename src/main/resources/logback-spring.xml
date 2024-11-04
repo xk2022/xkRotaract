@@ -36,16 +36,19 @@
 
     <!-- 为 com.xk 包启用 DEBUG 级别日志 -->
     <logger name="com.xk" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
         <appender-ref ref="TIME_FILE" />
     </logger>
 
     <!-- 为 Spring 框架启用 DEBUG 级别日志 -->
     <logger name="org.springframework" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
         <appender-ref ref="TIME_FILE" />
     </logger>
 
     <!-- 为 Thymeleaf 启用 DEBUG 级别日志 -->
     <logger name="org.thymeleaf" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
         <appender-ref ref="TIME_FILE" />
     </logger>
 </configuration>

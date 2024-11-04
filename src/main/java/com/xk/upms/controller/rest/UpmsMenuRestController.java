@@ -1,6 +1,6 @@
 package com.xk.upms.controller.rest;
 
-import com.xk.common.base.BaseRepostitory;
+import com.xk.common.base.BaseRepository;
 import com.xk.upms.model.bo.UpmsPermissionSaveReq;
 import com.xk.upms.model.po.UpmsPermission;
 import com.xk.upms.model.po.UpmsSystem;
@@ -29,7 +29,7 @@ public class UpmsMenuRestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsMenuRestController.class);
 
     @Autowired
-    private BaseRepostitory baseRepostitory;
+    private BaseRepository baseRepository;
     @Autowired
     private UpmsPermissionService upmsPermissionService;
     @Autowired
@@ -44,7 +44,7 @@ public class UpmsMenuRestController {
     @ApiOperation(value = "權限列表")
     @GetMapping("/page_head")
     public Object page_head() {
-        return baseRepostitory.queryTableComent("upms_permission");
+        return baseRepository.queryTableComment("upms_permission");
     }
 
     /**

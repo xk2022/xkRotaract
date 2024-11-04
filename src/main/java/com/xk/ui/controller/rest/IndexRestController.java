@@ -1,6 +1,5 @@
 package com.xk.ui.controller.rest;
 
-import com.xk.common.base.BaseRepostitory;
 import com.xk.ui.model.vo.CompanyLoc;
 import com.xk.ui.service.IndexCompanyService;
 import io.swagger.annotations.Api;
@@ -23,8 +22,6 @@ public class IndexRestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexRestController.class);
 
-    @Autowired
-    private BaseRepostitory baseRepostitory;
     @Autowired
     private IndexCompanyService indexCompanyService;
 

@@ -18,28 +18,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * 社團管理 Controller
- * @author yuan
- * Created by yuan on 2024/09/18
+ * Controller for managing clubs in the CMS system.
+ * Provides endpoints for creating, updating, listing, and deleting club entities.
+ *
+ * @author yuan Created on 2024/09/18.
  */
-@Api(value = "Club管理")
+@Api(value = "Club Management")
 @Controller
 @RequestMapping("/admin/cms/manage/club")
 public class CmsClubController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CmsClubController.class);
+    private static final String REDIRECT_URL = "redirect:/admin/cms/manage/club";
 
-    private static final String REDIRECT_ADDR = "redirect:/admin/cms/manage/club";
     @Autowired
     private CmsClubService cmsClubService;
 
     /**
-     * 查詢 社團 首頁
+     * Displays the homepage with a list of clubs.
+     *
+     * @param model the model object to pass attributes to the view
+     * @return the view name of the admin index page
      */
     @GetMapping()
     public String index(Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
-        model.addAttribute("fragmentName", "list");
+//        model.addAttribute("fragmentName", "list");
+        model.addAttribute("fragmentName", "dashboard");
 
         model.addAttribute("page_list", cmsClubService.list());
         model.addAttribute("entity", new CmsClub());
@@ -65,7 +70,7 @@ public class CmsClubController extends BaseController {
         } else {
             attributes.addFlashAttribute("message", "操作成功");
         }
-        return REDIRECT_ADDR;
+        return REDIRECT_URL;
     }
 
     /**
@@ -75,7 +80,7 @@ public class CmsClubController extends BaseController {
     public String delete(@PathVariable("ids") String ids, RedirectAttributes attributes) {
         cmsClubService.deleteByPrimaryKeys(ids);
         attributes.addFlashAttribute("message", "刪除成功");
-        return REDIRECT_ADDR;
+        return REDIRECT_URL;
     }
 
 }

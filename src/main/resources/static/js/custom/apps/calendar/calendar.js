@@ -632,12 +632,14 @@ var KTAppCalendar = function () {
 
     // Handle edit button
     const handleEditButton = () => {
-        viewEditButton.addEventListener('click', e => {
-            e.preventDefault();
+        if (viewEditButton != null) {
+            viewEditButton.addEventListener('click', e => {
+                e.preventDefault();
 
-            viewModal.hide();
-            handleEditEvent();
-        });
+                viewModal.hide();
+                handleEditEvent();
+            });
+        }
     }
 
     // Handle view button

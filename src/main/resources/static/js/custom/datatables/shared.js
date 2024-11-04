@@ -102,9 +102,9 @@ var categoryCode = 'dropdown_DISTRICT'; // 需要替换为实际的 code 值
 // 加载地区选项的函数
 function loadDistricts(categoryCode) {
     $.ajax({
-        url: '/xkRotaract/api/manage/dictionary/listDictionaryData',
+        url: '/xkRotaract/api/manage/organization/findChildren',
         method: 'POST',
-        data: JSON.stringify({ 'code': categoryCode }), // 修改为适合你的代码
+        data: JSON.stringify({ 'code': 'RIT' }), // 修改为适合你的代码
         processData: false,
         contentType: 'application/json',
         success: function(response) {
@@ -121,7 +121,7 @@ function loadDistricts(categoryCode) {
             if(response) {
                 response.forEach(function(district) {
                     rotaractSelect.append(
-                        `<option value="${district.code}">${district.description}</option>`
+                        `<option value="${district.id}">${district.name}</option>`
                     );
                 });
             }
@@ -139,11 +139,11 @@ function loadDistricts(categoryCode) {
 }
 
 // 加载扶青社选项的函数
-function loadRotaracts(districtId) {
+function loadRotaracts(districtCode) {
     $.ajax({
-        url: '/xkRotaract/api/manage/club/list',
+        url: '/xkRotaract/api/manage/organization/findChildren',
         method: 'POST',
-        data: JSON.stringify({ 'district': districtId }),
+        data: JSON.stringify({ 'code': districtCode }),
         processData: false,
         contentType: 'application/json',
         success: function(response) {
@@ -180,11 +180,11 @@ function loadRotaracts(districtId) {
 
 // 监听地区下拉选单变化事件
 $('#inputGroupSelect_district').change(function() {
-    var selectedDistrictId = $(this).val();
-    $('input[name="district_id"]').val(selectedDistrictId);
+    var selectedDistrictCode = $(this).val();
+    $('input[name="district_id"]').val(selectedDistrictCode);
 
-    if (selectedDistrictId !== '0') {
-        loadRotaracts(selectedDistrictId);
+    if (selectedDistrictCode !== '0') {
+        loadRotaracts(selectedDistrictCode);
     } else {
         $('#inputGroupSelect_club').empty().append('<option value="0">請選擇</option>');
     }

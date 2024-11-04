@@ -5,18 +5,23 @@ import com.xk.common.util.XkBeanUtils;
 import com.xk.common.util.XkTypeUtils;
 import com.xk.upms.dao.repository.UpmsOrganizationRepository;
 import com.xk.upms.dao.repository.UpmsOrganizationUserRepository;
+import com.xk.upms.dao.repository.UpmsRoleRepository;
 import com.xk.upms.model.bo.UpmsOrganizationReq;
 import com.xk.upms.model.bo.UpmsOrganizationSaveReq;
+import com.xk.upms.model.bo.UpmsUserSaveReq;
 import com.xk.upms.model.po.UpmsOrganization;
 import com.xk.upms.model.vo.UpmsOrganizationResp;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
 import com.xk.upms.model.vo.UpmsOrganizationTreeResp;
 import com.xk.upms.service.UpmsOrganizationService;
+import com.xk.upms.service.UpmsUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,12 +46,34 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
     private UpmsOrganizationRepository upmsOrganizationRepository;
     @Autowired
     private UpmsOrganizationUserRepository upmsOrganizationUserRepository;
+    @Autowired
+    private UpmsUserService upmsUserService;
+    @Autowired
+    private UpmsRoleRepository upmsRoleRepository;
 
     @Override
     public List<UpmsOrganizationResp> list(UpmsOrganizationReq resources) {
-        List<UpmsOrganization> organizations = upmsOrganizationRepository.findAll(
-                Sort.by(Sort.Order.asc("level"), Sort.Order.asc("orders")));
-        // 使用 XkBeanUtils.copyListProperties 進行集合屬性拷貝
+        // 設置 Example 條件，如果 resources 為 null 則返回 null
+        Example<UpmsOrganization> example = resources == null ? null :
+                Example.of(XkBeanUtils.copyProperties(resources, UpmsOrganization::new), ExampleMatcher.matching()
+                .withIgnoreNullValues()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                .withIgnoreCase());
+        // 提取排序規則，避免重複定義
+        Sort sort = Sort.by(Sort.Order.asc("level"), Sort.Order.asc("orders"));
+
+        // 記錄查詢條件和排序規則
+        LOGGER.info("查詢 UpmsOrganization，條件: {}", resources);
+        LOGGER.info("排序規則: {}", sort);
+
+        // 查詢數據並轉換為 UpmsOrganizationResp 列表
+        List<UpmsOrganization> organizations = (example == null)
+                ? upmsOrganizationRepository.findAll(sort)
+                : upmsOrganizationRepository.findAll(example, sort);
+
+        // 記錄查詢結果數量（僅在 DEBUG 級別下）
+        LOGGER.info("查詢結果數量: {}", organizations.size());
+
         return XkBeanUtils.copyListProperties(organizations, UpmsOrganizationResp::new);
     }
     // convertToResp
@@ -78,8 +105,23 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
         }
         // 保存實體到數據庫
         UpmsOrganization savedEntity = upmsOrganizationRepository.save(req);
+
+        prepareUserForOrganization(savedEntity);
         // 創建並返回 UpmsOrganizationSaveResp
         return XkBeanUtils.copyProperties(savedEntity, UpmsOrganizationSaveResp::new);
+    }
+
+    /**
+     * 在建立組織的同時，協助建立對應使用者
+     */
+    private void prepareUserForOrganization(UpmsOrganization uoEntity) {
+        if (uoEntity != null) {
+            UpmsUserSaveReq req = new UpmsUserSaveReq();
+            req.setUsername(uoEntity.getName());
+            req.setEmail(uoEntity.getCode().substring(1)+"@Club");
+            req.setUserRole(upmsRoleRepository.findByCode("club_sys").getId());
+            upmsUserService.create(req);
+        }
     }
 
     @Override
@@ -144,6 +186,23 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
 
         return rootNodes;
     }
+
+    @Override
+    public List findChildren(String code) {
+        UpmsOrganization parentEntity = upmsOrganizationRepository.findByCode(code);
+
+        // 檢查 parentEntity 是否存在
+        if (parentEntity == null) {
+            throw new IllegalArgumentException("找不到指定 code 的組織：" + code);
+        }
+
+        UpmsOrganizationReq req = new UpmsOrganizationReq();
+        req.setParentId(String.valueOf(parentEntity.getId()));
+
+        // 調用 list 方法查找子組織
+        return this.list(req);
+    }
+
 
     /**
      * 遞歸構建子節點，從 Map 中獲取子節點

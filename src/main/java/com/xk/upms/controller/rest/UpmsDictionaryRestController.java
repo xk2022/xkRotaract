@@ -1,6 +1,6 @@
 package com.xk.upms.controller.rest;
 
-import com.xk.common.base.BaseRepostitory;
+import com.xk.common.base.BaseRepository;
 import com.xk.upms.model.bo.UpmsSystemSaveReq;
 import com.xk.upms.service.UpmsDictionaryService;
 import io.swagger.annotations.Api;
@@ -25,7 +25,7 @@ public class UpmsDictionaryRestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsDictionaryRestController.class);
 
     @Autowired
-    private BaseRepostitory baseRepostitory;
+    private BaseRepository baseRepository;
     @Autowired
     private UpmsDictionaryService upmsDictionaryService;
 
@@ -39,7 +39,7 @@ public class UpmsDictionaryRestController {
     @ApiOperation(value = "系统列表")
     @GetMapping("/page_head")
     public Object page_head() {
-        return baseRepostitory.queryTableComent("upms_dictionary_category");
+        return baseRepository.queryTableComment("upms_dictionary_category");
     }
 
     /**

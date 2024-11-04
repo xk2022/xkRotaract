@@ -5,13 +5,14 @@ import com.xk.cms.dao.repository.CmsClubRepository;
 import com.xk.cms.model.bo.CmsCalendarReq;
 import com.xk.cms.model.bo.CmsCalendarSaveReq;
 import com.xk.cms.model.po.CmsCalendar;
-import com.xk.cms.model.po.CmsClub;
 import com.xk.cms.model.vo.CmsCalendarEvoResp;
 import com.xk.cms.model.vo.CmsCalendarResp;
 import com.xk.cms.model.vo.CmsCalendarSaveResp;
 import com.xk.cms.service.CmsCalendarService;
 import com.xk.common.util.GenericUpdateService;
 import com.xk.common.util.XkBeanUtils;
+import com.xk.upms.dao.repository.UpmsOrganizationRepository;
+import com.xk.upms.model.po.UpmsOrganization;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,8 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
     private CmsCalendarRepository cmsCalendarRepository;
     @Autowired
     private CmsClubRepository cmsClubRepository;
+    @Autowired
+    private UpmsOrganizationRepository upmsOrganizationRepository;
 
     @Override
     public List list(CmsCalendarReq resource) {
@@ -54,6 +57,7 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
             req.setDistrict_id(resource.getDistrict_id());
         }
         if (StringUtils.isNotBlank(resource.getRotaract_id())) {
+            req.setDistrict_id(null);
             req.setRotaract_id(resource.getRotaract_id());
         }
         Example<CmsCalendar> example = Example.of(req);
@@ -86,7 +90,8 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
                 temp.setTitle("[" + entity.getDistrict_id() + "]" + entity.getEventName());
             } else {
                 // 社內活動
-                Optional<CmsClub> club = cmsClubRepository.findById(Long.valueOf(entity.getRotaract_id()));
+//                Optional<CmsClub> club = cmsClubRepository.findById(Long.valueOf(entity.getRotaract_id()));
+                Optional<UpmsOrganization> club = upmsOrganizationRepository.findById(Long.valueOf(entity.getRotaract_id()));
                 if (club.isPresent()) {
                     temp.setTitle("[" + club.get().getName() + "]" + entity.getEventName());
                 } else {
@@ -206,7 +211,8 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
                 temp.setName("[" + entity.getDistrict_id() + "]" + entity.getEventName());
             } else {
                 // 社內活動
-                Optional<CmsClub> club = cmsClubRepository.findById(Long.valueOf(entity.getRotaract_id()));
+//                Optional<CmsClub> club = cmsClubRepository.findById(Long.valueOf(entity.getRotaract_id()));
+                Optional<UpmsOrganization> club = upmsOrganizationRepository.findById(Long.valueOf(entity.getRotaract_id()));
                 if (club.isPresent()) {
                     temp.setName("[" + club.get().getName() + "]" + entity.getEventName());
                 } else {

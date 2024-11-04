@@ -32,4 +32,6 @@ public class UpmsOrganizationReq {
     private String orders;
     private String status;
 
+    private String parentCode;
+
 }

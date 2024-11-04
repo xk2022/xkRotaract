@@ -10,6 +10,7 @@ import com.xk.upms.dao.repository.*;
 import com.xk.upms.model.enums.PermissionAction;
 import com.xk.upms.model.po.*;
 import com.xk.upms.model.vo.UpmsUserSaveResp;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,10 @@ public class AuthServiceImpl implements AuthService {
     private UpmsSystemRepository upmsSystemRepository;
     @Autowired
     private UpmsPermissionRepository upmsPermissionRepository;
+    @Autowired
+    private UpmsOrganizationRepository upmsOrganizationRepository;
+    @Autowired
+    private UpmsOrganizationUserRepository upmsOrganizationUserRepository;
 
     @Override
     public UserExample checkUser(String account, String password) {
@@ -101,6 +106,59 @@ public class AuthServiceImpl implements AuthService {
     public Boolean checkUser(String email) {
         UpmsUser user = upmsUserRepository.findByEmail(email);
         return (user != null);
+    }
+
+    @Override
+    public Boolean checkPassNullable(String email) {
+        Boolean isPassNull_mainFirstLoginIn = false;
+        UpmsUser user = upmsUserRepository.findByEmail(email);
+        if (StringUtils.isBlank(user.getPassword())) {
+            isPassNull_mainFirstLoginIn = true;
+            // 順便協助製造cms_user身份信息
+            initPublicAccountInfo(user);
+        }
+        return isPassNull_mainFirstLoginIn;
+    }
+
+    private void initPublicAccountInfo(UpmsUser uuEntity) {
+        CmsUser cuEntity = new CmsUser();
+        cuEntity.setFkUpmsUserId(uuEntity.getId());
+
+        String email = uuEntity.getEmail();
+        if (email.contains("@District")) {
+            String code = "D" + email.split("@")[0];
+            UpmsOrganization uoEntity = upmsOrganizationRepository.findByCode(code);
+
+            // 拚入地區
+            UpmsUserOrganization uuoEntity = new UpmsUserOrganization();
+            uuoEntity.setUserId(uuEntity.getId());
+            uuoEntity.setOrganizationId(uoEntity.getId());
+            upmsOrganizationUserRepository.save(uuoEntity);
+
+            cuEntity.setRname(uoEntity.getName());
+            cuEntity.setRealname("");
+            cuEntity.setDistrict_id(String.valueOf(uoEntity.getId()));
+        }
+        if (email.contains("@Club")) {
+            String code = "C" + email.split("@")[0];
+            UpmsOrganization uoEntity = upmsOrganizationRepository.findByCode(code);
+            UpmsOrganization parentUoEntity = upmsOrganizationRepository.findById(uoEntity.getParentId()).orElse(null);
+
+            // 拚入地區
+            UpmsUserOrganization uuoEntity = new UpmsUserOrganization();
+            uuoEntity.setUserId(uuEntity.getId());
+            uuoEntity.setOrganizationId(parentUoEntity.getId());
+            upmsOrganizationUserRepository.save(uuoEntity);
+            // 拚入所屬社
+            uuoEntity.setOrganizationId(uoEntity.getId());
+            upmsOrganizationUserRepository.save(uuoEntity);
+
+            cuEntity.setRname(parentUoEntity.getName());
+            cuEntity.setRealname(uoEntity.getName());
+            cuEntity.setDistrict_id(String.valueOf(parentUoEntity.getId()));
+            cuEntity.setRotaract_id(String.valueOf(uoEntity.getId()));
+        }
+        cmsUserRepository.save(cuEntity);
     }
 
     @Override

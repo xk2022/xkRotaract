@@ -1,6 +1,6 @@
 package com.xk.upms.controller.rest;
 
-import com.xk.common.base.BaseRepostitory;
+import com.xk.common.base.BaseRepository;
 import com.xk.upms.model.bo.UpmsRolePermissionReq;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
 import com.xk.upms.model.vo.UpmsPermissionResp;
@@ -30,7 +30,7 @@ public class UpmsRoleRestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UpmsRoleRestController.class);
 
     @Autowired
-    private BaseRepostitory baseRepostitory;
+    private BaseRepository baseRepository;
     @Autowired
     private UpmsRoleService upmsRoleService;
     @Autowired
@@ -47,7 +47,7 @@ public class UpmsRoleRestController {
     @ApiOperation(value = "角色列表")
     @GetMapping("/page_head")
     public Object page_head() {
-        return baseRepostitory.queryTableComent("upms_role");
+        return baseRepository.queryTableComment("upms_role");
     }
 
     @ApiOperation(value = "角色列表")

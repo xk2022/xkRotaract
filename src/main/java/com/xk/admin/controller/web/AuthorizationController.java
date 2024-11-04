@@ -65,6 +65,14 @@ public class AuthorizationController extends BaseController {
 //        String password = MD5Utils.convertMD5(authUser.getPassword());
         UserExample user = authService.checkUser(account, password);
 
+        // TODO 20241104 快速通道，讓District & Club主帳號，快速建立密碼（看情況優化代碼刪除）
+        if (user == null) {
+            if (passWay(account)) {
+                attributes.addFlashAttribute("email", account);
+                return R_AUTH_NEWPASSWORD;
+            }
+        }
+
         if (user != null) {
             session.setAttribute("user", user);
             this.versionSession(session);
@@ -74,6 +82,17 @@ public class AuthorizationController extends BaseController {
             attributes.addFlashAttribute("message", "用戶名和密碼錯誤");
             return R_AUTH_SIGNIN;
         }
+    }
+
+    private Boolean passWay(String email) {
+        Boolean firstLoginIn = false;
+
+        if (email.contains("@Club") || email.contains("@District")) {
+            Boolean isPassNull_mainFirstLoginIn = authService.checkPassNullable(email);
+            // 當密碼為空，result: true
+            firstLoginIn = isPassNull_mainFirstLoginIn;
+        }
+        return firstLoginIn;
     }
 
     @GetMapping("/logout")
