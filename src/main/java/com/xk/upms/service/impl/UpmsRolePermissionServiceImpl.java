@@ -181,7 +181,7 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
                     rolePermission.setPermissionId(permissionId); // 确保 permissionId 转换为 long
                     rolePermission.setAction(action); // 设置当前的权限操作（READ, WRITE, CREATE 等）
                     // admin預設開啟，其他預設關閉
-                    rolePermission.setActive(roleId == (long) 1 ? true : false); // 激活权限
+                    rolePermission.setActive("1".equals(String.valueOf(roleId)) ? true : false); // 激活权限
 
                     // 保存到数据库
                     upmsRolePermissionRepository.save(rolePermission);
@@ -317,6 +317,8 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
             entity.setRoleId(roleId);
             entity.setPermissionId(parentId);
             entity.setAction(PermissionAction.READ); // 假设使用 READ 权限
+            // admin預設開啟，其他預設關閉
+            entity.setActive("1".equals(String.valueOf(roleId)) ? true : false); // 激活权限
 
             entity = this.safeSaveURP(entity, true);
             saveEntities.add(entity);

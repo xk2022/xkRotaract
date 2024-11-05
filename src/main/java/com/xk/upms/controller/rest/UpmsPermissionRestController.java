@@ -265,16 +265,28 @@ public class UpmsPermissionRestController {
         data.setPid(findParentEntity.getId());
         data.setType((byte) 2);
 
-        data.setName("社內行事曆");
-        data.setPermissionValue("cms:c_calendar");
-        data.setUri("/admin/cms/manage/c_calendar");
+        data.setName("咱の扶青社");
+        data.setPermissionValue("cms:club");
+        data.setUri("/admin/cms/manage/club");
         data.setOrders((long) 21);
         upmsPermissionService.create(data);
 
-        data.setName("公司列表");
-        data.setPermissionValue("cms:company");
-        data.setUri("/admin/cms/manage/company");
+        data.setName("社內行事曆");
+        data.setPermissionValue("cms:c_calendar");
+        data.setUri("/admin/cms/manage/c_calendar");
         data.setOrders((long) 22);
+        upmsPermissionService.create(data);
+
+        data.setName("本社社友");
+        data.setPermissionValue("cms:c_user");
+        data.setUri("/admin/cms/manage/c_user");
+        data.setOrders((long) 23);
+        upmsPermissionService.create(data);
+
+        data.setName("公司列表");
+        data.setPermissionValue("cms:c_company");
+        data.setUri("/admin/cms/manage/c_company");
+        data.setOrders((long) 24);
         upmsPermissionService.create(data);
         /**
          * /admin/cms/d
@@ -291,16 +303,22 @@ public class UpmsPermissionRestController {
         data.setPid(findParentEntity.getId());
         data.setType((byte) 2);
 
-        data.setName("社團行事曆");
-        data.setPermissionValue("cms:d_calendar");
-        data.setUri("/admin/cms/manage/d_calendar");
+        data.setName("咱の地區");
+        data.setPermissionValue("cms:district");
+        data.setUri("/admin/cms/manage/district");
         data.setOrders((long) 31);
         upmsPermissionService.create(data);
 
-        data.setName("社團信息");
-        data.setPermissionValue("cms:club");
-        data.setUri("/admin/cms/manage/club");
+        data.setName("本區行事曆");
+        data.setPermissionValue("cms:d_calendar");
+        data.setUri("/admin/cms/manage/d_calendar");
         data.setOrders((long) 32);
+        upmsPermissionService.create(data);
+
+        data.setName("地區所屬扶青社");
+        data.setPermissionValue("cms:district_organization");
+        data.setUri("/admin/cms/manage/district_organization");
+        data.setOrders((long) 33);
         upmsPermissionService.create(data);
         /**
          * /admin/cms/s
@@ -333,6 +351,12 @@ public class UpmsPermissionRestController {
         data.setPermissionValue("cms:calendar");
         data.setUri("/admin/cms/manage/calendar");
         data.setOrders((long) 43);
+        upmsPermissionService.create(data);
+
+        data.setName("公司列表");
+        data.setPermissionValue("cms:company");
+        data.setUri("/admin/cms/manage/company");
+        data.setOrders((long) 44);
         upmsPermissionService.create(data);
         return "OK";
     }

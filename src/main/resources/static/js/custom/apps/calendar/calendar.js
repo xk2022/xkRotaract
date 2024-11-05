@@ -60,15 +60,20 @@ var KTAppCalendar = function () {
 
 
     var initData = function () {
+        let data = {
+            calendar_range: $('#calendar_range').val(),
+            district_id: $('#district_id').val()
+        };
+
+        let rotaractId = $('#rotaract_id').val();
+        if (rotaractId !== "") {
+            data.rotaract_id = rotaractId; // 只有當 rotaract_id 不為空時才添加
+        }
+
         $.ajax({
             url: baseUrl + '/api/manage/calendar/list',
             method: 'POST',
-            data: JSON.stringify({
-                    // 傳遞 JSON 格式的數據
-                    calendar_range: $('#calendar_range').val(),
-                    district_id: $('#district_id').val(),
-                    rotaract_id: $('#rotaract_id').val()
-                }),
+            data: JSON.stringify(data),
             processData: false,
             contentType: 'application/json',
             success: function(response) {

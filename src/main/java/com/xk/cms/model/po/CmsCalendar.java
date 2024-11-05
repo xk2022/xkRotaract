@@ -38,7 +38,7 @@ public class CmsCalendar extends BaseEntity implements Serializable {
     private String eventLocation;
 
     @Comment("04_全天")
-    private boolean allDay;
+    private Boolean allDay = null;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Comment("05_活動開始日期")

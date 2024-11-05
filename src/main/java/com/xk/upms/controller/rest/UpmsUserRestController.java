@@ -85,34 +85,58 @@ public class UpmsUserRestController {
 
         data.setEmail("admin@admin"); // 郵箱（帳號一）
         data.setUsername("ADMIN"); // 自訂（帳號二）
-        data.setCellPhone("0987654321"); // 手機（帳號三）
+        data.setCellPhone("9099999999"); // 手機（帳號三）
         upmsUserService.create(data);
 
         data.setEmail("louis@louis"); // 郵箱（帳號一）
         data.setUsername("louis"); // 自訂（帳號二）
-        data.setCellPhone("0987654322"); // 手機（帳號三）
+        data.setCellPhone("0978628329"); // 手機（帳號三）
         upmsUserService.create(data);
 
         data.setEmail("cwei@cwei"); // 郵箱（帳號一）
         data.setUsername("cwei"); // 自訂（帳號二）
-        data.setCellPhone("0987654323"); // 手機（帳號三）
+        data.setCellPhone("9099999998"); // 手機（帳號三）
         upmsUserService.create(data);
 
         data.setEmail("bonnie@bonnie"); // 郵箱（帳號一）
         data.setUsername("bonnie"); // 自訂（帳號二）
-        data.setCellPhone("0987654324"); // 手機（帳號三）
+        data.setCellPhone("9099999997"); // 手機（帳號三）
         upmsUserService.create(data);
 
         data.setEmail("summer@summer"); // 郵箱（帳號一）
         data.setUsername("summer"); // 自訂（帳號二）
-        data.setCellPhone("0987654325"); // 手機（帳號三）
+        data.setCellPhone("9099999996"); // 手機（帳號三）
+        upmsUserService.create(data);
+
+        data.setEmail("jacky@jacky"); // 郵箱（帳號一）
+        data.setUsername("jacky"); // 自訂（帳號二）
+        data.setCellPhone("9099999995"); // 手機（帳號三）
+        upmsUserService.create(data);
+
+        data.setEmail("hank@hank"); // 郵箱（帳號一）
+        data.setUsername("hank"); // 自訂（帳號二）
+        data.setCellPhone("9099999994"); // 手機（帳號三）
+        upmsUserService.create(data);
+
+        data.setEmail("rit@rit"); // 郵箱（帳號一）
+        data.setUsername("rit"); // 自訂（帳號二）
+        data.setCellPhone("9099999993"); // 手機（帳號三）
+        upmsUserService.create(data);
+
+        data.setEmail("district@district"); // 郵箱（帳號一）
+        data.setUsername("district"); // 自訂（帳號二）
+        data.setCellPhone("9099999992"); // 手機（帳號三）
+        upmsUserService.create(data);
+
+        data.setEmail("club@club"); // 郵箱（帳號一）
+        data.setUsername("club"); // 自訂（帳號二）
+        data.setCellPhone("9099999991"); // 手機（帳號三）
         upmsUserService.create(data);
 
         data.setEmail("member@member"); // 郵箱（帳號一）
         data.setUsername("member"); // 自訂（帳號二）
-        data.setCellPhone("0987654326"); // 手機（帳號三）
+        data.setCellPhone("9099999990"); // 手機（帳號三）
         upmsUserService.create(data);
-
         return "OK";
     }
 
@@ -149,6 +173,14 @@ public class UpmsUserRestController {
         upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
 
         resources.setUsername("summer");
+        respUser = upmsUserService.findByUsername(resources);
+        upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
+
+        resources.setUsername("jacky");
+        respUser = upmsUserService.findByUsername(resources);
+        upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
+
+        resources.setUsername("hank");
         respUser = upmsUserService.findByUsername(resources);
         upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
         /**
