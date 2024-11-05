@@ -139,11 +139,11 @@ function loadDistricts(categoryCode) {
 }
 
 // 加载扶青社选项的函数
-function loadRotaracts(districtCode) {
+function loadRotaracts(districtId) {
     $.ajax({
         url: '/xkRotaract/api/manage/organization/findChildren',
         method: 'POST',
-        data: JSON.stringify({ 'code': districtCode }),
+        data: JSON.stringify({ 'id': districtId }),
         processData: false,
         contentType: 'application/json',
         success: function(response) {
@@ -180,11 +180,11 @@ function loadRotaracts(districtCode) {
 
 // 监听地区下拉选单变化事件
 $('#inputGroupSelect_district').change(function() {
-    var selectedDistrictCode = $(this).val();
-    $('input[name="district_id"]').val(selectedDistrictCode);
+    var selectedDistrictId = $(this).val();
+    $('input[name="district_id"]').val(selectedDistrictId);
 
-    if (selectedDistrictCode !== '0') {
-        loadRotaracts(selectedDistrictCode);
+    if (selectedDistrictId !== '0') {
+        loadRotaracts(selectedDistrictId);
     } else {
         $('#inputGroupSelect_club').empty().append('<option value="0">請選擇</option>');
     }

@@ -184,6 +184,30 @@ public class UpmsUserRestController {
         respUser = upmsUserService.findByUsername(resources);
         upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
         /**
+         * rit
+         */
+        respRole = upmsRoleService.selectByCode("rit_sys");
+
+        resources.setUsername("rit");
+        respUser = upmsUserService.findByUsername(resources);
+        upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
+        /**
+         * district
+         */
+        respRole = upmsRoleService.selectByCode("district_sys");
+
+        resources.setUsername("district");
+        respUser = upmsUserService.findByUsername(resources);
+        upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
+        /**
+         * club
+         */
+        respRole = upmsRoleService.selectByCode("club_sys");
+
+        resources.setUsername("club");
+        respUser = upmsUserService.findByUsername(resources);
+        upmsUserRoleService.role(respUser.getId(), String.valueOf(respRole.getId()));
+        /**
          * member
          */
         respRole = upmsRoleService.selectByCode("member");

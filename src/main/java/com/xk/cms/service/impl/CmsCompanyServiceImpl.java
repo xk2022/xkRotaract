@@ -15,7 +15,7 @@ import com.xk.cms.model.vo.CmsCompanyWithUserResp;
 import com.xk.cms.service.CmsCompanyService;
 import com.xk.common.json.Industry;
 import com.xk.common.util.GoogleApiGeocode;
-import com.xk.upms.dao.repository.UpmsDictionaryCategaryRepository;
+import com.xk.upms.dao.repository.UpmsDictionaryCategoryRepository;
 import com.xk.upms.dao.repository.UpmsDictionaryDataRepository;
 import com.xk.upms.model.po.UpmsDictionaryCategory;
 import com.xk.upms.model.po.UpmsDictionaryData;
@@ -52,7 +52,7 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
     @Autowired
     private CmsUserRepository cmsUserRepository;
     @Autowired
-    private UpmsDictionaryCategaryRepository upmsDictionaryCategaryRepository;
+    private UpmsDictionaryCategoryRepository upmsDictionaryCategoryRepository;
     @Autowired
     private UpmsDictionaryDataRepository upmsDictionaryDataRepository;
     @Autowired
@@ -240,11 +240,11 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
         result.setUserId(cuEntity.getId());
         BeanUtils.copyProperties(cuEntity, result);
 
-        UpmsDictionaryCategory dropdown_DISTRICT_udcEntity =  upmsDictionaryCategaryRepository.findOneByCode("dropdown_DISTRICT");
+        UpmsDictionaryCategory dropdown_DISTRICT_udcEntity =  upmsDictionaryCategoryRepository.findOneByCode("dropdown_DISTRICT");
         UpmsDictionaryData dropdown_DISTRICT_uddEntity = upmsDictionaryDataRepository.findByParentIdAndCode(dropdown_DISTRICT_udcEntity.getId(), result.getDistrict_id());
         result.setDistrict_name(dropdown_DISTRICT_uddEntity.getDescription());
 
-        UpmsDictionaryCategory udcEntity =  upmsDictionaryCategaryRepository.findOneByCode("dropdown_DISTRICT" + result.getDistrict_id());
+        UpmsDictionaryCategory udcEntity =  upmsDictionaryCategoryRepository.findOneByCode("dropdown_DISTRICT" + result.getDistrict_id());
         UpmsDictionaryData uddEntity = upmsDictionaryDataRepository.findByParentIdAndCode(udcEntity.getId(), String.valueOf(Integer.valueOf(result.getRotaract_id())));
         result.setRotaract_name(uddEntity.getDescription());
         /**

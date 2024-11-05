@@ -3,6 +3,7 @@ package com.xk.upms.model.po;
 import com.xk.common.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -62,6 +63,7 @@ public class UpmsOrganization extends BaseEntity implements Serializable {
     private Long orders;
 
     @Column(name = "status", columnDefinition = "boolean default true")
+    @ColumnDefault(value = "true")
     @Comment("91_組織狀態，表示是否有效或啟用")
     private Boolean status;
 

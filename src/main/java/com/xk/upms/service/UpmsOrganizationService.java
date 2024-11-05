@@ -32,6 +32,14 @@ public interface UpmsOrganizationService {
     UpmsOrganizationResp findById(Long id);
 
     /**
+     * Find an organization by its code.
+     *
+     * @param reqCode the code of the organization
+     * @return the organization response
+     */
+    UpmsOrganizationResp findByCode(String reqCode);
+
+    /**
      * Create a new organization.
      *
      * @param resources the information required to create the organization

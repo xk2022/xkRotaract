@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.io.Serializable;
 
-public interface UpmsDictionaryCategaryRepository extends JpaRepository<UpmsDictionaryCategory, Long>, Serializable {
+public interface UpmsDictionaryCategoryRepository extends JpaRepository<UpmsDictionaryCategory, Long>, Serializable {
 
     UpmsDictionaryCategory findOneByCode(String code);
 

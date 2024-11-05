@@ -1,6 +1,6 @@
 package com.xk.upms.service.impl;
 
-import com.xk.upms.dao.repository.UpmsDictionaryCategaryRepository;
+import com.xk.upms.dao.repository.UpmsDictionaryCategoryRepository;
 import com.xk.upms.dao.repository.UpmsDictionaryDataRepository;
 import com.xk.upms.model.bo.UpmsDictionaryCategoryReq;
 import com.xk.upms.model.bo.UpmsDictionaryDataReq;
@@ -29,18 +29,18 @@ public class UpmsDictionaryServiceImpl implements UpmsDictionaryService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UpmsDictionaryServiceImpl.class);
 
 	@Autowired
-	private UpmsDictionaryCategaryRepository upmsDictionaryCategaryRepository;
+	private UpmsDictionaryCategoryRepository upmsDictionaryCategoryRepository;
 	@Autowired
 	private UpmsDictionaryDataRepository upmsDictionaryDataRepository;
 
     @Override
     public List list() {
-        return upmsDictionaryCategaryRepository.findAll( );
+        return upmsDictionaryCategoryRepository.findAll( );
     }
 
 	@Override
 	public List listDDbyDC(String categaryCode) {
-		UpmsDictionaryCategory category = upmsDictionaryCategaryRepository.findOneByCode(categaryCode);
+		UpmsDictionaryCategory category = upmsDictionaryCategoryRepository.findOneByCode(categaryCode);
 		if (category == null) {
 			return null;
 		}
@@ -53,7 +53,7 @@ public class UpmsDictionaryServiceImpl implements UpmsDictionaryService {
 
 		UpmsDictionaryCategory req = new UpmsDictionaryCategory();
 		BeanUtils.copyProperties(resources, req);
-		UpmsDictionaryCategory entity = upmsDictionaryCategaryRepository.save(req);
+		UpmsDictionaryCategory entity = upmsDictionaryCategoryRepository.save(req);
 
 		BeanUtils.copyProperties(entity, result);
 		return result;
@@ -65,7 +65,7 @@ public class UpmsDictionaryServiceImpl implements UpmsDictionaryService {
 
 		UpmsDictionaryCategory req = new UpmsDictionaryCategory();
 		BeanUtils.copyProperties(resources, req);
-		UpmsDictionaryCategory entity = upmsDictionaryCategaryRepository.save(req);
+		UpmsDictionaryCategory entity = upmsDictionaryCategoryRepository.save(req);
 
 		BeanUtils.copyProperties(entity, result);
 		return result;
@@ -73,7 +73,7 @@ public class UpmsDictionaryServiceImpl implements UpmsDictionaryService {
 
 	@Override
 	public void deleteCategory(Long id) {
-		upmsDictionaryCategaryRepository.deleteById(id);
+		upmsDictionaryCategoryRepository.deleteById(id);
 
 	}
 
@@ -82,7 +82,7 @@ public class UpmsDictionaryServiceImpl implements UpmsDictionaryService {
 		String[] idArray = ids.split("-");
 		for (String idStr : idArray) {
 			Long id = Long.valueOf(idStr);
-			upmsDictionaryCategaryRepository.deleteById(id);
+			upmsDictionaryCategoryRepository.deleteById(id);
 		}
 	}
 

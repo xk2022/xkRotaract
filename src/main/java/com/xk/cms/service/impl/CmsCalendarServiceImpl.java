@@ -12,7 +12,8 @@ import com.xk.cms.service.CmsCalendarService;
 import com.xk.common.util.GenericUpdateService;
 import com.xk.common.util.XkBeanUtils;
 import com.xk.upms.dao.repository.UpmsOrganizationRepository;
-import com.xk.upms.model.po.UpmsOrganization;
+import com.xk.upms.model.vo.UpmsOrganizationResp;
+import com.xk.upms.service.UpmsOrganizationService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,8 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
     private CmsCalendarRepository cmsCalendarRepository;
     @Autowired
     private CmsClubRepository cmsClubRepository;
+    @Autowired
+    private UpmsOrganizationService upmsOrganizationService;
     @Autowired
     private UpmsOrganizationRepository upmsOrganizationRepository;
 
@@ -87,13 +90,18 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
             temp.setId(String.valueOf(entity.getId()));
             if (StringUtils.isBlank(entity.getRotaract_id()) || "0".equals(entity.getRotaract_id())) {
                 // 地區活動
-                temp.setTitle("[" + entity.getDistrict_id() + "]" + entity.getEventName());
+                UpmsOrganizationResp district = upmsOrganizationService.findById(Long.valueOf(entity.getDistrict_id()));
+                if (district != null) {
+                    temp.setTitle("[" + district.getName() + "]" + entity.getEventName());
+                } else {
+                    temp.setTitle(entity.getEventName());
+                }
             } else {
                 // 社內活動
 //                Optional<CmsClub> club = cmsClubRepository.findById(Long.valueOf(entity.getRotaract_id()));
-                Optional<UpmsOrganization> club = upmsOrganizationRepository.findById(Long.valueOf(entity.getRotaract_id()));
-                if (club.isPresent()) {
-                    temp.setTitle("[" + club.get().getName() + "]" + entity.getEventName());
+                UpmsOrganizationResp club = upmsOrganizationService.findById(Long.valueOf(entity.getRotaract_id()));
+                if (club != null) {
+                    temp.setTitle("[" + club.getName() + "]" + entity.getEventName());
                 } else {
                     temp.setTitle(entity.getEventName());
                 }
@@ -208,13 +216,18 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
             temp.setId(String.valueOf(entity.getId()));
             if (StringUtils.isBlank(entity.getRotaract_id()) || "0".equals(entity.getRotaract_id())) {
                 // 地區活動
-                temp.setName("[" + entity.getDistrict_id() + "]" + entity.getEventName());
+                UpmsOrganizationResp district = upmsOrganizationService.findById(Long.valueOf(entity.getDistrict_id()));
+                if (district != null) {
+                    temp.setName("[" + district.getName() + "]" + entity.getEventName());
+                } else {
+                    temp.setName(entity.getEventName());
+                }
             } else {
                 // 社內活動
 //                Optional<CmsClub> club = cmsClubRepository.findById(Long.valueOf(entity.getRotaract_id()));
-                Optional<UpmsOrganization> club = upmsOrganizationRepository.findById(Long.valueOf(entity.getRotaract_id()));
-                if (club.isPresent()) {
-                    temp.setName("[" + club.get().getName() + "]" + entity.getEventName());
+                UpmsOrganizationResp club = upmsOrganizationService.findById(Long.valueOf(entity.getRotaract_id()));
+                if (club != null) {
+                    temp.setName("[" + club.getName() + "]" + entity.getEventName());
                 } else {
                     temp.setName(entity.getEventName());
                 }

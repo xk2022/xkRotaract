@@ -746,7 +746,7 @@ var KTAppCalendar = function () {
         handleFormSubmit(element, form, validator, modal);
         // 初始化加载地区
         loadDistricts('dropdown_DISTRICT');
-        dropdown('dropdown_CALENDAR_TYPE', 'inputGroupSelect_type', 'type');
+        dropdown('dropdown_EVENTS_TYPE', 'inputGroupSelect_type', 'type');
 
             // View event modal
             const viewElement = document.getElementById('kt_modal_input_view_event');

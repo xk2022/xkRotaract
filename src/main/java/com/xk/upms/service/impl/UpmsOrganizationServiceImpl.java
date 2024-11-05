@@ -80,16 +80,16 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
 
     @Override
     public UpmsOrganizationResp findById(Long id) {
-        UpmsOrganizationResp resp = new UpmsOrganizationResp();
-
         UpmsOrganization entity = upmsOrganizationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("UpmsOrganization with ID " + id + " not found"));
-        Long cntUser = upmsOrganizationUserRepository.countByOrganizationId(entity.getId());
+//        Long cntUser = upmsOrganizationUserRepository.countByOrganizationId(entity.getId());
+        return XkBeanUtils.copyProperties(entity, UpmsOrganizationResp::new);
+    }
 
-        BeanUtils.copyProperties(entity, resp);
-//        resp.setCountUser(cntUser);
-
-        return resp;
+    @Override
+    public UpmsOrganizationResp findByCode(String reqCode) {
+        UpmsOrganization entity = upmsOrganizationRepository.findByCode(reqCode);
+        return XkBeanUtils.copyProperties(entity, UpmsOrganizationResp::new);
     }
 
     @Override
@@ -118,9 +118,17 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
         if (uoEntity != null) {
             UpmsUserSaveReq req = new UpmsUserSaveReq();
             req.setUsername(uoEntity.getName());
-            req.setEmail(uoEntity.getCode().substring(1)+"@Club");
-            req.setUserRole(upmsRoleRepository.findByCode("club_sys").getId());
-            upmsUserService.create(req);
+            if (uoEntity.getCode().startsWith("D")) {
+                req.setEmail(uoEntity.getCode().substring(1)+"@District");
+                req.setUserRole(upmsRoleRepository.findByCode("district_sys").getId());
+                upmsUserService.create(req);
+            } else if (uoEntity.getCode().startsWith("C")) {
+                req.setEmail(uoEntity.getCode().substring(1)+"@Club");
+                req.setUserRole(upmsRoleRepository.findByCode("club_sys").getId());
+                upmsUserService.create(req);
+            } else {
+                return;
+            }
         }
     }
 
