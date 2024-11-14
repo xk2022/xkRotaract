@@ -52,15 +52,11 @@ public class DemoExampleServiceImpl implements DemoExampleService {
 
     @Override
     public List listBy(DemoExampleReq resources) {
-        List<DemoExampleResp> resultList = new ArrayList<>();
-
-        DemoExample req = new DemoExample();
-        BeanUtils.copyProperties(resources, req);
+        DemoExample req = XkBeanUtils.copyProperties(resources, DemoExample::new);
         Example<DemoExample> example = Example.of(req);
 
         List<DemoExample> entities = demoExampleRepository.findAll(example);
-        resultList = XkBeanUtils.copyListProperties(entities, DemoExampleResp::new);
-        return resultList;
+        return XkBeanUtils.copyListProperties(entities, DemoExampleResp::new);
     }
 
     @Override

@@ -6,7 +6,7 @@
         <id property="id" column="user_id"></id>
         <result property="username" column="username"/>
         <result property="realname" column="realname"/>
-        <result property="avatar" column="avatar"/>
+        <result property="avatarUrl" column="avatar_url"/>
         <result property="email" column="email"/>
         <result property="locked" column="locked"/>
         <result property="lastLogin" column="last_login"/>
@@ -20,7 +20,7 @@
             LEFT JOIN upms_role role ON role.role_id = ur.role_id
     </select>
     <select id="selectUsersByRole" resultMap="urDto">
-        SELECT uur.user_id, uur.username, cur.realname, cur.avatar, uur.email, uur.create_time
+        SELECT uur.user_id, uur.username, cur.realname, cur.avatar_url, uur.email, uur.create_time
         FROM upms_user uur
             LEFT JOIN cms_user cur ON uur.user_id = cur.fk_upms_user_id
             LEFT JOIN upms_user_role uure ON uur.user_id = uure.user_id
@@ -30,14 +30,14 @@
         <id property="id" column="user_id"></id>
         <result property="username" column="username"/>
         <result property="realname" column="realname"/>
-        <result property="avatar" column="avatar"/>
+        <result property="avatarUrl" column="avatar_url"/>
         <result property="email" column="email"/>
         <result property="locked" column="locked"/>
         <result property="lastLogin" column="last_login"/>
         <result property="createTime" column="create_time"/>
     </resultMap>
     <select id="selectUsersByOrganization" resultMap="urDto">
-        SELECT uur.user_id, uur.username, cur.realname, cur.avatar, uur.email, uur.create_time
+        SELECT uur.user_id, uur.username, cur.realname, cur.avatar_url, uur.email, uur.create_time
         FROM upms_user uur
             LEFT JOIN cms_user cur ON uur.user_id = cur.fk_upms_user_id
             LEFT JOIN upms_user_organization uuon ON uur.user_id = uuon.user_id

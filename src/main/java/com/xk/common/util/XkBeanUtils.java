@@ -33,7 +33,6 @@ public class XkBeanUtils {
             return null;
         }
         T target = targetSupplier.get();
-
         // 使用 Spring 的 BeanUtils 進行基本屬性拷貝
         BeanUtils.copyProperties(source, target);
 

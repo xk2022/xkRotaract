@@ -24,6 +24,6 @@ public interface CmsCompanyService {
 
     void deleteByPrimaryKeys(String ids);
 
-    CmsCompanyWithUserResp findOneWithPersonalByCompanyId(long id);
+    CmsCompanyWithUserResp findOneWithPersonalByCompanyId(String reqCompanyId);
 
 }

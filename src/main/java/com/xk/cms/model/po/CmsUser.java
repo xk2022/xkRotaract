@@ -46,14 +46,14 @@ public class CmsUser extends BaseEntity implements Serializable {
     private String rotaract_id;
 
     @Comment("05_頭像")
-    private String avatar;
+    private String avatarUrl;
 //    @Lob
 //    private Blob avatar;
 
     @Comment("06_電話")
-    private String phone;
+    private String phoneNumber;
 
-    @Comment("07_性别")
-    private Byte sex;
+    @Comment("07_性别 用戶性別（例如 \"Male\", \"Female\"）")
+    private Byte gender;
 
 }

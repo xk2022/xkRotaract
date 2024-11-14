@@ -30,8 +30,8 @@ import javax.servlet.http.HttpSession;
 public class CmsCalendarController extends BaseController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CmsCalendarController.class);
+	private static final String REDIRECT_URL = "redirect:/admin/cms/manage/calendar";
 
-	private static final String REDIRECT_ADDR = "redirect:/admin/cms/manage/calendar";
 	@Autowired
 	private CmsCalendarService cmsCalendarService;
 
@@ -102,7 +102,7 @@ public class CmsCalendarController extends BaseController {
 		} else {
 			attributes.addFlashAttribute("message", "操作成功");
 		}
-		return REDIRECT_ADDR;
+		return REDIRECT_URL;
 	}
 
 }

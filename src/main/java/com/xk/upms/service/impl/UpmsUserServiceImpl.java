@@ -32,7 +32,8 @@ import java.util.Optional;
 
 /**
  * UpmsUserService 實現
- * Created by yuan on 2022/06/10
+ *
+ * @author yuan Created on 2022/06/10.
  */
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -50,11 +51,6 @@ public class UpmsUserServiceImpl implements UpmsUserService {
     private UpmsUserRoleRepository upmsUserRoleRepository;
     @Autowired
     private UpmsUserRefRepository upmsUserRefRepository;
-
-//    @Override
-//    public List list(UpmsUserReq resources) {
-//        return upmsUserRepository.findAll();
-//    }
     
     @Override
     public List list(UpmsUserReq resources) {

@@ -21,6 +21,7 @@
         $("[name='allDay']").val(null);
         $("[name='district_id']").val($('#district_id').val());
         $('#inputGroupSelect_district').val($('#district_id').val());
+        $('#inputGroupSelect_district').val($('#district_id').val()).trigger('change');
     });
 
     // Update

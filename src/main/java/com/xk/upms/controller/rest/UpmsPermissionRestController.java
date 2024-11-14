@@ -358,6 +358,12 @@ public class UpmsPermissionRestController {
         data.setUri("/admin/cms/manage/company");
         data.setOrders((long) 44);
         upmsPermissionService.create(data);
+
+        data.setName("社友管理");
+        data.setPermissionValue("cms:user");
+        data.setUri("/admin/cms/manage/user");
+        data.setOrders((long) 45);
+        upmsPermissionService.create(data);
         return "OK";
     }
 

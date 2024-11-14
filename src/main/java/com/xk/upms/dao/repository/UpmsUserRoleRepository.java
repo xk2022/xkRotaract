@@ -1,11 +1,10 @@
 package com.xk.upms.dao.repository;
 
-import java.io.Serializable;
-import java.util.Optional;
-
+import com.xk.upms.model.po.UpmsUserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.xk.upms.model.po.UpmsUserRole;
+import java.io.Serializable;
+import java.util.Optional;
 
 public interface UpmsUserRoleRepository extends JpaRepository<UpmsUserRole, Long>, Serializable {
 
@@ -16,5 +15,5 @@ public interface UpmsUserRoleRepository extends JpaRepository<UpmsUserRole, Long
 
 //    List<UpmsUserRole> findByUserId(Long userId);
     
-    Optional<UpmsUserRole>findByUserId(Long userIde);
+    Optional<UpmsUserRole> findByUserId(Long userIde);
 }

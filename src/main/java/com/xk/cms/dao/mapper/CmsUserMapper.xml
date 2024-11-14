@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xk.cms.dao.mapper.CmsUserMapper">
+
+    <resultMap type="com.xk.cms.model.po.CmsUser" id="baseRM">
+        <id property="id" column="user_id"></id>
+        <result property="fkUpmsUserId" column="fkUpmsUserId"/>
+        <result property="rname" column="rname"/>
+        <result property="realname" column="realname"/>
+        <result property="district_id" column="district_id"/>
+        <result property="rotaract_id" column="rotaract_id"/>
+        <result property="avatarUrl" column="avatarUrl"/>
+        <result property="phoneNumber" column="phoneNumber"/>
+        <result property="gender" column="gender"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <resultMap type="com.xk.cms.model.dto.CmsUserExample" id="cuDto" extends="baseRM">
+        <!-- 继承自 baseRM 的映射 -->
+        <result property="companyName" column="companyName"/>
+        <result property="cmsCompanyPayId" column="company_pay_id"/>
+        <result property="payDate" column="pay_date"/>
+        <result property="locked" column="locked"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="cuDto">
+        SELECT  cc.company_id,
+                cc.name as companyName,
+                cc.create_time,
+                ccp.company_pay_id,
+                ccp.pay_date,
+                ccp.locked
+        FROM cms_company cc
+            LEFT JOIN cms_company_pay ccp ON cc.company_id = ccp.fk_cms_company_id
+        ORDER BY cc.company_id DESC
+    </select>
+
+</mapper>

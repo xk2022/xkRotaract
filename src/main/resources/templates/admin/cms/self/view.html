@@ -73,7 +73,7 @@
 
 <div th:fragment="infoSelf" class="card-body">
     <!--begin::Form-->
-    <form class="form" method="post" id="kt_modal_input_form" th:object="${entity}" th:action="@{/admin/cms/manage/user/save}" >
+    <form class="form" method="post" id="kt_modal_input_form" th:object="${entity}" th:action="@{/admin/cms/manage/user/save/self}" >
         <input type="hidden" name="id" th:value="${entity.id}">
         <input type="hidden" name="username" th:value="${session.user.username}">
         <input type="hidden" name="district_id" th:value="${entity.district_id}">

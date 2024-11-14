@@ -1,27 +1,35 @@
 package com.xk.cms.service.impl;
 
 import com.xk.cms.dao.repository.CmsUserRepository;
+import com.xk.cms.model.bo.CmsUserReq;
 import com.xk.cms.model.bo.CmsUserSaveReq;
 import com.xk.cms.model.bo.CmsUserSelfUpdateReq;
 import com.xk.cms.model.po.CmsUser;
+import com.xk.cms.model.vo.CmsUserResp;
 import com.xk.cms.model.vo.CmsUserSaveResp;
 import com.xk.cms.service.CmsUserService;
+import com.xk.common.util.XkBeanUtils;
 import com.xk.upms.dao.repository.UpmsUserRepository;
 import com.xk.upms.model.bo.UpmsUserSaveReq;
 import com.xk.upms.model.po.UpmsUser;
+import com.xk.upms.model.vo.UpmsUserIndexResp;
 import com.xk.upms.service.UpmsUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * CmsUserService 實現
- * Created by yuan on 2024/05/02
+ *
+ * @author yuan Created on 2024/05/02.
  */
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -35,6 +43,17 @@ public class CmsUserServiceImpl implements CmsUserService {
     private UpmsUserRepository upmsUserRepository;
     @Autowired
     private UpmsUserService upmsUserService;
+
+    @Override
+    public List list(CmsUserReq resources) {
+        List<UpmsUserIndexResp> resultList = new ArrayList<>();
+
+        CmsUser req = XkBeanUtils.copyProperties(resources, CmsUser::new);
+        Example<CmsUser> example = Example.of(req);
+
+        List<CmsUser> entities = cmsUserRepository.findAll(example);
+        return XkBeanUtils.copyListProperties(entities, CmsUserResp::new);
+    }
 
     @Override
     public CmsUserSaveResp create(CmsUserSaveReq resources) {
@@ -55,7 +74,7 @@ public class CmsUserServiceImpl implements CmsUserService {
             BeanUtils.copyProperties(resources, entity);
             entity.setFkUpmsUserId(upmsUser.getId());
         }
-        entity.setPhone(resources.getCellPhone());
+        entity.setPhoneNumber(resources.getCellPhone());
         entity = cmsUserRepository.save(entity);
 
         BeanUtils.copyProperties(entity, result);
@@ -77,7 +96,7 @@ public class CmsUserServiceImpl implements CmsUserService {
         BeanUtils.copyProperties(resources, req);
         BeanUtils.copyProperties(req, userinfo);
 
-        userinfo.setPhone(resources.getCellPhone());
+        userinfo.setPhoneNumber(resources.getCellPhone());
         CmsUser entity = cmsUserRepository.save(userinfo);
         BeanUtils.copyProperties(entity, result);
         return result;

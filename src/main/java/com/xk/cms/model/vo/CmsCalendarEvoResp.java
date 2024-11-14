@@ -35,4 +35,6 @@ public class CmsCalendarEvoResp {
 
     private String everyYear = "!0";
 
+    private String startTime;
+
 }

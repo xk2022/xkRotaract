@@ -44,7 +44,7 @@ public class CmsCompanyRestController {
     @PostMapping("/findInfo")
     public CmsCompanyWithUserResp findCompanyAllInfo(@RequestBody Map<String, Object> requestBody) {
         String companyId = (String) requestBody.get("id");
-        return cmsCompanyService.findOneWithPersonalByCompanyId(Long.valueOf(companyId));
+        return cmsCompanyService.findOneWithPersonalByCompanyId(companyId);
     }
 
     /**

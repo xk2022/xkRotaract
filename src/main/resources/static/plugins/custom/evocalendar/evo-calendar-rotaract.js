@@ -41,7 +41,7 @@
                 sidebarToggler: true,
                 eventDisplayDefault: true, // 默認顯示事件列表
                 eventListToggler: true,
-                calendarEvents: null
+                x: null
             };
             _.options = $.extend({}, _.defaults, settings);
 
@@ -582,14 +582,15 @@
         _.$active.events.push(event_data);
         markup =    '<div class="timeline-row" role="button" data-event-index="'+(event_data.id)+'">';
         // markup +=       '<div class="timeline-time">7:45PM</div>'
-        markup +=       '<div class="timeline-time">'+event_data.time+'</div>';
+        markup +=       '<div class="timeline-time">'+event_data.startTime+'</div>';
         // markup += '<div class="event-icon"><div class="event-bullet-'+event_data.type+'"';
         markup +=       '<div class="timeline-dot fb-bg"></div>';
         markup +=       '<div class="timeline-content">';
         // markup +=           '<h4>No.191 帶你進入不動產世界</h4>';
-        markup +=           '<h4>'+_.limitTitle(event_data.name)+'</h4>';
+//        markup +=           '<h4>'+_.limitTitle(event_data.name, 30)+'</h4>';
+        markup +=           '<h4>'+event_data.name+'</h4>';
         // markup +=           '<p>[八德陽德扶青社]</p>';
-        markup +=           '<p>['+event_data.club+']</p>';
+        markup +=           '<p>['+event_data.badge+']</p>';
         markup +=       '</div>';
         markup +=   '</div>';
         eventListEl.append(markup);
@@ -610,6 +611,21 @@
         .on('click.evocalendar', _.selectEvent);
     };
 
+    // v1.0.0 - Limit title (...)
+    EvoCalendar.prototype.limitTitle = function(title, limit) {
+        var newTitle = [];
+        limit = limit === undefined ? 18 : limit;
+        if ((title).split(' ').join('').length > limit) {
+            var t = title.split(' ');
+            for (var i=0; i<t.length; i++) {
+                if (t[i].length + newTitle.join('').length <= limit) {
+                    newTitle.push(t[i])
+                }
+            }
+            return newTitle.join(' ') + '...'
+        }
+        return title;
+    }
 
 
 
@@ -1142,21 +1158,6 @@
    
 
 
-    // v1.0.0 - Limit title (...)
-    EvoCalendar.prototype.limitTitle = function(title, limit) {
-        var newTitle = [];
-        limit = limit === undefined ? 18 : limit;
-        if ((title).split(' ').join('').length > limit) {
-            var t = title.split(' ');
-            for (var i=0; i<t.length; i++) {
-                if (t[i].length + newTitle.join('').length <= limit) {
-                    newTitle.push(t[i])
-                }
-            }
-            return newTitle.join(' ') + '...'
-        }
-        return title;
-    }
 
     // v1.0.0 - Remove single event to event list
     EvoCalendar.prototype.removeEventList = function(event_data) {

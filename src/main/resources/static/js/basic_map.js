@@ -250,7 +250,13 @@ function updateDrawerContent(data) {
             $('#name').val(data.name);
             $('#phone').val(data.phone);
             $('#address').val(data.address);
-            $('#url').val(data.url);
+            if (data.url) {
+                $('#url').val(data.url);
+                $('#redirectButton').show();
+            } else {
+                $('#url').val(null);
+                $('#redirectButton').hide();
+            }
             // 更新 #url 的文本和 href 属性
 //            if (data.url) {
 //                $('#url').text(data.url);

@@ -236,10 +236,10 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
             temp.setBadge("測試顯示");
             temp.setDate(outputFormat.format(entity.getStartDate()));
             if (StringUtils.isBlank(entity.getStartTime())) {
-//                temp.setDate(outputFormat.format(entity.getStartDate()));
+                temp.setStartTime("");
 //                temp.setEnd(outputFormat.format(entity.getEndDate()));
             } else {
-//                temp.setStart(outputFormat.format(entity.getStartDate()) + 'T' + entity.getStartTime());
+                temp.setStartTime(entity.getStartTime());
 //                temp.setEnd(outputFormat.format(entity.getEndDate()) + 'T' + entity.getEndTime());
             }
             String type = "0".equals(entity.getType()) ? "birthday" :

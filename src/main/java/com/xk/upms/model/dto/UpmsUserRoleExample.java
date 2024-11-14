@@ -18,7 +18,7 @@ public class UpmsUserRoleExample {
 
     private String realname;
 
-    private String avatar;
+    private String avatarUrl;
 
     private String email;
 

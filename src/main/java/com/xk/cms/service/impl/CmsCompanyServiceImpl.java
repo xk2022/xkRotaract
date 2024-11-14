@@ -15,10 +15,11 @@ import com.xk.cms.model.vo.CmsCompanyWithUserResp;
 import com.xk.cms.service.CmsCompanyService;
 import com.xk.common.json.Industry;
 import com.xk.common.util.GoogleApiGeocode;
+import com.xk.common.util.XkBeanUtils;
 import com.xk.upms.dao.repository.UpmsDictionaryCategoryRepository;
 import com.xk.upms.dao.repository.UpmsDictionaryDataRepository;
-import com.xk.upms.model.po.UpmsDictionaryCategory;
-import com.xk.upms.model.po.UpmsDictionaryData;
+import com.xk.upms.model.vo.UpmsOrganizationResp;
+import com.xk.upms.service.UpmsOrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -29,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,6 +59,8 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
     private CmsCompanyPayRepository cmsCompanyPayRepository;
     @Autowired
     private CmsCompanyMapper cmsCompanyMapper;
+    @Autowired
+    private UpmsOrganizationService upmsOrganizationService;
 
     @Override
     public List list() {
@@ -207,46 +209,37 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
     }
 
     @Override
-    public CmsCompanyWithUserResp findOneWithPersonalByCompanyId(long id) {
+    public CmsCompanyWithUserResp findOneWithPersonalByCompanyId(String reqCompanyId) {
         CmsCompanyWithUserResp result = new CmsCompanyWithUserResp();
         /**
          * CmsCompany
          */
-        Optional<CmsCompany> OCCEntity = cmsCompanyRepository.findById(id);
-        if (!OCCEntity.isPresent()) {
-            throw new EntityNotFoundException("CmsCompany not found with id: " + id);
-        }
-        CmsCompany ccEntity = OCCEntity.get();
+        CmsCompany ccEntity = cmsCompanyRepository.findById(Long.valueOf(reqCompanyId))
+                .orElseThrow(() -> new EntityNotFoundException("Entity<CmsCompany> with ID " + reqCompanyId + " not found"));
 
-        CmsCompanySaveResp resp = new CmsCompanySaveResp();
-        BeanUtils.copyProperties(ccEntity, resp);
-        if (resp.getIndustries() != null) {
-            resp = transIndustriesChinese(resp);
+        CmsCompanySaveResp companyResp = XkBeanUtils.copyProperties(ccEntity, CmsCompanySaveResp::new);
+        if (companyResp.getIndustries() != null) {
+            companyResp = transIndustriesChinese(companyResp);
         }
-        result.setCompanyId(resp.getId());
-        BeanUtils.copyProperties(resp, result);
+        result.setCompanyId(companyResp.getId());
+        BeanUtils.copyProperties(companyResp, result);
         /**
          * CmsUser
          */
-        List<CmsUserCompany> cucEntity = cmsUserCompanyRepository.findByFkCmsCompanyId(id);
-        if (cucEntity.size() <= 0) {
+        List<CmsUserCompany> cucEntities = cmsUserCompanyRepository.findByFkCmsCompanyId(Long.valueOf(reqCompanyId));
+        if (cucEntities.size() <= 0) {
             return null;
         }
-        Optional<CmsUser> OCUEntity = cmsUserRepository.findById(cucEntity.get(0).getFkCmsUserId());
-        if (!OCUEntity.isPresent()) {
-            throw new EntityNotFoundException("CmsUser not found with id: " + id);
-        }
-        CmsUser cuEntity = OCUEntity.get();
+        CmsUser cuEntity = cmsUserRepository.findById(cucEntities.get(0).getFkCmsUserId())
+                .orElseThrow(() -> new EntityNotFoundException("Entity<CmsUser> with ID " + cucEntities.get(0).getFkCmsUserId() + " not found"));
         result.setUserId(cuEntity.getId());
         BeanUtils.copyProperties(cuEntity, result);
 
-        UpmsDictionaryCategory dropdown_DISTRICT_udcEntity =  upmsDictionaryCategoryRepository.findOneByCode("dropdown_DISTRICT");
-        UpmsDictionaryData dropdown_DISTRICT_uddEntity = upmsDictionaryDataRepository.findByParentIdAndCode(dropdown_DISTRICT_udcEntity.getId(), result.getDistrict_id());
-        result.setDistrict_name(dropdown_DISTRICT_uddEntity.getDescription());
+        UpmsOrganizationResp districtUOR = upmsOrganizationService.findById(Long.valueOf(result.getDistrict_id()));
+        result.setDistrict_name(districtUOR.getName());
 
-        UpmsDictionaryCategory udcEntity =  upmsDictionaryCategoryRepository.findOneByCode("dropdown_DISTRICT" + result.getDistrict_id());
-        UpmsDictionaryData uddEntity = upmsDictionaryDataRepository.findByParentIdAndCode(udcEntity.getId(), String.valueOf(Integer.valueOf(result.getRotaract_id())));
-        result.setRotaract_name(uddEntity.getDescription());
+        UpmsOrganizationResp clubUOR = upmsOrganizationService.findById(Long.valueOf(result.getRotaract_id()));
+        result.setRotaract_name(clubUOR.getName());
         /**
          * CmsCompanyPay
          */
