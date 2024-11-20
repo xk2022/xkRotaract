@@ -10,9 +10,9 @@
     const form = element.querySelector('#kt_modal_add_event_form');
     const modal = new bootstrap.Modal(element);
 
-    // Insert
-    $("[name='add_btn']").click(function(){
-        $('#modal_name').text("新增事件");
+    // Function to reset and populate the modal for adding an event
+    function resetEventModal(modalName) {
+        $('#modal_name').text(modalName);
 
         $("[name='id']").val(null);
         $("[name='eventName']").val(null);
@@ -20,8 +20,13 @@
         $("[name='startDate']").val(null);
         $("[name='allDay']").val(null);
         $("[name='district_id']").val($('#district_id').val());
+        $("[name='rotaract_id']").val($('#rotaract_id').val());
         $('#inputGroupSelect_district').val($('#district_id').val());
         $('#inputGroupSelect_district').val($('#district_id').val()).trigger('change');
+    }
+    // Event handler for adding a new event
+    $("[name='add_btn']").click(function () {
+        resetEventModal("新增事件");
     });
 
     // Update
@@ -79,6 +84,9 @@
     <!--begin::Form-->
     <form id="kt_modal_add_event_form" class="form" th:action="@{/admin/cms/manage/calendar/save}" method="post" th:object="${entity}" >
         <input type="hidden" name="id">
+        <input type="hidden" name="access_scope" th:value="${access_scope}">
+        <!-- calendar.js -->
+        <input type="hidden" class="initialDate" name="initialDate" th:value="${initialDate}">
         <input type="hidden" name="district_id">
         <input type="hidden" name="rotaract_id">
         <input type="hidden" name="type">
@@ -89,7 +97,7 @@
             <!--end::Label-->
             <!--begin::Select-->
             <select class="form-select form-control form-control-solid" id="inputGroupSelect_type">
-                <option value="0">請選擇</option>
+<!--                <option value="0">請選擇</option>-->
             </select>
             <!--end::Select-->
         </div>
@@ -157,7 +165,7 @@
             <div class="col">
                 <!--begin::Checkbox-->
                 <label class="form-check form-check-custom form-check-solid">
-                    <input class="form-check-input" name="allDay" type="checkbox" value="" id="kt_calendar_datepicker_allday" />
+                    <input class="form-check-input" name="allDay" type="checkbox" value="true" id="kt_calendar_datepicker_allday" />
                     <span class="form-check-label fw-bold" for="kt_calendar_datepicker_allday" th:text="全天">All Day</span>
                 </label>
                 <!--end::Checkbox-->
@@ -165,21 +173,21 @@
             <div class="col">
                 <!--begin::Checkbox-->
                 <label class="form-check form-check-custom form-check-solid">
-                    <input class="form-check-input" name="dayMorning" type="checkbox" value="" id="kt_calendar_datepicker_dayMorning" />
+                    <input class="form-check-input" name="dayMorning" type="checkbox" value="false" id="kt_calendar_datepicker_dayMorning" />
                     <span class="form-check-label fw-bold" for="kt_calendar_datepicker_dayMorning" th:text="上午"></span>
                 </label>
                 <!--end::Checkbox-->
             </div>
             <div class="col"><!--begin::Checkbox-->
                 <label class="form-check form-check-custom form-check-solid">
-                    <input class="form-check-input" name="dayAfternoon" type="checkbox" value="" id="kt_calendar_datepicker_dayAfternoon" />
+                    <input class="form-check-input" name="dayAfternoon" type="checkbox" value="false" id="kt_calendar_datepicker_dayAfternoon" />
                     <span class="form-check-label fw-bold" for="kt_calendar_datepicker_dayAfternoon" th:text="下午"></span>
                 </label>
                 <!--end::Checkbox-->
             </div>
             <div class="col"><!--begin::Checkbox-->
                 <label class="form-check form-check-custom form-check-solid">
-                    <input class="form-check-input" name="dayNight" type="checkbox" value="" id="kt_calendar_datepicker_dayNight" />
+                    <input class="form-check-input" name="dayNight" type="checkbox" value="false" id="kt_calendar_datepicker_dayNight" />
                     <span class="form-check-label fw-bold" for="kt_calendar_datepicker_dayNight" th:text="晚上"></span>
                 </label>
                 <!--end::Checkbox-->

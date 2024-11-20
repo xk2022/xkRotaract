@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * CmsCalendar ServiceImpl 實現
- * @author yuan
- * Created by yuan on 2024/09/24
+ * Implementation of the CmsCalendar Service.
+ *
+ * @author yuan Created on 2024/09/24.
  */
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -65,7 +65,7 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
         }
         Example<CmsCalendar> example = Example.of(req);
 
-        switch (resource.getCalendar_range()) {
+        switch (resource.getAccess_scope()) {
             case "all":
                 entities = cmsCalendarRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
                 break;

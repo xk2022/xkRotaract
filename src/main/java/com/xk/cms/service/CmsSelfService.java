@@ -4,7 +4,7 @@ import com.xk.common.json.Industry;
 import java.util.List;
 
 /**
- * CmsSelfService 接口
+ * CmsSelf Service interface
  * <p>
  * 該接口提供了個人管理模塊中與行業信息相關的服務方法。
  * 通過此接口，可以查詢所有行業信息，以及將行業信息分組的功能。
@@ -16,8 +16,8 @@ import java.util.List;
  * 並可以以分組方式展示行業，方便前端進行多列佈局等操作。
  * </p>
  *
- * @author yuan Created by yuan on 2024/05/02
- * @author yuan Updated by yuan on 2024/11/01
+ * @author yuan Created on 2024/05/02.
+ * @author yuan Updated on 2024/11/01.
  *
  * @param <Industry> 行業類型，用於表示單個行業的數據
  */

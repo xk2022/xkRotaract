@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * CmsDistrict Service interface
  *
- * @author yuan Created by yuan on 2024/10/24
+ * @author yuan Created on 2024/10/24
  */
 public interface CmsDistrictService {
 

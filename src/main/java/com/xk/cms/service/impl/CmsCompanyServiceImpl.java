@@ -34,8 +34,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * CmsUserService 實現
- * Created by yuan on 2024/05/02
+ * Implementation of the CmsCompany Service.
+ *
+ * @author yuan Created on 2024/05/02.
  */
 @Transactional(rollbackFor = Exception.class)
 @Service

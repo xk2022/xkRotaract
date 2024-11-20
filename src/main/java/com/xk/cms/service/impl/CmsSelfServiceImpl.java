@@ -12,8 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * CmsUserService 實現
- * Created by yuan on 2024/05/02
+ * Implementation of the CmsSelf Service.
+ *
+ * @author yuan Created on 2024/05/02.
  */
 @Transactional(rollbackFor = Exception.class)
 @Service

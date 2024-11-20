@@ -74,4 +74,6 @@ public interface UpmsOrganizationService {
     List buildTree(List<UpmsOrganizationResp> organizations);
 
     List findChildren(String code);
+
+    List getOrganizationsExcludingLevel3();
 }

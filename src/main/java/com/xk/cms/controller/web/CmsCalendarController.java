@@ -44,7 +44,7 @@ public class CmsCalendarController extends BaseController {
 //		model.addAttribute("fragmentPackage", "calendar");
 		model.addAttribute("fragmentName", "list");
 
-		model.addAttribute("calendar_range", "all");
+		model.addAttribute("access_scope", "all");
 		model.addAttribute("entity", new CmsCalendarSaveReq());
 		return ADMIN_INDEX;
 	}
@@ -55,7 +55,7 @@ public class CmsCalendarController extends BaseController {
 		model.addAttribute("fragmentPackage", "calendar");
 		model.addAttribute("fragmentName", "list");
 
-		model.addAttribute("calendar_range", "club");
+		model.addAttribute("access_scope", "club");
 		UserExample user = (UserExample) session.getAttribute("user");
 		if (StringUtils.isBlank(user.getRotaract_id()) || "0".equals(user.getRotaract_id())) {
 			return this.errorMsg(model, "查無所屬社", "請先至“我的資料”，選擇您的所屬社！");
@@ -72,7 +72,7 @@ public class CmsCalendarController extends BaseController {
 		model.addAttribute("fragmentPackage", "calendar");
 		model.addAttribute("fragmentName", "list");
 
-		model.addAttribute("calendar_range", "district");
+		model.addAttribute("access_scope", "district");
 		UserExample user = (UserExample) session.getAttribute("user");
 		if (StringUtils.isBlank(user.getDistrict_id()) || "0".equals(user.getDistrict_id())) {
 			return this.errorMsg(model, "查無所屬地區", "請先至“我的資料”，選擇您的所屬地區！");
@@ -84,7 +84,7 @@ public class CmsCalendarController extends BaseController {
 
 
 	/**
-	 * 新增/修改 社團 Create/Update
+	 * 新增/修改 Create/Update
 	 */
 	@PostMapping("/save")
 	public String post(CmsCalendarSaveReq resources, RedirectAttributes attributes) {
@@ -97,12 +97,10 @@ public class CmsCalendarController extends BaseController {
 			result = cmsCalendarService.update(resources);
 		}
 
-		if (result == null) {
-			attributes.addFlashAttribute("message", "操作失敗");
-		} else {
-			attributes.addFlashAttribute("message", "操作成功");
-		}
-		return REDIRECT_URL;
+		attributes.addFlashAttribute("initialDate", resources.getInitialDate());
+		// 根據操作結果設置提示訊息
+		attributes.addFlashAttribute("message", (result == null) ? "操作失敗" : "操作成功");
+		return REDIRECT_URL + "/" + resources.getAccess_scope();
 	}
 
 }

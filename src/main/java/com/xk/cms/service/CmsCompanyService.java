@@ -7,8 +7,9 @@ import com.xk.cms.model.vo.CmsCompanyWithUserResp;
 import java.util.List;
 
 /**
- * CmsCompany Service 接口
- * Created by yuan on 2024/05/02
+ * CmsCompany Service interface
+ *
+ * @author yuan Created on 2024/05/02.
  */
 public interface CmsCompanyService {
 

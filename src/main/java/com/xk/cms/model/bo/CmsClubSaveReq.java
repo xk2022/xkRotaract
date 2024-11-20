@@ -1,6 +1,5 @@
 package com.xk.cms.model.bo;
 
-import com.xk.cms.model.po.CmsClub;
 import lombok.Data;
 
 /**
@@ -8,6 +7,14 @@ import lombok.Data;
  * Created by yuan on 2024/09/18
  */
 @Data
-public class CmsClubSaveReq extends CmsClub {
+public class CmsClubSaveReq {
+
+    private String id;
+
+    private String fkUpmsOrganizationId;
+
+    private String name;
+
+    private String status;
 
 }

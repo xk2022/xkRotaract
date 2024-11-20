@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * CmsUserService 實現
+ * Implementation of the CmsUser Service.
  *
  * @author yuan Created on 2024/05/02.
  */

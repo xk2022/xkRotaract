@@ -18,8 +18,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * CmsCompanyPayService 實現
- * Created by yuan on 2024/08/22
+ * Implementation of the CmsCompanyPay Service.
+ *
+ * @author yuan Created on 2024/09/18.
  */
 @Transactional(rollbackFor = Exception.class)
 @Service

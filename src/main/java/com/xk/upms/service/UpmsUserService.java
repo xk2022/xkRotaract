@@ -23,8 +23,10 @@ public interface UpmsUserService {
     List list(UpmsUserReq resources);
 
     UpmsUserResp findByUsername(UpmsUserReq resources);
+
+    UpmsUserResp findByEmail(String email);
     
-    UpmsUserDetailResp selectDeatilById(long id);
+    UpmsUserDetailResp selectDetailById(long id);
 
     UpmsUserSaveResp create(UpmsUserSaveReq resources);
 

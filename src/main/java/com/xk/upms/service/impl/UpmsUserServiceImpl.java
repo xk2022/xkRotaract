@@ -74,9 +74,15 @@ public class UpmsUserServiceImpl implements UpmsUserService {
         BeanUtils.copyProperties(entity, result);
         return result;
     }
-    
+
     @Override
-    public UpmsUserDetailResp selectDeatilById(long id) {
+    public UpmsUserResp findByEmail(String email) {
+        UpmsUser entity = upmsUserRepository.findByEmail(email);
+        return XkBeanUtils.copyProperties(entity, UpmsUserResp::new);
+    }
+
+    @Override
+    public UpmsUserDetailResp selectDetailById(long id) {
         UpmsUserDetailResp result = new UpmsUserDetailResp();
 
         UpmsUser entity = upmsUserRepository.findById(id).get();

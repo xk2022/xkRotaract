@@ -92,7 +92,7 @@ public class UpmsUserController extends BaseController {
         // 將所有角色列表加入模型，以便在視圖中使用
         model.addAttribute("role_list", upmsRoleService.list());
         // 根據用戶 ID 獲取詳細的用戶信息並加入模型
-        model.addAttribute("info", upmsUserService.selectDeatilById(id));
+        model.addAttribute("info", upmsUserService.selectDetailById(id));
         // 根據用戶 ID 獲取主要的用戶實體並加入模型
         model.addAttribute("entity", upmsUserService.selectByPrimaryKey(id));
         // 返回管理員首頁模板路徑

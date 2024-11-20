@@ -35,4 +35,8 @@ public class CmsCalendarSaveReq {
     // event, holiday, birthday
     private String type;
 
+    private String access_scope;
+
+    private String initialDate;
+
 }

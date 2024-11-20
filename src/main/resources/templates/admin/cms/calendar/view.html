@@ -44,12 +44,12 @@
 
             var elementD = document.getElementById('inputGroupSelect_district');
             var elementC = document.getElementById('inputGroupSelect_club');
-            if ($('#calendar_range').val() === 'club') {
+            if ($('#access_scope').val() === 'club') {
                 elementD.style.display = 'block';
                 elementC.style.display = 'block';
                 elementD.disabled = true;
                 elementC.disabled = true;
-            } else if ($('#calendar_range').val() === 'district') {
+            } else if ($('#access_scope').val() === 'district') {
                 elementD.style.display = 'block';
                 // elementC.style.display = 'none';
                 elementD.disabled = true;
@@ -84,9 +84,11 @@
         <!--end::Card header-->
         <!--begin::Card body-->
         <div class="card-body">
-            <input type="hidden" id="calendar_range" th:value="${calendar_range}">
+            <input type="hidden" id="access_scope" th:value="${access_scope}">
             <input type="hidden" id="district_id" th:value="${district_id}">
             <input type="hidden" id="rotaract_id" th:value="${rotaract_id}">
+            <!-- calendar.js -->
+            <input type="hidden" class="initialDate" id="initialDate" th:value="${initialDate}">
             <!--begin::Calendar-->
             <div id="kt_calendar_app"></div>
             <!--end::Calendar-->

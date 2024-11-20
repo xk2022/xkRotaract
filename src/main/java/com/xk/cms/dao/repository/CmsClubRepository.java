@@ -7,9 +7,11 @@ import java.io.Serializable;
 
 /**
  * CmsClub Repository
- * Created by yuan on 2024/09/18
- * @author yuan
+ *
+ * @author yuan Created on 2024/09/18.
  */
 public interface CmsClubRepository extends JpaRepository<CmsClub, Long>, Serializable {
+
+    CmsClub findByFkUpmsOrganizationId(Long organization_id);
 
 }

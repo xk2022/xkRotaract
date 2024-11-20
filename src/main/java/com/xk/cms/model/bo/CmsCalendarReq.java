@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class CmsCalendarReq {
 
-    private String calendar_range;
+    private String access_scope;
 
     private String eventName;
 

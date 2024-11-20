@@ -61,7 +61,7 @@ var KTAppCalendar = function () {
 
     var initData = function () {
         let data = {
-            calendar_range: $('#calendar_range').val(),
+            access_scope: $('#access_scope').val(),
             district_id: $('#district_id').val()
         };
 
@@ -109,6 +109,7 @@ var KTAppCalendar = function () {
         var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
         var TODAY = todayDate.format('YYYY-MM-DD');
         var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
+        var INITIAL_DATE = $('#initialDate').val() == '' ? TODAY : $('#initialDate').val();
 
         // Init calendar --- more info: https://fullcalendar.io/docs/initialize-globals
         calendar = new FullCalendar.Calendar(calendarEl, {
@@ -118,7 +119,6 @@ var KTAppCalendar = function () {
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
             },
-            initialDate: TODAY,
             navLinks: true, // can click day/week names to navigate views
             selectable: true,
             selectMirror: true,
@@ -131,7 +131,7 @@ var KTAppCalendar = function () {
             now: TODAY + 'T09:25:00', // just for demo
 
             initialView: 'dayGridMonth',
-            initialDate: TODAY,
+            initialDate: INITIAL_DATE,
 
             views: {
                 dayGridMonth: { buttonText: '月份' },
@@ -530,6 +530,8 @@ var KTAppCalendar = function () {
                 });
             }
         });
+
+        resetEventModal("新增事件");
     }
 
     // Handle add new event
@@ -568,6 +570,7 @@ var KTAppCalendar = function () {
     // Handle view event
     const handleViewEvent = () => {
         viewModal.show();
+        $('.initialDate').val(data.startDate);
 
         // Detect all day event
         var eventNameMod;
@@ -683,6 +686,8 @@ var KTAppCalendar = function () {
         // Handle null end dates
         // const endDate = data.endDate ? data.endDate : moment(data.startDate).format();
         endFlatpickr.setDate(data.startDate, true, 'Y-m-d');
+
+        $('.initialDate').val(data.startDate);
 
 //        const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
 //        if (data.allDay) {

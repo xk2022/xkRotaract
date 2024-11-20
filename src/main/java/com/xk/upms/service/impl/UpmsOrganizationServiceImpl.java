@@ -1,5 +1,9 @@
 package com.xk.upms.service.impl;
 
+import com.xk.cms.model.bo.CmsClubSaveReq;
+import com.xk.cms.model.bo.CmsUserSaveReq;
+import com.xk.cms.service.CmsClubService;
+import com.xk.cms.service.CmsUserService;
 import com.xk.common.util.GenericUpdateService;
 import com.xk.common.util.XkBeanUtils;
 import com.xk.common.util.XkTypeUtils;
@@ -13,6 +17,7 @@ import com.xk.upms.model.po.UpmsOrganization;
 import com.xk.upms.model.vo.UpmsOrganizationResp;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
 import com.xk.upms.model.vo.UpmsOrganizationTreeResp;
+import com.xk.upms.model.vo.UpmsUserResp;
 import com.xk.upms.service.UpmsOrganizationService;
 import com.xk.upms.service.UpmsUserService;
 import org.apache.commons.lang3.StringUtils;
@@ -50,9 +55,18 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
     private UpmsUserService upmsUserService;
     @Autowired
     private UpmsRoleRepository upmsRoleRepository;
+    @Autowired
+    private CmsUserService cmsUserService;
+    @Autowired
+    private CmsClubService cmsClubService;
 
     @Override
     public List<UpmsOrganizationResp> list(UpmsOrganizationReq resources) {
+        // parentCode
+        if (resources != null && StringUtils.isNotBlank(resources.getParentCode())) {
+            UpmsOrganization parentOrg = upmsOrganizationRepository.findByCode(resources.getParentCode());
+            resources.setParentId(String.valueOf(parentOrg.getId()));
+        }
         // 設置 Example 條件，如果 resources 為 null 則返回 null
         Example<UpmsOrganization> example = resources == null ? null :
                 Example.of(XkBeanUtils.copyProperties(resources, UpmsOrganization::new), ExampleMatcher.matching()
@@ -105,7 +119,7 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
         }
         // 保存實體到數據庫
         UpmsOrganization savedEntity = upmsOrganizationRepository.save(req);
-
+        // upmsUserService.create() && cmsUserService.create()
         prepareUserForOrganization(savedEntity);
         // 創建並返回 UpmsOrganizationSaveResp
         return XkBeanUtils.copyProperties(savedEntity, UpmsOrganizationSaveResp::new);
@@ -142,8 +156,40 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
         UpmsOrganization updatedEntity = updateService.updateEntity(entity, resources);
         // 保存更新後的實體
         UpmsOrganization savedEntity = upmsOrganizationRepository.save(updatedEntity);
+        // cmsUserService.create()
+        prepareUserInfoForOrganization(savedEntity);
         // 創建並返回 UpmsOrganizationSaveResp
         return XkBeanUtils.copyProperties(savedEntity, UpmsOrganizationSaveResp::new);
+    }
+
+    /**
+     * 在開啟組織的同時，協助建立對應使用者資訊
+     */
+    private void prepareUserInfoForOrganization(UpmsOrganization uoEntity) {
+        if (uoEntity != null) {
+            UpmsUserResp upmsUser = null;
+            if (uoEntity.getCode().startsWith("D")) {
+                upmsUser = upmsUserService.findByEmail(uoEntity.getCode().substring(1)+"@District");
+            } else if (uoEntity.getCode().startsWith("C")) {
+                upmsUser = upmsUserService.findByEmail(uoEntity.getCode().substring(1)+"@Club");
+
+                CmsClubSaveReq ccReq = new CmsClubSaveReq();
+                ccReq.setFkUpmsOrganizationId(String.valueOf(uoEntity.getId()));
+                ccReq.setName(uoEntity.getName());
+                ccReq.setStatus("true");
+                cmsClubService.create(ccReq);
+            } else {
+                return;
+            }
+            UpmsOrganization parentOrg = upmsOrganizationRepository.findById(uoEntity.getParentId())
+                    .orElseThrow(() -> new EntityNotFoundException("Entity<UpmsOrganization> with ID " + uoEntity.getParentId() + " not found"));
+
+            CmsUserSaveReq req = new CmsUserSaveReq();
+            req.setFkUpmsUserId(upmsUser.getId());
+            req.setDistrict_id(String.valueOf(parentOrg.getId()));
+            req.setRotaract_id(String.valueOf(uoEntity.getId()));
+            cmsUserService.create(req);
+        }
     }
 
     @Override
@@ -206,9 +252,16 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
 
         UpmsOrganizationReq req = new UpmsOrganizationReq();
         req.setParentId(String.valueOf(parentEntity.getId()));
+        req.setStatus("true");
 
         // 調用 list 方法查找子組織
         return this.list(req);
+    }
+
+    @Override
+    public List<UpmsOrganization> getOrganizationsExcludingLevel3() {
+        // 查詢不包含 level = 3 的所有組織
+        return upmsOrganizationRepository.findByLevelNotIn(Arrays.asList(3));
     }
 
 

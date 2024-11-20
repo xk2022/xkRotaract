@@ -64,7 +64,7 @@ public class UpmsOrganizationController extends BaseController {
 //        model.addAttribute("page_list", upmsOrganizationService.list(null));
         model.addAttribute("page_list", upmsOrganizationService.buildTree(upmsOrganizationService.list(null)));
         model.addAttribute("entity", new UpmsOrganizationSaveReq());
-        model.addAttribute("select_organization", upmsOrganizationService.list(null));
+        model.addAttribute("select_organization", upmsOrganizationService.getOrganizationsExcludingLevel3());
         return ADMIN_INDEX;
     }
 

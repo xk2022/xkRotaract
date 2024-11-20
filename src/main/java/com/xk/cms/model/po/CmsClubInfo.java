@@ -11,30 +11,38 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
+ * CmsClubInfo - 社團資訊表
+ * 用於儲存 key-value 格式的社團資訊
  *
- * @author yuan Created on 2024/09/18.
- * @author yuan Updated on 2024/11/15.
+ * @author yuan Created on 2024/11/15.
  */
 @Entity
 @Getter
 @Setter
-@Table(name = "cms_club")
-public class CmsClub extends BaseEntity implements Serializable {
+@Table(name = "cms_club_info")
+public class CmsClubInfo extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GenericGenerator(name = "faceset_generator", strategy = "guid")
-    @Column(name = "club_id")
+    @Column(name = "id")
     @NotNull(groups = Update.class)
     @Comment("00_流水號")
     private Long id;
 
-    @Column(name = "organization_id", nullable = false, length = 255)
-    @Comment("01_所属組織 ID")
-    private Long fkUpmsOrganizationId;
+    @Column(name = "club_id", nullable = false)
+    @Comment("01_關聯的社團 ID")
+    @NotNull
+    private Long clubId;
 
-    @Comment("02_社團名稱（地區or社名）")
-    private String name;
+    @Column(name = "info_key", nullable = false, length = 255)
+    @Comment("02_資訊的名稱（key）")
+    @NotNull
+    private String infoKey;
+
+    @Column(name = "info_value", columnDefinition = "TEXT")
+    @Comment("03_資訊的內容（value）")
+    private String infoValue;
 
     @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
     @Comment("91_狀態，表示是否有效或啟用")
