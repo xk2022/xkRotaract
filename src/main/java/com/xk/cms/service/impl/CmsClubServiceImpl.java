@@ -79,6 +79,9 @@ public class CmsClubServiceImpl implements CmsClubService {
                 .collect(Collectors.toList()); // 收集到 List
 
         CmsClub entity = cmsClubRepository.findByFkUpmsOrganizationId(Long.valueOf(rotaractId));
+        if (entity == null) {
+            return null;
+        }
         List<CmsClubInfo> dataList = cmsClubInfoRepository.findByClubId(entity.getId());
         Map<String, String> dataMap = dataList.stream()
                 .collect(Collectors.toMap(CmsClubInfo::getInfoKey, CmsClubInfo::getInfoValue));

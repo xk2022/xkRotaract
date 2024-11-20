@@ -25,7 +25,7 @@ public class UpmsUserRole extends BaseEntity implements Serializable {
     @GenericGenerator(name = "faceset_generator", strategy = "guid")
     @Column(name = "user_role_id")
     @NotNull(groups = Update.class)
-    private Long userRoleId;
+    private Long id;
     /**
      * 用户编号
      */

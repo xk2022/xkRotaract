@@ -139,7 +139,7 @@ public class AuthorizationController extends BaseController {
         result = upmsUserService.create(resources);
         LOGGER.info("新增用户，主键：userId={}", result.getId());
 
-        UpmsRole role = upmsRoleService.selectByCode("member");
+        UpmsRole role = upmsRoleService.selectByCode("rookie");
         if (role == null) {
             // 如果角色不存在，可以處理相應邏輯
             attributes.addFlashAttribute("message", "操作失敗，系統角色有誤，通知管理員");
@@ -147,8 +147,6 @@ public class AuthorizationController extends BaseController {
         }
         String[] roleIds = {String.valueOf(role.getId())};
         upmsUserRoleService.role(result.getId(), roleIds);
-
-
 
         if (result != null) {
             return R_AUTH_SIGNIN;

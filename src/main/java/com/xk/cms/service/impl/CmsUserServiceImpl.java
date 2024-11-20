@@ -77,6 +77,8 @@ public class CmsUserServiceImpl implements CmsUserService {
         entity.setPhoneNumber(resources.getCellPhone());
         entity = cmsUserRepository.save(entity);
 
+
+
         BeanUtils.copyProperties(entity, result);
         return result;
     }

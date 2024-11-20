@@ -51,7 +51,6 @@ public class UpmsRoleController extends BaseController {
     /**
      * 查詢 角色 首頁
      */
-//    @RequiresPermissions("upms:role:read")
     @GetMapping()
     public String index(Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);

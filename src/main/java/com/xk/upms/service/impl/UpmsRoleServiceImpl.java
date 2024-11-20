@@ -6,6 +6,7 @@ import com.xk.upms.dao.repository.UpmsRoleRepository;
 import com.xk.upms.dao.repository.UpmsUserRoleRepository;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
 import com.xk.upms.model.po.UpmsRole;
+import com.xk.upms.model.po.UpmsUserRole;
 import com.xk.upms.model.vo.UpmsRoleResp;
 import com.xk.upms.model.vo.UpmsRoleSaveResp;
 import com.xk.upms.service.UpmsRoleService;
@@ -129,6 +130,16 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
         resp.setCountUser(cntUser);
 
         return resp;
+    }
+
+    @Override
+    public void updateByUserIdAndRoleCode(Long upmsUserId, String roleCode) {
+        UpmsRole roleEntity = upmsRoleRepository.findByCode(roleCode);
+
+        UpmsUserRole saveEntity = upmsUserRoleRepository.findByUserId(upmsUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Entity<UpmsUserRole> with userId " + upmsUserId + " not found"));
+        saveEntity.setRoleId(roleEntity.getId());
+        upmsUserRoleRepository.save(saveEntity);
     }
 
 }

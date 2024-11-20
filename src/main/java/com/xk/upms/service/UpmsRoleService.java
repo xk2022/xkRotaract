@@ -29,4 +29,6 @@ public interface UpmsRoleService {
     UpmsRoleResp selectByCode(String code);
 
     UpmsRoleResp findById(Long id);
+
+    void updateByUserIdAndRoleCode(Long upmsUserId, String roleCode);
 }

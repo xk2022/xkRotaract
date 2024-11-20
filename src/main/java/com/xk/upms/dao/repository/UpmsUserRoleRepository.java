@@ -15,5 +15,5 @@ public interface UpmsUserRoleRepository extends JpaRepository<UpmsUserRole, Long
 
 //    List<UpmsUserRole> findByUserId(Long userId);
     
-    Optional<UpmsUserRole> findByUserId(Long userIde);
+    Optional<UpmsUserRole> findByUserId(Long userId);
 }

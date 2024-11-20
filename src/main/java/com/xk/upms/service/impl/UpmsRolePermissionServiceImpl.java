@@ -324,7 +324,11 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
             saveEntities.add(entity);
         }
         // 5. 保存更新后的父菜单权限
-        upmsRolePermissionRepository.saveAll(saveEntities);
+//        upmsRolePermissionRepository.saveAll(saveEntities);
+        // 排除重複紀錄，避免拋出錯誤
+
+        Set<UpmsRolePermission> uniquePermissions = new HashSet<>(saveEntities);
+        upmsRolePermissionRepository.saveAll(uniquePermissions);
     }
 
 }

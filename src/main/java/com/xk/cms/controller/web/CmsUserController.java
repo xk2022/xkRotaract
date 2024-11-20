@@ -6,6 +6,7 @@ import com.xk.cms.model.bo.CmsUserSaveReq;
 import com.xk.cms.model.vo.CmsUserSaveResp;
 import com.xk.cms.service.CmsUserService;
 import com.xk.common.base.BaseController;
+import com.xk.upms.service.UpmsRoleService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,6 +39,8 @@ public class CmsUserController extends BaseController {
 
     @Autowired
     private CmsUserService cmsUserService;
+    @Autowired
+    private UpmsRoleService upmsRoleService;
 
     /**
      * 查詢 用户 首頁
@@ -147,6 +150,8 @@ public class CmsUserController extends BaseController {
         if (resources.getId() == null) {
             result = cmsUserService.create(resources);
             LOGGER.info("新增用户，主键：userId={}", result.getId());
+
+            upmsRoleService.updateByUserIdAndRoleCode(result.getFkUpmsUserId(), "member");
         } else {
             result = cmsUserService.update(resources.getId(), resources);
         }

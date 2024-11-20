@@ -58,7 +58,7 @@
                 <div class="card-footer flex-wrap pt-0">
                     <a th:href="@{/admin/upms/manage/role/{id}(id=${data.id})}" class="btn btn-light btn-active-primary my-1 me-2">權限明細</a>
                     <button type="button" class="btn btn-light btn-active-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_input"
-                            th:attr="onclick=|edit_btn('${data.id}', '${data.title}')|">
+                            th:attr="onclick=|edit_btn('${data.id}', '${data.code}', '${data.title}')|">
                         編輯名稱</button>
                 </div>
                 <!--end::Card footer-->

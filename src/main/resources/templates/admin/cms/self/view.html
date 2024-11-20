@@ -33,9 +33,27 @@
     <!--end::Page Custom Javascript-->
     <script th:inline="javascript">
         $(document).ready(function() {
-
             // 初始化加载地区
             loadDistricts('dropdown_DISTRICT');
+
+            if ($('#rookieMsg').val()) {
+                // Simulate ajax request
+                setTimeout(function() {
+
+                    // Show message popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+                    Swal.fire({
+                        text: "首次登入，請先協助填寫個人信息。再次登入即可享有更多服務。",
+                        icon: "success",
+                        buttonsStyling: false,
+                        confirmButtonText: "馬上開始!",
+                        customClass: {
+                            confirmButton: "btn btn-primary"
+                        }
+                    }).then(function (result) {
+
+                    });
+                }, 2000);
+            }
 
             function init_referralCode() {
                 var referralCode;
@@ -50,6 +68,11 @@
             }
             init_referralCode();
         });
+
+        // Function to show a confirmation message before submitting the form
+        function confirmSubmit() {
+            return confirm('您確定要更新您的資料嗎？');
+        }
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->
@@ -57,6 +80,7 @@
 <div th:fragment="view" id="kt_content_container" class="container-fluid">
     <!--begin::Sitemap main-->
     <div class="d-flex flex-column flex-xl-row">
+        <input type="hidden" id="rookieMsg" th:value="${rookieMsg}">
         <!--begin::Content-->
         <div class="card bg-body flex-row-fluid mb-9 mb-xl-0 me-xl-9">
             <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: infoSelf"></div>
@@ -73,7 +97,7 @@
 
 <div th:fragment="infoSelf" class="card-body">
     <!--begin::Form-->
-    <form class="form" method="post" id="kt_modal_input_form" th:object="${entity}" th:action="@{/admin/cms/manage/user/save/self}" >
+    <form class="form" method="post" id="kt_modal_input_form" th:object="${entity}" th:action="@{/admin/cms/manage/user/save/self}" onsubmit="return confirmSubmit()">
         <input type="hidden" name="id" th:value="${entity.id}">
         <input type="hidden" name="username" th:value="${session.user.username}">
         <input type="hidden" name="district_id" th:value="${entity.district_id}">
@@ -181,7 +205,7 @@
         </div>
         <!--end::Input group-->
         <!--begin::Submit-->
-        <button type="submit" class="btn btn-primary" id="kt_contact_submit_button">
+        <button type="submit" class="btn btn-primary" id="kt_contact_submit_button" onclick="submitMsg()">
             <!--begin::Indicator-->
             <span class="indicator-label">更新我的資料</span>
             <span class="indicator-progress">Please wait...

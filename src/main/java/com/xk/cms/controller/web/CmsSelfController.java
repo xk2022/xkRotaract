@@ -8,6 +8,7 @@ import com.xk.cms.service.CmsSelfService;
 import com.xk.cms.service.CmsUserService;
 import com.xk.common.base.BaseController;
 import io.swagger.annotations.Api;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,11 @@ public class CmsSelfController extends BaseController {
         model.addAttribute("fragmentName", "view");
 
         CmsUserSaveResp entity = getUserFromSession(session);
+
+        if (StringUtils.isBlank(entity.getDistrict_id()) && StringUtils.isBlank(entity.getRealname())) {
+            model.addAttribute("rookieMsg", true);
+        }
+
         model.addAttribute("entity", entity);
         model.addAttribute("companies", loadUserCompanies(entity));
 
