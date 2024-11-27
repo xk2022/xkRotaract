@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * CmsClubInfo Repository
@@ -14,5 +15,7 @@ import java.util.List;
 public interface CmsClubInfoRepository extends JpaRepository<CmsClubInfo, Long>, Serializable {
 
     List<CmsClubInfo> findByClubId(Long clubId);
+
+    Optional<CmsClubInfo> findByClubIdAndInfoKey(Long clubId, String infoKey);
 
 }

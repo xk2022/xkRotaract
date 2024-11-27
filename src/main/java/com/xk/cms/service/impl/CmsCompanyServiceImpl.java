@@ -5,11 +5,13 @@ import com.xk.cms.dao.repository.CmsCompanyPayRepository;
 import com.xk.cms.dao.repository.CmsCompanyRepository;
 import com.xk.cms.dao.repository.CmsUserCompanyRepository;
 import com.xk.cms.dao.repository.CmsUserRepository;
+import com.xk.cms.model.bo.CmsCompanyReq;
 import com.xk.cms.model.bo.CmsCompanySaveReq;
 import com.xk.cms.model.dto.CmsCompanyExample;
 import com.xk.cms.model.po.CmsCompany;
 import com.xk.cms.model.po.CmsUser;
 import com.xk.cms.model.po.CmsUserCompany;
+import com.xk.cms.model.vo.CmsCompanyResp;
 import com.xk.cms.model.vo.CmsCompanySaveResp;
 import com.xk.cms.model.vo.CmsCompanyWithUserResp;
 import com.xk.cms.service.CmsCompanyService;
@@ -24,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,21 +69,27 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
     private UpmsOrganizationService upmsOrganizationService;
 
     @Override
-    public List list() {
-        List<CmsCompanySaveResp> result = new ArrayList<>();
-        List<CmsCompany> entities = cmsCompanyRepository.findAll();
+    public List list(CmsCompanyReq resources) {
+        // 設置 Example 條件，如果 resources 為 null 則返回 null
+        Example<CmsCompany> example = resources == null ? null :
+                Example.of(XkBeanUtils.copyProperties(resources, CmsCompany::new), ExampleMatcher.matching()
+                        .withIgnoreNullValues()
+                        .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                        .withIgnoreCase());
+        // 提取排序規則，避免重複定義
+        Sort sort = Sort.by(Sort.Order.asc("id"));
+        // 記錄查詢條件和排序規則
+        LOGGER.info("查詢 CmsCompany，條件: {}", resources);
+        LOGGER.info("排序規則: {}", sort);
 
-        for (CmsCompany entity : entities) {
-            CmsCompanySaveResp resp = new CmsCompanySaveResp();
-            BeanUtils.copyProperties(entity, resp);
+        // 查詢數據並轉換為 UpmsOrganizationResp 列表
+        List<CmsCompany> companies = (example == null)
+                ? cmsCompanyRepository.findAll(sort)
+                : cmsCompanyRepository.findAll(example, sort);
+        // 記錄查詢結果數量（僅在 DEBUG 級別下）
+        LOGGER.info("查詢結果數量: {}", companies.size());
 
-            if (resp.getIndustries() != null) {
-                resp = transIndustriesChinese(resp);
-            }
-            resp.setLocked(false);
-            result.add(resp);
-        }
-        return result;
+        return XkBeanUtils.copyListProperties(companies, CmsCompanyResp::new);
     }
 
     @Override

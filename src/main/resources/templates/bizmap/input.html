@@ -52,46 +52,119 @@
 
 
             <!--begin::Modal body-->
+<!--            <div id="filterBlock" class="modal-body scroll-y mx-5 mx-xl-15 my-7">-->
+<!--                &lt;!&ndash;begin::Input group&ndash;&gt;-->
+<!--                <div class="row fv-row mb-7">-->
+<!--                    <div class="col-md">-->
+<!--                        &lt;!&ndash; 全选复选框 &ndash;&gt;-->
+<!--                        <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
+<!--                            <div class="col-12 mb-3 no-wrap">-->
+<!--                                <input class="form-check-input" type="checkbox" id="selectAll" checked/>-->
+<!--                                <label class="form-check-label" for="selectAll">全選</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        <th:block th:if="${chunkedIndustries != null}" th:each="chunk : ${chunkedIndustries}">-->
+<!--                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">-->
+<!--                                &lt;!&ndash;                                <div class="col-md" th:each="industry : ${chunk}">&ndash;&gt;-->
+<!--                                <div th:each="industry, iterStat : ${chunk}" class="col-6 mb-3 no-wrap" th:classappend="${iterStat.index % 2 == 0} ? ' border-right' : ''">-->
+<!--                                    &lt;!&ndash; 添加 null 检查，确保 industry 不为空 &ndash;&gt;-->
+<!--                                    <th:block th:if="${industry != null}">-->
+<!--&lt;!&ndash;                                        <input class="form-check-input industry-checkbox" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" checked/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>&ndash;&gt;-->
+<!--                                        <div class="btn-group-toggle" data-toggle="buttons">-->
+<!--                                            <input class="form-check-input industry-checkbox d-none"-->
+<!--                                                   type="checkbox"-->
+<!--                                                   th:value="${industry.getKey()}"-->
+<!--                                                   th:id="'flexCheckDefault_' + ${industry.getKey()}"-->
+<!--                                                   th:name="'industryIds'"-->
+<!--                                                   checked/>-->
+<!--                                            <label class="form-check-label btn"-->
+<!--                                                   th:for="'flexCheckDefault_' + ${industry.getKey()}"-->
+<!--                                                   th:text="${industry.getName()}">Industry Name</label>-->
+<!--                                        </div>-->
+
+<!--                                    </th:block>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </th:block>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash;end::Input group&ndash;&gt;-->
+<!--                &lt;!&ndash;begin::Actions&ndash;&gt;-->
+<!--                <div class="text-center">-->
+<!--                    &lt;!&ndash;                    <button type="reset" class="btn btn-light me-3" data-kt-modal-action="cancel">取消</button>&ndash;&gt;-->
+<!--                    <button type="submit" class="btn btn-primary" onclick="handleButtonClick()">-->
+<!--                        <span class="indicator-label">篩選</span>-->
+<!--                        <span class="indicator-progress">請稍候...-->
+<!--                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>-->
+<!--                    </span>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--                &lt;!&ndash;end::Actions&ndash;&gt;-->
+<!--            </div>-->
+            <!--end::Modal body-->
+            <!--begin::Modal body-->
             <div id="filterBlock" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                 <!--begin::Input group-->
                 <div class="row fv-row mb-7">
                     <div class="col-md">
                         <!-- 全选复选框 -->
-                        <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
-                            <div class="col-12 mb-3 no-wrap">
-                                <input class="form-check-input" type="checkbox" id="selectAll" checked/>
-                                <label class="form-check-label" for="selectAll">全選</label>
+                        <div class="row fv-row mb-7">
+                            <div class="col-12 mb-3">
+<!--                                <input class="form-check-input" type="checkbox" id="selectAll" checked/>-->
+<!--                                <label class="form-check-label" for="selectAll">全選</label>-->
+                                <div class="btn-group-toggle mb-2" data-toggle="buttons">
+                                    <input class="form-check-input industry-checkbox d-none"
+                                           type="checkbox"
+                                           id="selectAll"
+                                           checked/>
+                                    <label class="form-check-label btn btn-primary w-100 text-center"
+                                           for="selectAll">全選</label>
+                                </div>
                             </div>
-                        </div>
-
-                        <th:block th:if="${chunkedIndustries != null}" th:each="chunk : ${chunkedIndustries}">
-                            <div class="row fv-row mb-7 form-check form-check-custom form-check-solid me-10">
-                                <!--                                <div class="col-md" th:each="industry : ${chunk}">-->
-                                <div th:each="industry, iterStat : ${chunk}" class="col-6 mb-3 no-wrap" th:classappend="${iterStat.index % 2 == 0} ? ' border-right' : ''">
-                                    <!-- 添加 null 检查，确保 industry 不为空 -->
-                                    <th:block th:if="${industry != null}">
-                                        <input class="form-check-input industry-checkbox" type="checkbox" th:value="${industry.getKey()}" th:id="'flexCheckDefault_' + ${industry.getKey()}" th:name="'industryIds'" checked/>
-                                        <label class="form-check-label" th:for="'flexCheckDefault_' + ${industry.getKey()}" th:text="${industry.getName()}">Industry Name</label>
+                            <div class="col-12 mb-3">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <!-- Industry Checkboxes -->
+                                    <th:block th:if="${chunkedIndustries != null}" th:each="chunk : ${chunkedIndustries}">
+                                        <th:block th:each="industry, iterStat : ${chunk}">
+                                            <th:block th:if="${industry != null}">
+                                                <div class="btn-group-toggle me-2 mb-2" data-toggle="buttons">
+                                                    <input class="form-check-input industry-checkbox d-none"
+                                                           type="checkbox"
+                                                           th:value="${industry.getKey()}"
+                                                           th:id="'flexCheckDefault_' + ${industry.getKey()}"
+                                                           th:name="'industryIds'"
+                                                           checked/>
+                                                    <label class="form-check-label btn btn-primary"
+                                                           th:for="'flexCheckDefault_' + ${industry.getKey()}"
+                                                           th:text="${industry.getName()}">Industry Name</label>
+                                                </div>
+                                            </th:block>
+                                        </th:block>
                                     </th:block>
                                 </div>
                             </div>
-                        </th:block>
+                        </div>
+
+
                     </div>
                 </div>
                 <!--end::Input group-->
+
                 <!--begin::Actions-->
                 <div class="text-center">
-                    <!--                    <button type="reset" class="btn btn-light me-3" data-kt-modal-action="cancel">取消</button>-->
                     <button type="submit" class="btn btn-primary" onclick="handleButtonClick()">
                         <span class="indicator-label">篩選</span>
                         <span class="indicator-progress">請稍候...
-                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                    </span>
+                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+            </span>
                     </button>
                 </div>
                 <!--end::Actions-->
             </div>
             <!--end::Modal body-->
+
 
             <!--begin::Modal body-->
             <div id="ciSection" class="modal-body scroll-y mx-5 mx-xl-15 my-7">

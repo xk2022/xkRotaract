@@ -4,9 +4,9 @@ import com.xk.cms.model.po.CmsCalendar;
 import lombok.Data;
 
 /**
- * CmsCalendar SaveResp
- * @author yuan
- * Created by yuan on 2024/09/24
+ * CmsCompany 響應變更後前端物件
+ *
+ * @author yuan Created on 2024/09/24.
  */
 @Data
 public class CmsCalendarSaveResp extends CmsCalendar {

@@ -1,6 +1,8 @@
 package com.xk.cms.service;
 
 import com.xk.common.json.Industry;
+import com.xk.common.json.Industry_modern;
+
 import java.util.List;
 
 /**
@@ -38,6 +40,6 @@ public interface CmsSelfService {
      *
      * @return 分組後的行業列表，每個子列表包含一部分行業數據
      */
-    List<List<Industry>> getChunkedIndustries();
+    List<List<Industry_modern>> getChunkedIndustries();
 
 }

@@ -76,4 +76,12 @@ public interface UpmsOrganizationService {
     List findChildren(String code);
 
     List getOrganizationsExcludingLevel3();
+
+    /**
+     * 通过组织 ID 获取父类信息
+     * @param id 当前组织的 ID
+     * @return 父类组织的信息，如果不存在则返回 null
+     */
+    UpmsOrganizationResp getParentOrganization(Long id);
+
 }

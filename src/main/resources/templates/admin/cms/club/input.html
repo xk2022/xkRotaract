@@ -5,28 +5,28 @@
 <script th:inline="javascript">
     // Insert
     $("[name='add_btn']").click(function(){
-        $('#modal_name').text("新增扶青社");
-        $("[name='id']").val(null);
-        $("[name='district']").val(null);
-        $("[name='name']").val(null);
-        $("[name='registrationDate']").val(null);
-        $("[name='status']")[0].checked = true;
+<!--        $('#modal_name').text("新增扶青社");-->
+<!--        $("[name='id']").val(null);-->
+<!--        $("[name='district']").val(null);-->
+<!--        $("[name='name']").val(null);-->
+<!--        $("[name='registrationDate']").val(null);-->
+<!--        $("[name='status']")[0].checked = true;-->
     });
 
     // Update
     var readyToEdit = function(row) {
-        $('#modal_name').text("更新扶青社");
-        $("[name='id']").val(row[1].innerText);
-        // 设置默认选中项
-        var selectedDistrictId = row[2].innerText;
-        if (selectedDistrictId) {
-            $('#inputGroupSelect_district').val(selectedDistrictId);
-            $("[name='district']").val(selectedDistrictId);
-        }
-        $("[name='name']").val(row[3].innerText);
-        $("[name='registrationDate']").val(row[4].innerText);
-        var btnradio_status_ = row[5].innerText == '啟用';
-        $("#btnradio_status_"+btnradio_status_).prop('checked', true);
+<!--        $('#modal_name').text("更新扶青社");-->
+<!--        $("[name='id']").val(row[1].innerText);-->
+<!--        // 设置默认选中项-->
+<!--        var selectedDistrictId = row[2].innerText;-->
+<!--        if (selectedDistrictId) {-->
+<!--            $('#inputGroupSelect_district').val(selectedDistrictId);-->
+<!--            $("[name='district']").val(selectedDistrictId);-->
+<!--        }-->
+<!--        $("[name='name']").val(row[3].innerText);-->
+<!--        $("[name='registrationDate']").val(row[4].innerText);-->
+<!--        var btnradio_status_ = row[5].innerText == '啟用';-->
+<!--        $("#btnradio_status_"+btnradio_status_).prop('checked', true);-->
     }
 
     // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
@@ -55,9 +55,8 @@
 <!--begin::Modal body-->
 <div th:fragment="form" class="modal-body scroll-y mx-5 mx-xl-15 my-7">
     <!--begin::Form-->
-    <form id="kt_modal_input_form" class="form" action="#" th:action="@{/admin/cms/manage/club/save}" method="post" th:object="${entity}" >
-        <input type="hidden" name="id">
-        <input type="hidden" name="district" th:value="${entity.district}">
+    <form id="kt_modal_input_form" class="form" th:action="@{/admin/cms/manage/club/saveOverview}" method="post" th:object="${infoOverviewReq}">
+        <input type="hidden" name="id" th:value="${cmsUserInfo.cmsUserInfoId}">
         <!--begin::Input group-->
         <div class="row fv-row mb-7">
             <div class="col-md">
@@ -76,18 +75,16 @@
                 <!--end::Select-->
             </div>
         </div>
+        <!--end::Input group--><!--begin::Input group-->
         <div class="row fv-row mb-7">
             <div class="col-md">
                 <!--begin::Label-->
                 <label class="fs-6 fw-bold form-label mb-2">
                     <span>扶青社名稱</span>
-                    <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="popover"
-                       data-bs-trigger="hover" data-bs-html="true"
-                       data-bs-content="必填"></i>
                 </label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input class="form-control form-control-solid" placeholder="Enter a Club name" name="name" />
+                <input class="form-control form-control-solid" name="clubName"/>
                 <!--end::Input-->
             </div>
         </div>
@@ -97,27 +94,109 @@
             <div class="col-md">
                 <!--begin::Label-->
                 <label class="fs-6 fw-bold form-label mb-2">
-                    <span>RI註冊日期</span>
+                    <span>授證日期</span>
                 </label>
                 <!--end::Label-->
                 <!--begin::Input-->
                 <input class="form-control form-control-solid" name="registrationDate" placeholder="YYYY/MM/DD"/>
                 <!--end::Input-->
             </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
             <div class="col-md">
                 <!--begin::Label-->
                 <label class="fs-6 fw-bold form-label mb-2">
-                    <span>狀態</span>
+                    <span>輔導社</span>
                 </label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <div class="btn-group form-control form-control-solid mb-3 mb-lg-0" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check" name="btnradio_status_true" id="btnradio_status_true" value="true" th:field="*{status}" autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="btnradio_status_true" th:text="啟用">Radio 1</label>
-
-                    <input type="radio" class="btn-check" name="btnradio_status_false" id="btnradio_status_false" value="false" th:field="*{status}" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio_status_false" th:text="禁用">Radio 2</label>
-                </div>
+                <input class="form-control form-control-solid" name="sponsoringClub"/>
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span>社員人數</span>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" name="memberCount" type="number"/>
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span>例會地點</span>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" name="meetingVenue"/>
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span>例會時間</span>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" name="meetingSchedule"/>
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span>電話</span>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" name="contactNumber"/>
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span>傳真</span>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" name="faxNumber"/>
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Input group-->
+        <!--begin::Input group-->
+        <div class="row fv-row mb-7">
+            <div class="col-md">
+                <!--begin::Label-->
+                <label class="fs-6 fw-bold form-label mb-2">
+                    <span>通訊處</span>
+                </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input class="form-control form-control-solid" name="correspondenceAddress"/>
                 <!--end::Input-->
             </div>
         </div>

@@ -20,7 +20,7 @@ import lombok.Data;
  * - districtId: 地區 ID (Long)，表示使用者的區域範疇
  * - isActive: 帳號狀態 (boolean)，表示帳號是否啟用
  *
- * @author yuan Created by yuan on 2024/11/13.
+ * @author yuan Created on 2024/11/13.
  * Last updated on 2024/11/13 for enhanced functionality with additional user attributes.
  */
 @Data

@@ -3,7 +3,7 @@ package com.xk.cms.model.vo;
 import lombok.Data;
 
 /**
- * CmsUser 響應物件
+ * CmsUser 響應前端物件
  *
  * 用於返回 CMS 使用者的基本屬性和狀態資訊，如帳號資訊、角色、權限等。
  * 該類別與 CmsUser 實體類分離，專門用於後端傳遞處理結果給前端。

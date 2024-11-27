@@ -52,6 +52,27 @@
         }
 
 
+/* 非勾選時的樣式 */
+.industry-checkbox:not(:checked) + .form-check-label.btn {
+    background-color: gray;
+    color: white;
+}
+
+/* 滑鼠懸停效果 */
+.form-check-label.btn:hover {
+    background-color: #bbb;
+    color: white;
+}
+.d-flex.flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* 按钮之间的间距 */
+}
+
+.btn-group-toggle {
+}
+
+
     </style>
 </head>
 <!--end::Head-->
@@ -149,17 +170,13 @@
     $('.search_btn').click(function() {
         toggleVisibility(true);
     });
-    $('.search_btn').click(function() {
-        toggleVisibility(true);
-    });
-
 
     // Example usage:
     // Call this function with true to show the element
-    toggleVisibility(true);
+<!--    toggleVisibility(true);-->
 
     // Call this function with false to hide the element
-    toggleVisibility(false);
+<!--    toggleVisibility(false);-->
 
 
         // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/

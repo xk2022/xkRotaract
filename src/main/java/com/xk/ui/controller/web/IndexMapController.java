@@ -2,7 +2,7 @@ package com.xk.ui.controller.web;
 
 import com.xk.cms.service.CmsSelfService;
 import com.xk.common.base.BaseController;
-import com.xk.common.json.Industry;
+import com.xk.common.json.Industry_modern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class IndexMapController extends BaseController {
     public String index(Model model) {
         this.info(model);
 
-        List<List<Industry>> industries = cmsSelfService.getChunkedIndustries();
+        List<List<Industry_modern>> industries = cmsSelfService.getChunkedIndustries();
 
         if (industries == null) {
             industries = new ArrayList<>();  // 初始化空列表，避免null

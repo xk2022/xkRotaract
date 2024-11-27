@@ -1,13 +1,15 @@
 package com.xk.cms.controller.web;
 
+import com.xk.admin.model.dto.UserExample;
+import com.xk.cms.model.bo.CmsCompanyReq;
 import com.xk.cms.model.bo.CmsCompanySaveReq;
 import com.xk.cms.model.vo.CmsCompanySaveResp;
 import com.xk.cms.service.CmsCompanyService;
 import com.xk.cms.service.CmsSelfService;
 import com.xk.common.base.BaseController;
 import com.xk.common.util.GoogleApiGeocode;
-import com.xk.upms.model.dto.UpmsSystemExample;
 import io.swagger.annotations.Api;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * 公司管理 Controller
@@ -46,8 +50,29 @@ public class CmsCompanyController extends BaseController {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
         model.addAttribute("fragmentName", "list");
 
-        model.addAttribute("page_list", cmsCompanyService.list());
-        model.addAttribute("entity", new UpmsSystemExample());
+        model.addAttribute("page_list", cmsCompanyService.list(null));
+        model.addAttribute("entity", new CmsCompanySaveReq());
+        model.addAttribute("chunkedIndustries", cmsSelfService.getChunkedIndustries());
+        return ADMIN_INDEX;
+    }
+
+    @GetMapping("/club")
+    public String indexClub(Model model, HttpSession session) {
+        this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0] + "/club");
+        model.addAttribute("fragmentPackage", "company");
+        model.addAttribute("fragmentName", "list");
+
+        model.addAttribute("access_scope", "club");
+        UserExample user = (UserExample) session.getAttribute("user");
+        if (StringUtils.isBlank(user.getRotaract_id()) || "0".equals(user.getRotaract_id())) {
+            return this.errorMsg(model, "查無所屬社", "請先至“我的資料”，選擇您的所屬社！");
+        }
+        model.addAttribute("district_id", user.getDistrict_id());
+        model.addAttribute("rotaract_id", user.getRotaract_id());
+        CmsCompanyReq req = new CmsCompanyReq();
+        req.setRotaract_id(user.getRotaract_id());
+        model.addAttribute("page_list", cmsCompanyService.list(req));
+        model.addAttribute("entity", new CmsCompanySaveReq());
         model.addAttribute("chunkedIndustries", cmsSelfService.getChunkedIndustries());
         return ADMIN_INDEX;
     }

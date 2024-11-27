@@ -20,20 +20,20 @@
     <script th:src="@{/js/custom/datatables/shared.js}"></script>
     <!--end::Page Custom Javascript-->
     <script th:inline="javascript">
-        $("[name='add_btn']").click(function() {
+        $("[name='add_btn']").onClick(function() {
             $('.control-add-input').show();
             $('.control-add-span').hide();
-        });
+        }
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->
 
-<div th:fragment="dashboard" id="kt_content_container" class="container-fluid">
+<div th:fragment="view" id="kt_content_container" class="container-fluid">
     <!--begin::Navbar-->
-    <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: infoClub_navbar"></div>
+    <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/'+${fragmentName} :: infoClub_navbar"></div>
     <!--end::Navbar-->
     <!--begin::details View-->
-    <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/view' :: infoClub_details"></div>
+    <div th:replace="'admin/'+${fragmentSystem}+'/'+${fragmentPackage}+'/'+${fragmentName} :: infoClub_details"></div>
     <!--end::details View-->
 </div>
 
@@ -41,11 +41,11 @@
     <div class="card-body pt-9 pb-0">
         <!--begin::Details-->
         <div class="d-flex flex-wrap flex-sm-nowrap mb-3">
-            <input type="hidden" id="cmsClubId" name="cmsClubId" th:value="${cmsClubInfo.cmsClubId}">
+            <input type="hidden" id="cmsUserInfoId" name="cmsUserInfoId" th:value="${cmsUserInfo.cmsUserInfoId}">
             <!--begin: Pic-->
             <div class="me-7 mb-4">
                 <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                    <img src="/" alt="預計可以上傳社徽章">
+                    <img src="assets/media/avatars/300-1.jpg" alt="預計可以上傳社徽章">
                     <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-success rounded-circle border border-4 border-white h-20px w-20px"></div>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                         <div class="d-flex align-items-center mb-2">
                             <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1">
                                 <font style="vertical-align: inherit;">
-                                    <font style="vertical-align: inherit;" th:text="${cmsClubInfo.infoHeader.clubName}">N/A扶青社</font>
+                                    <font style="vertical-align: inherit;" th:text="${cmsUserInfo.infoHeader.clubName}">N/A扶青社</font>
                                 </font>
                             </a>
                             <a href="#">
@@ -75,7 +75,7 @@
                             </a>
                             <a href="#" class="btn btn-sm btn-light-success fw-bolder ms-2 fs-8 py-1 px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_upgrade_plan">
                                 <font style="vertical-align: inherit;">
-                                    <font style="vertical-align: inherit;">升級到專業版 N/A</font>
+                                    <font style="vertical-align: inherit;">升級到專業版</font>
                                 </font>
                             </a>
                         </div>
@@ -92,7 +92,7 @@
                                 </span>
                                 <!--end::Svg Icon-->
                                 <font style="vertical-align: inherit;">
-                                    <font style="vertical-align: inherit;" th:text="${cmsClubInfo.infoHeader.organizationDistrict}">國際扶輪3502地區</font>
+                                    <font style="vertical-align: inherit;" th:text="${cmsUserInfo.infoHeader.organizationDistrict}">國際扶輪3502地區</font>
                                 </font>
                             </a>
                             <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
@@ -105,7 +105,7 @@
                                 </span>
                                 <!--end::Svg Icon-->
                                 <font style="vertical-align: inherit;">
-                                    <font style="vertical-align: inherit;" th:text="${cmsClubInfo.infoHeader.serviceArea}">桃園市桃園區</font>
+                                    <font style="vertical-align: inherit;" th:text="${cmsUserInfo.infoHeader.serviceArea}">桃園市桃園區</font>
                                 </font>
                             </a>
                             <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary mb-2">
@@ -118,7 +118,7 @@
                                 </span>
                                 <!--end::Svg Icon-->
                                 <font style="vertical-align: inherit;">
-                                    <font style="vertical-align: inherit;" th:text="${cmsClubInfo.infoHeader.serviceEmail}">35020001@club</font>
+                                    <font style="vertical-align: inherit;" th:text="${cmsUserInfo.infoHeader.serviceEmail}">35020001@club</font>
                                 </font>
                             </a>
                         </div>
@@ -137,21 +137,10 @@
                     <div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
                         <div class="d-flex justify-content-between w-100 mt-auto mb-2">
                             <span class="fw-bold fs-6 text-gray-400"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">個人資料完成</font></font></span>
-                            <span class="fw-bolder fs-6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" th:text="${cmsClubInfo.infoHeader.infoCompletionScore}+'%'"></font></font></span>
+                            <span class="fw-bolder fs-6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" th:text="${cmsUserInfo.infoHeader.infoCompletionScore}+'%'"></font></font></span>
                         </div>
                         <div class="h-5px mx-3 w-100 bg-light mb-3">
-                            <div class="bg-success rounded h-5px"
-                                 th:classappend="
-                                    ${cmsClubInfo.infoHeader.infoCompletionScore < 30} ? 'bg-danger' :
-                                    (${cmsClubInfo.infoHeader.infoCompletionScore < 70} ? 'bg-warning' :
-                                    'bg-success')"
-                                 role="progressbar"
-                                 th:attr="aria-label='Completion Score: ' + ${cmsClubInfo.infoHeader.infoCompletionScore} + '%'"
-                                 th:style="'width: ' + ${cmsClubInfo.infoHeader.infoCompletionScore} + '%;'"
-                                 th:aria-valuenow="${cmsClubInfo.infoHeader.infoCompletionScore}"
-                                 aria-valuemin="0"
-                                 aria-valuemax="100">
-                            </div>
+                            <div class="bg-success rounded h-5px" role="progressbar" style="width: 50%;" aria-valuenow="${cmsUserInfo.infoHeader.infoCompletionScore}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
                     <!--end::Progress-->
@@ -172,24 +161,24 @@
                 </a>
             </li>
             <!--end::Nav item-->
-            <!--            &lt;!&ndash;begin::Nav item&ndash;&gt;-->
-            <!--            <li class="nav-item mt-2">-->
-            <!--                <a class="nav-link text-active-primary ms-0 me-10 py-5" href="#">-->
-            <!--                    <font style="vertical-align: inherit;">-->
-            <!--                        <font style="vertical-align: inherit;">頁籤二</font>-->
-            <!--                    </font>-->
-            <!--                </a>-->
-            <!--            </li>-->
-            <!--            &lt;!&ndash;end::Nav item&ndash;&gt;-->
-            <!--            &lt;!&ndash;begin::Nav item&ndash;&gt;-->
-            <!--            <li class="nav-item mt-2">-->
-            <!--                <a class="nav-link text-active-primary ms-0 me-10 py-5" href="#">-->
-            <!--                    <font style="vertical-align: inherit;">-->
-            <!--                        <font style="vertical-align: inherit;">頁籤三</font>-->
-            <!--                    </font>-->
-            <!--                </a>-->
-            <!--            </li>-->
-            <!--            &lt;!&ndash;end::Nav item&ndash;&gt;-->
+<!--            &lt;!&ndash;begin::Nav item&ndash;&gt;-->
+<!--            <li class="nav-item mt-2">-->
+<!--                <a class="nav-link text-active-primary ms-0 me-10 py-5" href="#">-->
+<!--                    <font style="vertical-align: inherit;">-->
+<!--                        <font style="vertical-align: inherit;">頁籤二</font>-->
+<!--                    </font>-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            &lt;!&ndash;end::Nav item&ndash;&gt;-->
+<!--            &lt;!&ndash;begin::Nav item&ndash;&gt;-->
+<!--            <li class="nav-item mt-2">-->
+<!--                <a class="nav-link text-active-primary ms-0 me-10 py-5" href="#">-->
+<!--                    <font style="vertical-align: inherit;">-->
+<!--                        <font style="vertical-align: inherit;">頁籤三</font>-->
+<!--                    </font>-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            &lt;!&ndash;end::Nav item&ndash;&gt;-->
         </ul>
         <!--begin::Navs-->
     </div>
@@ -214,11 +203,11 @@
         </th:block>
         <!--end::Card toolbar-->
         <!--begin::Action-->
-        <!--        <a href="#" class="btn btn-primary align-self-center">-->
-        <!--            <font style="vertical-align: inherit;">-->
-        <!--                <font style="vertical-align: inherit;">編輯個人資料</font>-->
-        <!--            </font>-->
-        <!--        </a>-->
+<!--        <a href="#" class="btn btn-primary align-self-center">-->
+<!--            <font style="vertical-align: inherit;">-->
+<!--                <font style="vertical-align: inherit;">編輯個人資料</font>-->
+<!--            </font>-->
+<!--        </a>-->
         <!--end::Action-->
     </div>
     <!--begin::Card header-->
@@ -226,7 +215,7 @@
     <div class="card-body p-9">
         <!--begin::Form-->
         <form id="kt_modal_input_form" class="form" th:action="@{/admin/cms/manage/club/saveOverview}" method="post" th:object="${infoOverviewReq}">
-            <input type="hidden" name="id" th:value="${cmsClubInfo.cmsClubId}">
+            <input type="hidden" name="id" th:value="${cmsUserInfo.cmsUserInfoId}">
             <!--begin::Row with Input group-->
             <div class="row mb-7 g-4">
                 <!--begin::Label-->
@@ -240,10 +229,10 @@
                 <!--begin::Static and Input Text-->
                 <div class="col-lg-8 col-sm-12">
                     <span class="fw-bolder fs-6 text-gray-800 control-add-span"
-                          th:text="${cmsClubInfo.infoOverview.clubName}"></span>
+                          th:text="${cmsUserInfo.infoOverview.clubName}"></span>
                     <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
                            id="clubName-input" placeholder="ＸＸＸ扶青社" style="display: none;"
-                           name="clubName" th:value="${cmsClubInfo.infoOverview.clubName}">
+                           th:value="${cmsUserInfo.infoOverview.clubName}">
                 </div>
                 <!--end::Static and Input Text-->
             </div>
@@ -260,10 +249,10 @@
                 <!--begin::Static and Input Text-->
                 <div class="col-lg-8 col-sm-12">
                     <span class="fw-bolder fs-6 text-gray-800 control-add-span"
-                          th:text="${cmsClubInfo.infoOverview.registrationDate}"></span>
+                          th:text="${cmsUserInfo.infoOverview.registrationDate}"></span>
                     <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
                            id="registrationDate-input" placeholder="XXXX年XX月XX日" style="display: none;"
-                           name="registrationDate" th:value="${cmsClubInfo.infoOverview.registrationDate}">
+                           th:value="${cmsUserInfo.infoOverview.registrationDate}">
                 </div>
                 <!--end::Static and Input Text-->
             </div>
@@ -281,10 +270,10 @@
                 <!--begin::Static and Input Text-->
                 <div class="col-lg-8 col-sm-12">
                     <span class="fw-bolder fs-6 text-gray-800 control-add-span"
-                          th:text="${cmsClubInfo.infoOverview.sponsoringClub}"></span>
+                          th:text="${cmsUserInfo.infoOverview.sponsoringClub}"></span>
                     <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
                            id="sponsoringClub-input" placeholder="ＸＸＸ扶輪社" style="display: none;"
-                           name="sponsoringClub" th:value="${cmsClubInfo.infoOverview.sponsoringClub}">
+                           th:value="${cmsUserInfo.infoOverview.sponsoringClub}">
                 </div>
                 <!--end::Static and Input Text-->
             </div>
@@ -301,10 +290,10 @@
                 <!--begin::Static and Input Text-->
                 <div class="col-lg-8 col-sm-12">
                     <span class="fw-bolder fs-6 text-gray-800 control-add-span"
-                          th:text="${cmsClubInfo.infoOverview.memberCount}+'名'"></span>
+                          th:text="${cmsUserInfo.infoOverview.memberCount}+'名'"></span>
                     <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
                            id="memberCount-input" placeholder="ＸＸ名" style="display: none;"
-                           name="memberCount" th:value="${cmsClubInfo.infoOverview.memberCount}">
+                           th:value="${cmsUserInfo.infoOverview.memberCount}+'名'">
                 </div>
                 <!--end::Static and Input Text-->
             </div>
@@ -321,10 +310,10 @@
                 <!--begin::Static and Input Text-->
                 <div class="col-lg-8 col-sm-12">
                     <span class="fw-bolder fs-6 text-gray-800 control-add-span"
-                          th:text="${cmsClubInfo.infoOverview.meetingVenue}"></span>
+                          th:text="${cmsUserInfo.infoOverview.meetingVenue}"></span>
                     <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
                            id="meetingVenue-input" placeholder="例會地點" style="display: none;"
-                           name="meetingVenue" th:value="${cmsClubInfo.infoOverview.meetingVenue}">
+                           th:value="${cmsUserInfo.infoOverview.meetingVenue}">
                 </div>
                 <!--end::Static and Input Text-->
             </div>
@@ -341,10 +330,10 @@
                 <!--begin::Static and Input Text-->
                 <div class="col-lg-8 col-sm-12">
                     <span class="fw-bolder fs-6 text-gray-800 control-add-span"
-                          th:text="${cmsClubInfo.infoOverview.meetingSchedule}"></span>
+                          th:text="${cmsUserInfo.infoOverview.meetingSchedule}"></span>
                     <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
                            id="meetingSchedule-input" placeholder="例會時間" style="display: none;"
-                           name="meetingSchedule" th:value="${cmsClubInfo.infoOverview.meetingSchedule}">
+                           th:value="${cmsUserInfo.infoOverview.meetingSchedule}">
                 </div>
                 <!--end::Static and Input Text-->
             </div>
@@ -361,10 +350,10 @@
                 <!--begin::Static and Input Text-->
                 <div class="col-lg-8 col-sm-12">
                     <span class="fw-bolder fs-6 text-gray-800 control-add-span"
-                          th:text="${cmsClubInfo.infoOverview.contactNumber}"></span>
+                          th:text="${cmsUserInfo.infoOverview.contactNumber}"></span>
                     <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
-                           id="contactNumber-input" placeholder="電話" style="display: none;"
-                           name="contactNumber" th:value="${cmsClubInfo.infoOverview.contactNumber}">
+                           id="contactNumber-input" placeholder="例會時間" style="display: none;"
+                           th:value="${cmsUserInfo.infoOverview.contactNumber}">
                 </div>
                 <!--end::Static and Input Text-->
             </div>
@@ -381,10 +370,10 @@
                 <!--begin::Static and Input Text-->
                 <div class="col-lg-8 col-sm-12">
                     <span class="fw-bolder fs-6 text-gray-800 control-add-span"
-                          th:text="${cmsClubInfo.infoOverview.faxNumber}"></span>
+                          th:text="${cmsUserInfo.infoOverview.faxNumber}"></span>
                     <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
-                           id="faxNumber-input" placeholder="傳真" style="display: none;"
-                           name="faxNumber" th:value="${cmsClubInfo.infoOverview.faxNumber}">
+                           id="faxNumber-input" placeholder="例會時間" style="display: none;"
+                           th:value="${cmsUserInfo.infoOverview.faxNumber}">
                 </div>
                 <!--end::Static and Input Text-->
             </div>
@@ -401,47 +390,10 @@
                 <!--begin::Static and Input Text-->
                 <div class="col-lg-8 col-sm-12">
                     <span class="fw-bolder fs-6 text-gray-800 control-add-span"
-                          th:text="${cmsClubInfo.infoOverview.correspondenceAddress}"></span>
+                          th:text="${cmsUserInfo.infoOverview.correspondenceAddress}"></span>
                     <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
-                           id="correspondenceAddress-input" placeholder="通訊處" style="display: none;"
-                           name="correspondenceAddress" th:value="${cmsClubInfo.infoOverview.correspondenceAddress}">
-                </div>
-                <!--end::Static and Input Text-->
-            </div>
-            <!--end::Row with Input group-->
-
-            <!--begin::Row with Input group-->
-            <div class="row mb-7 g-4 control-add-input" style="display: none;">
-                <!--begin::Label-->
-                <div class="col-lg-4 col-sm-12">
-                    <label for="serviceArea-input" class="fw-bold text-muted">
-                        服務區域
-                    </label>
-                </div>
-                <!--end::Label-->
-                <!--begin::Static and Input Text-->
-                <div class="col-lg-8 col-sm-12">
-                    <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
-                           id="serviceArea-input" placeholder="服務區域"
-                           name="serviceArea" th:value="${cmsClubInfo.infoHeader.serviceArea}">
-                </div>
-                <!--end::Static and Input Text-->
-            </div>
-            <!--end::Row with Input group-->
-            <!--begin::Row with Input group-->
-            <div class="row mb-7 g-4 control-add-input" style="display: none;">
-                <!--begin::Label-->
-                <div class="col-lg-4 col-sm-12">
-                    <label for="serviceEmail-input" class="fw-bold text-muted">
-                        服務信箱
-                    </label>
-                </div>
-                <!--end::Label-->
-                <!--begin::Static and Input Text-->
-                <div class="col-lg-8 col-sm-12">
-                    <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
-                           id="serviceEmail-input" placeholder="服務信箱"
-                           name="serviceEmail" th:value="${cmsClubInfo.infoHeader.serviceEmail}">
+                           id="correspondenceAddress-input" placeholder="例會時間" style="display: none;"
+                           th:value="${cmsUserInfo.infoOverview.correspondenceAddress}">
                 </div>
                 <!--end::Static and Input Text-->
             </div>
@@ -451,9 +403,7 @@
             <!--end::Notice-->
 
             <!--begin::Actions-->
-            <div class="control-add-input" style="display: none;">
-                <div th:replace="admin/_fragments/input_basic :: Actions"></div>
-            </div>
+            <div th:replace="admin/_fragments/input_basic :: Actions"></div>
             <!--end::Actions-->
         </form>
     </div>

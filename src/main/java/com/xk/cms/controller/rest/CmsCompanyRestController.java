@@ -31,7 +31,7 @@ public class CmsCompanyRestController {
     @ApiOperation(value = "系统列表")
     @GetMapping("/list")
     public Object list() {
-        return cmsCompanyService.list();
+        return cmsCompanyService.list(null);
     }
 
     @ApiOperation(value = "系统列表")

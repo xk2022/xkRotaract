@@ -17,7 +17,7 @@ import lombok.Data;
  * - orders: 排序欄位 (String)
  * - status: 組織狀態，表示是否啟用 (String)
  *
- * @author yuan Created by yuan on 2022/06/24
+ * @author yuan Created on 2022/06/24.
  * Last updated on 2024/10/30 for enhanced functionality with type conversions.
  */
 @Data

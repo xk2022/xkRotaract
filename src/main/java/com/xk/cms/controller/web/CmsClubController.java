@@ -2,10 +2,13 @@ package com.xk.cms.controller.web;
 
 import com.xk.admin.model.dto.UserExample;
 import com.xk.cms.model.bo.CmsClubSaveReq;
+import com.xk.cms.model.dto.CmsClubInfoOverview;
 import com.xk.cms.model.vo.CmsClubSaveResp;
 import com.xk.cms.service.CmsClubService;
 import com.xk.common.base.BaseController;
 import com.xk.common.util.XkTypeUtils;
+import com.xk.upms.model.vo.UpmsOrganizationResp;
+import com.xk.upms.service.UpmsOrganizationService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,6 +40,8 @@ public class CmsClubController extends BaseController {
 
     @Autowired
     private CmsClubService cmsClubService;
+    @Autowired
+    private UpmsOrganizationService upmsOrganizationService;
 
     /**
      * Displays the homepage with a list of clubs.
@@ -53,8 +58,11 @@ public class CmsClubController extends BaseController {
         if (StringUtils.isBlank(user.getDistrict_id()) || "0".equals(user.getDistrict_id())) {
             return this.errorMsg(model, "查無所屬地區", "請先至“我的資料”，選擇您的所屬地區！");
         }
-        model.addAttribute("page_list", cmsClubService.getOne(user.getRotaract_id()));
-        model.addAttribute("entity", new CmsClubSaveReq());
+
+
+        UpmsOrganizationResp parentOrg = upmsOrganizationService.getParentOrganization(Long.valueOf(user.getRotaract_id()));
+        model.addAttribute("cmsClubInfo", cmsClubService.getOne(user.getRotaract_id(), parentOrg));
+        model.addAttribute("infoOverviewReq", new CmsClubInfoOverview());
         return ADMIN_INDEX;
     }
 
@@ -75,6 +83,18 @@ public class CmsClubController extends BaseController {
         }
 
         attributes.addFlashAttribute("message", (result == null) ? "操作失敗" : "操作成功");
+        return REDIRECT_URL;
+    }
+
+    /**
+     * 新增/修改 社團 Create/Update
+     */
+    @PostMapping("/saveOverview")
+    public String saveOverview(CmsClubInfoOverview resources, RedirectAttributes attributes) {
+        Boolean result;
+        result = cmsClubService.saveOverview(resources);
+
+        attributes.addFlashAttribute("message", result ? "操作失敗" : "操作成功");
         return REDIRECT_URL;
     }
 

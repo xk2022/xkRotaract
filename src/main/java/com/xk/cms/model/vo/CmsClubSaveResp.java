@@ -4,9 +4,9 @@ import com.xk.cms.model.po.CmsClub;
 import lombok.Data;
 
 /**
- * CmsClub SaveResp
- * Created by yuan on 2024/09/18
- * @author yuan
+ * CmsClub 響應變更後物件
+ *
+ * @author yuan Created on 2024/09/18.
  */
 @Data
 public class CmsClubSaveResp extends CmsClub {

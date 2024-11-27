@@ -2,6 +2,8 @@ package com.xk.upms.service.impl;
 
 import com.xk.cms.model.bo.CmsClubSaveReq;
 import com.xk.cms.model.bo.CmsUserSaveReq;
+import com.xk.cms.model.vo.CmsClubSaveResp;
+import com.xk.cms.service.CmsClubInfoService;
 import com.xk.cms.service.CmsClubService;
 import com.xk.cms.service.CmsUserService;
 import com.xk.common.util.GenericUpdateService;
@@ -59,6 +61,8 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
     private CmsUserService cmsUserService;
     @Autowired
     private CmsClubService cmsClubService;
+    @Autowired
+    private CmsClubInfoService cmsClubInfoService;
 
     @Override
     public List<UpmsOrganizationResp> list(UpmsOrganizationReq resources) {
@@ -177,7 +181,14 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
                 ccReq.setFkUpmsOrganizationId(String.valueOf(uoEntity.getId()));
                 ccReq.setName(uoEntity.getName());
                 ccReq.setStatus("true");
-                cmsClubService.create(ccReq);
+                CmsClubSaveResp ccEntity = cmsClubService.create(ccReq);
+
+//                CmsClubInfoSaveReq cciReq = new CmsClubInfoSaveReq();
+//                cciReq.setClubId(String.valueOf(ccEntity.getId()));
+//                cciReq.setInfoKey("club_name");
+//                cciReq.setInfoValue(ccEntity.getName());
+//                cciReq.setStatus("true");
+//                cmsClubInfoService.create(cciReq);
             } else {
                 return;
             }
@@ -262,6 +273,29 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
     public List<UpmsOrganization> getOrganizationsExcludingLevel3() {
         // 查詢不包含 level = 3 的所有組織
         return upmsOrganizationRepository.findByLevelNotIn(Arrays.asList(3));
+    }
+
+    /**
+     * 通过组织 ID 获取父类信息
+     * @param id 当前组织的 ID
+     * @return 父类组织的信息，如果不存在则返回 null
+     */
+    @Override
+    public UpmsOrganizationResp getParentOrganization(Long id) {
+        // Step 1: 根据 ID 获取当前组织信息
+        UpmsOrganization organization = upmsOrganizationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("组织 ID 不存在: " + id));
+        // Step 2: 获取父类 ID
+        Long parentId = organization.getParentId();
+        // Step 3: 如果父类 ID 为 null，则返回 null
+        if (parentId == null) {
+            return null;
+        }
+        // Step 4: 根据父类 ID 获取父类信息
+        UpmsOrganization parentOrg = upmsOrganizationRepository.findById(parentId)
+                .orElseThrow(() -> new IllegalArgumentException("父类组织 ID 不存在: " + parentId));
+
+        return XkBeanUtils.copyProperties(parentOrg, UpmsOrganizationResp::new);
     }
 
 

@@ -6,8 +6,9 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * UpmsUser SaveResp
- * Created by yuan on 2022/06/24
+ * UpmsUser 響應前端物件
+ *
+ * @author yuan Created on 2022/06/24.
  */
 @Data
 public class CmsCompanyWithUserResp extends UpmsUser {

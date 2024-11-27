@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class CmsClubInfoOverview {
 
+    private String id;
+
     private String clubName; // 扶青社名稱 (Club Name)
 
     private String registrationDate; // 授證日期 (Charter Date)
@@ -27,5 +29,9 @@ public class CmsClubInfoOverview {
     private String faxNumber; // 傳真電話 (Fax Number)
 
     private String correspondenceAddress; // 通訊處 (Correspondence Address) : 適用於正式場合，特別是指用於通信的地址。
+
+    private String serviceArea;
+
+    private String serviceEmail;
     
 }

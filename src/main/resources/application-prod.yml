@@ -2,7 +2,7 @@ server:
   port: 8443
 
 app:
-  baseUrl: "http://rotaract.xplorekaleido.com"
+  baseUrl: "https://rotaract.xplorekaleido.com"
 
 spring:
   datasource:

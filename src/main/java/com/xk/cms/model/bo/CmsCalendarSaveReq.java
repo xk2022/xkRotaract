@@ -3,9 +3,9 @@ package com.xk.cms.model.bo;
 import lombok.Data;
 
 /**
- * CmsClub SaveReq
- * @author yuan
- * Created by yuan on 2024/09/24
+ * CmsClub 請求變更物件
+ *
+ * @author yuan Created on 2024/09/24ㄡ
  */
 @Data
 public class CmsCalendarSaveReq {

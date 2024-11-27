@@ -3,8 +3,9 @@ package com.xk.cms.model.bo;
 import lombok.Data;
 
 /**
- * CmsClub SaveReq
- * Created by yuan on 2024/09/18
+ * CmsClub 請求變更物件
+ *
+ * @author yuan Created on 2024/09/18.
  */
 @Data
 public class CmsClubSaveReq {

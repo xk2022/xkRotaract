@@ -113,7 +113,6 @@ public class UpmsOrganizationController extends BaseController {
             result = upmsOrganizationService.update(id, resources);
             LOGGER.info("Updated Organization, ID: {}", resources.getId());
         }
-
         attributes.addFlashAttribute("message", (result == null) ? "操作失敗" : "操作成功");
         return REDIRECT_URL;
     }

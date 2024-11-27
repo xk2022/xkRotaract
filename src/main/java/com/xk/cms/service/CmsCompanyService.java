@@ -1,5 +1,6 @@
 package com.xk.cms.service;
 
+import com.xk.cms.model.bo.CmsCompanyReq;
 import com.xk.cms.model.bo.CmsCompanySaveReq;
 import com.xk.cms.model.vo.CmsCompanySaveResp;
 import com.xk.cms.model.vo.CmsCompanyWithUserResp;
@@ -13,7 +14,13 @@ import java.util.List;
  */
 public interface CmsCompanyService {
 
-    List list();
+    /**
+     * Find all companys based on the given criteria.
+     *
+     * @param resources the criteria for filtering companys
+     * @return a list of company responses
+     */
+    List list(CmsCompanyReq resources);
 
     List listByUser(long cms_user_id);
 

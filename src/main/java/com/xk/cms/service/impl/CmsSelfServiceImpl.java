@@ -2,6 +2,7 @@ package com.xk.cms.service.impl;
 
 import com.xk.cms.service.CmsSelfService;
 import com.xk.common.json.Industry;
+import com.xk.common.json.Industry_modern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,9 @@ public class CmsSelfServiceImpl implements CmsSelfService {
     }
 
     @Override
-    public List<List<Industry>> getChunkedIndustries() {
-        List<Industry> allIndustries = Arrays.asList(Industry.values());
-        List<List<Industry>> chunkedIndustries = new ArrayList<>();
+    public List<List<Industry_modern>> getChunkedIndustries() {
+        List<Industry_modern> allIndustries = Arrays.asList(Industry_modern.values());
+        List<List<Industry_modern>> chunkedIndustries = new ArrayList<>();
         int chunkSize = 4;
         for (int i = 0; i < allIndustries.size(); i += chunkSize) {
             int end = Math.min(i + chunkSize, allIndustries.size());

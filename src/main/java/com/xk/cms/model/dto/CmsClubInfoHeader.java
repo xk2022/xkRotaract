@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class CmsClubInfoHeader {
 
+    private String id;
+
     private String clubLogo; // 社徽章 (Club Emblem)
 
     private String clubName; // 社名稱 (Club Name)

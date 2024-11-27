@@ -2,8 +2,10 @@ package com.xk.cms.service;
 
 import com.xk.cms.model.bo.CmsClubReq;
 import com.xk.cms.model.bo.CmsClubSaveReq;
+import com.xk.cms.model.dto.CmsClubInfoOverview;
 import com.xk.cms.model.vo.CmsClubResp;
 import com.xk.cms.model.vo.CmsClubSaveResp;
+import com.xk.upms.model.vo.UpmsOrganizationResp;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public interface CmsClubService {
 
     List listBy(CmsClubReq resources);
 
-    CmsClubResp getOne(String rotaractId);
+    CmsClubResp getOne(String rotaractId, UpmsOrganizationResp parentOrg);
 
     CmsClubSaveResp create(CmsClubSaveReq resources);
 
@@ -26,4 +28,5 @@ public interface CmsClubService {
 
     void deleteByPrimaryKeys(String ids);
 
+    Boolean saveOverview(CmsClubInfoOverview resources);
 }

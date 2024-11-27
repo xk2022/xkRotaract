@@ -2,11 +2,11 @@ package com.xk.cms.model.vo;
 
 import lombok.Data;
 
+
 /**
- * CmsCalendar Resp
- * @author yuan
- * Created by yuan on 2024/10/08
+ * CmsCalendar 響應前端物件
  *
+ * @author yuan Created on 2024/10/08.
  *
     {
         id: "d8jai7s",
