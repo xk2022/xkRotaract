@@ -64,10 +64,16 @@
             <th class="min-w-299px">組織描述</th>
             <th class="min-w-99px">排序</th>
             <th class="min-w-99px">狀態</th>
-            <th:block th:fragment="btn_delete" th:each="permission : ${session.permissionAction}">
-                <th th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
-                    class="text-end min-w-100px">Actions</th>
+            <th:block th:each="permission : ${session.permissionAction}">
+                <th:block th:if="${permission.id == upInfo.id}">
+                    <th:block th:if="${permission.action.equals(T(com.xk.upms.model.enums.PermissionAction).WRITE)}">
+                        <th:block th:if="${permission.active}">
+                            <th class="text-end min-w-100px">Actions</th>
+                        </th:block>
+                    </th:block>
+                </th:block>
             </th:block>
+
         </tr>
         <!--end::Table row-->
         </thead>
@@ -131,7 +137,7 @@
         </td>
         <!--begin::Action=-->
         <th:block th:each="permission : ${session.permissionAction}">
-            <td th:if="${permission.action != null and permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+            <td th:if="${permission.action != null and permission.id == upInfo.id and permission.action.equals(T(com.xk.upms.model.enums.PermissionAction).WRITE) and permission.active}"
                 class="text-end">
                 <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
                 <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>

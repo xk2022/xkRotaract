@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * CmsUserCompany Repository
@@ -15,4 +16,7 @@ public interface CmsUserCompanyRepository extends JpaRepository<CmsUserCompany, 
     List findByFkCmsUserId(long cms_user_id);
 
     List findByFkCmsCompanyId(long cms_company_id);
+
+    List<CmsUserCompany> findAllByFkCmsUserIdIn(Set<Long> userIds);
+
 }

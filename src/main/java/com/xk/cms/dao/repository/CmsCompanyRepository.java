@@ -15,4 +15,6 @@ public interface CmsCompanyRepository extends JpaRepository<CmsCompany, Long>, S
     // 使用方法名称约定查询 latlng 不为空的所有记录
     List<CmsCompany> findByLatlngIsNotNull();
 
+    List<CmsCompany> findAllById(Iterable<Long> companyIds);
+
 }

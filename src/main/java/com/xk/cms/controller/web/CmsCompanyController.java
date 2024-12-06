@@ -71,7 +71,7 @@ public class CmsCompanyController extends BaseController {
         model.addAttribute("rotaract_id", user.getRotaract_id());
         CmsCompanyReq req = new CmsCompanyReq();
         req.setRotaract_id(user.getRotaract_id());
-        model.addAttribute("page_list", cmsCompanyService.list(req));
+        model.addAttribute("page_list", cmsCompanyService.listByClub(req));
         model.addAttribute("entity", new CmsCompanySaveReq());
         model.addAttribute("chunkedIndustries", cmsSelfService.getChunkedIndustries());
         return ADMIN_INDEX;

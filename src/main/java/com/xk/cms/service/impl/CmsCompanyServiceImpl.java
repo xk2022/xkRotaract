@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -91,6 +92,54 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
 
         return XkBeanUtils.copyListProperties(companies, CmsCompanyResp::new);
     }
+
+    @Override
+    public List<CmsCompanyResp> listByClub(CmsCompanyReq resources) {
+        // 构建 Example 查询条件
+        Example<CmsUser> example = resources == null ? null :
+                Example.of(XkBeanUtils.copyProperties(resources, CmsUser::new), ExampleMatcher.matching()
+                        .withIgnoreNullValues()
+                        .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                        .withIgnoreCase());
+        // 定义排序规则
+        Sort sort = Sort.by(Sort.Order.asc("id"));
+        // 记录查询条件和排序规则
+        LOGGER.info("查询 CmsUser 条件: {}", resources);
+        LOGGER.info("排序规则: {}", sort);
+        // 查询 CmsUser 数据
+        List<CmsUser> cmsUsers = (example == null)
+                ? cmsUserRepository.findAll(sort)
+                : cmsUserRepository.findAll(example, sort);
+        LOGGER.info("查询 CmsUser 结果数量: {}", cmsUsers.size());
+
+        // 提取所有 userId
+        Set<Long> userIds = cmsUsers.stream()
+                .map(CmsUser::getId)
+                .collect(Collectors.toSet());
+        if (userIds.isEmpty()) {
+            LOGGER.info("未找到任何匹配的 CmsUser");
+            return Collections.emptyList();
+        }
+
+        // 根据 userId 查询所有 companyId
+        List<Long> companyIds = cmsUserCompanyRepository.findAllByFkCmsUserIdIn(userIds).stream()
+                .map(CmsUserCompany::getFkCmsCompanyId)
+                .distinct()
+                .collect(Collectors.toList());
+        LOGGER.info("根据 userId 查询到的 companyId 数量: {}", companyIds.size());
+
+        if (companyIds.isEmpty()) {
+            LOGGER.info("未找到任何匹配的公司 ID");
+            return Collections.emptyList();
+        }
+        // 根据 companyId 查询 CmsCompany 列表
+        List<CmsCompany> companies = cmsCompanyRepository.findAllById(companyIds);
+        LOGGER.info("根据 companyId 查询到的 CmsCompany 数量: {}", companies.size());
+
+        // 转换为 CmsCompanyResp 列表
+        return XkBeanUtils.copyListProperties(companies, CmsCompanyResp::new);
+    }
+
 
     @Override
     public List listByUser(long cms_user_id) {

@@ -92,7 +92,7 @@ public class CmsCalendarController extends BaseController {
 
 		if (StringUtils.isBlank(resources.getId())) {
 			result = cmsCalendarService.create(resources);
-			LOGGER.info("新增用户，主键：userId={}", result.getId());
+			LOGGER.info("新增用户，主键：calendarId={}", result.getId());
 		} else {
 			result = cmsCalendarService.update(resources);
 		}
@@ -100,7 +100,7 @@ public class CmsCalendarController extends BaseController {
 		attributes.addFlashAttribute("initialDate", resources.getInitialDate());
 		// 根據操作結果設置提示訊息
 		attributes.addFlashAttribute("message", (result == null) ? "操作失敗" : "操作成功");
-		return REDIRECT_URL + "/" + resources.getAccess_scope();
+		return "all".equals(resources.getAccess_scope()) ? REDIRECT_URL : REDIRECT_URL + "/" + resources.getAccess_scope();
 	}
 
 }

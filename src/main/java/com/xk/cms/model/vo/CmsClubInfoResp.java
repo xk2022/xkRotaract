@@ -1,5 +1,7 @@
 package com.xk.cms.model.vo;
 
+import com.xk.cms.model.dto.CmsClubInfoHeader;
+import com.xk.cms.model.dto.CmsClubInfoOverview;
 import lombok.Data;
 
 /**
@@ -9,5 +11,11 @@ import lombok.Data;
  */
 @Data
 public class CmsClubInfoResp {
+
+    private String cmsClubId;
+
+    private CmsClubInfoHeader infoHeader; // The Top
+
+    private CmsClubInfoOverview infoOverview; // first page
 
 }

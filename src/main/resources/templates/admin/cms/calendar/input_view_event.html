@@ -17,7 +17,7 @@
             <!--begin::Modal header-->
             <div class="modal-header border-0 justify-content-end">
                 <th:block th:each="permission : ${session.permissionAction}"><!--begin::Edit-->
-                    <div th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                    <div th:if="${permission.id == upInfo.id and permission.action.equals(T(com.xk.upms.model.enums.PermissionAction).WRITE) and permission.active}"
                          class="btn btn-icon btn-sm btn-color-gray-400 btn-active-icon-primary me-2" data-bs-toggle="tooltip" data-bs-dismiss="click" title="Edit Event" id="kt_modal_view_event_edit">
                         <!--begin::Svg Icon | path: icons/duotune/art/art005.svg-->
                         <span class="svg-icon svg-icon-2">
@@ -30,7 +30,7 @@
                     </div>
                     <!--end::Edit-->
                     <!--begin::Edit-->
-                    <div th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                    <div th:if="${permission.id == upInfo.id and permission.action.equals(T(com.xk.upms.model.enums.PermissionAction).WRITE) and permission.active}"
                          class="btn btn-icon btn-sm btn-color-gray-400 btn-active-icon-danger me-2" data-bs-toggle="tooltip" data-bs-dismiss="click" title="Delete Event" id="kt_modal_view_event_delete">
                         <!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
                         <span class="svg-icon svg-icon-2">

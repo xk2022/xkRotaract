@@ -63,4 +63,8 @@ public class CmsCalendar extends BaseEntity implements Serializable {
     @Comment("11_所屬扶青社")
     private String rotaract_id;
 
+    @Column(name = "locked", columnDefinition = "boolean default false")
+    @Comment("92_狀態(0:正常,1:锁定)")
+    private Boolean locked;
+
 }

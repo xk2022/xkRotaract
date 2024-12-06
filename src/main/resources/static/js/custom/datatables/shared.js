@@ -108,7 +108,7 @@ function loadDistricts(categoryCode) {
         processData: false,
         contentType: 'application/json',
         success: function(response) {
-            console.log('AJAX 请求成功：', response);
+//            console.log('AJAX 请求成功：', response);
 
             // 获取下拉选单元素
             var rotaractSelect = $('#inputGroupSelect_district');
@@ -120,9 +120,9 @@ function loadDistricts(categoryCode) {
             // 遍历响应数据并添加到下拉选单中
             if(response) {
                 response.forEach(function(district) {
-                    rotaractSelect.append(
-                        `<option value="${district.id}">${district.name}</option>`
-                    );
+                    const option = `<option value="${district.id}" ` + (district.status === "true" ? '' : 'disabled') + `>${district.name}</option>`;
+//                    console.log(option);
+                    rotaractSelect.append(option);
                 });
             }
 
@@ -147,7 +147,7 @@ function loadRotaracts(districtId) {
         processData: false,
         contentType: 'application/json',
         success: function(response) {
-            console.log('AJAX 请求成功：', response);
+//            console.log('AJAX 请求成功：', response);
 
             // 获取下拉选单元素
             var clubSelectElement = $('#inputGroupSelect_club');
@@ -159,9 +159,9 @@ function loadRotaracts(districtId) {
             // 遍历响应数据并添加到下拉选单中
             if(response) {
                 response.forEach(function(club) {
-                    clubSelectElement.append(
-                        `<option value="${club.id}">${club.name}</option>`
-                    );
+                    const option = `<option value="${club.id}" ` + (club.status === "true" ? '' : 'disabled') + ` >${club.name}</option>`
+//                    console.log(option);
+                    clubSelectElement.append(option);
                 });
             }
 
@@ -209,7 +209,7 @@ function dropdown(categoryCode, selectElementId, inputHiddenName) {
         processData: false,
         contentType: 'application/json',
         success: function(response) {
-            console.log('AJAX 请求成功：', response);
+//            console.log('AJAX 请求成功：', response);
 
             // 获取下拉选单元素
             var elementSelect = $('#' + selectElementId);

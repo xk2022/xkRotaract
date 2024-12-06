@@ -77,7 +77,7 @@ var KTAppCalendar = function () {
             processData: false,
             contentType: 'application/json',
             success: function(response) {
-                console.log('AJAX 请求成功：', response);
+//                console.log('AJAX 请求成功：', response);
 
                 calendarData = response; // 将数据存储在全局变量中
                 // 將資料轉換為 FullCalendar 所需的格式
@@ -109,7 +109,8 @@ var KTAppCalendar = function () {
         var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
         var TODAY = todayDate.format('YYYY-MM-DD');
         var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
-        var INITIAL_DATE = $('#initialDate').val() == '' ? TODAY : $('#initialDate').val();
+//        var INITIAL_DATE = $('#initialDate').val() == '' ? TODAY : $('#initialDate').val();
+        var INITIAL_DATE = TODAY;
 
         // Init calendar --- more info: https://fullcalendar.io/docs/initialize-globals
         calendar = new FullCalendar.Calendar(calendarEl, {
@@ -558,7 +559,7 @@ var KTAppCalendar = function () {
             processData: false,
             contentType: 'application/json',
             success: function(response) {
-                console.log('AJAX 请求成功：', response);
+//                console.log('AJAX 请求成功：', response);
                 readyToEdit(response);
             },
             error: function(xhr, status, error) {
@@ -604,39 +605,59 @@ var KTAppCalendar = function () {
 
     // Handle delete event
     const handleDeleteEvent = () => {
-        viewDeleteButton.addEventListener('click', e => {
-            e.preventDefault();
+        if (viewDeleteButton) {
+            viewDeleteButton.addEventListener('click', e => {
+                e.preventDefault();
 
-            Swal.fire({
-                text: "Are you sure you would like to delete this event?",
-                icon: "warning",
-                showCancelButton: true,
-                buttonsStyling: false,
-                confirmButtonText: "Yes, delete it!",
-                cancelButtonText: "No, return",
-                customClass: {
-                    confirmButton: "btn btn-primary",
-                    cancelButton: "btn btn-active-light"
-                }
-            }).then(function (result) {
-                if (result.value) {
-                    calendar.getEventById(data.id).remove();
+                Swal.fire({
+                    text: "Are you sure you would like to delete this event?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    buttonsStyling: false,
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, return",
+                    customClass: {
+                        confirmButton: "btn btn-primary",
+                        cancelButton: "btn btn-active-light"
+                    }
+                }).then(function (result) {
+                    if (result.value) {
+                        calendar.getEventById(data.id).remove();
 
-                    viewModal.hide(); // Hide modal				
-                } else if (result.dismiss === 'cancel') {
-                    Swal.fire({
-                        text: "Your event was not deleted!.",
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: "Ok, got it!",
-                        customClass: {
-                            confirmButton: "btn btn-primary",
-                        }
-                    });
-                }
+                        viewModal.hide(); // Hide modal
+                        deleteEvent(data.id);
+                    } else if (result.dismiss === 'cancel') {
+                        Swal.fire({
+                            text: "Your event was not deleted!.",
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary",
+                            }
+                        });
+                    }
+                });
             });
+        }
+    }
+    function deleteEvent(eventId) {
+        $.ajax({
+            url: baseUrl + '/api/manage/calendar/delete/' + eventId, // RESTful API 的删除 URL
+            method: 'DELETE',
+            success: function(response) {
+                if (response.success) {
+                    console.log('Event deleted successfully:', response.message);
+                } else {
+                    console.error('Delete failed:', response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Delete Request Failed:', error);
+            }
         });
     }
+
 
     // Handle edit button
     const handleEditButton = () => {

@@ -83,8 +83,12 @@
 
                 <!--begin::Action=-->
                 <th:block th:each="permission : ${session.permissionAction}">
-                    <td th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
-                        class="text-end">
+                    <td th:if="${permission != null
+                         and upInfo != null
+                         and permission.id == upInfo.id
+                         and permission.action.equals(T(com.xk.upms.model.enums.PermissionAction).WRITE)
+                         and permission.active}"
+                         class="text-end">
                         <th:block th:if="${data.payDate == null}">
                             <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
                         </th:block>

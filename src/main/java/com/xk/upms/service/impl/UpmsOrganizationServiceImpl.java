@@ -2,6 +2,7 @@ package com.xk.upms.service.impl;
 
 import com.xk.cms.model.bo.CmsClubSaveReq;
 import com.xk.cms.model.bo.CmsUserSaveReq;
+import com.xk.cms.model.vo.CmsClubResp;
 import com.xk.cms.model.vo.CmsClubSaveResp;
 import com.xk.cms.service.CmsClubInfoService;
 import com.xk.cms.service.CmsClubService;
@@ -171,6 +172,12 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
      */
     private void prepareUserInfoForOrganization(UpmsOrganization uoEntity) {
         if (uoEntity != null) {
+            // 若已經存在 return
+            CmsClubResp cmsCLub = cmsClubService.selectByOrganizationId(String.valueOf(uoEntity.getId()));
+            if (cmsCLub != null) {
+                return;
+            }
+
             UpmsUserResp upmsUser = null;
             if (uoEntity.getCode().startsWith("D")) {
                 upmsUser = upmsUserService.findByEmail(uoEntity.getCode().substring(1)+"@District");
@@ -263,7 +270,7 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
 
         UpmsOrganizationReq req = new UpmsOrganizationReq();
         req.setParentId(String.valueOf(parentEntity.getId()));
-        req.setStatus("true");
+//        req.setStatus("true");
 
         // 調用 list 方法查找子組織
         return this.list(req);

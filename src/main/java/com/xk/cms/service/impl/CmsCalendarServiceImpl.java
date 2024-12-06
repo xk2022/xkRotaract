@@ -56,6 +56,7 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
         List<CmsCalendar> entities = null;
 
         CmsCalendar req = new CmsCalendar();
+        req.setLocked(false);
         if (StringUtils.isNotBlank(resource.getDistrict_id())) {
             req.setDistrict_id(resource.getDistrict_id());
         }
@@ -169,6 +170,7 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        req.setLocked(false);
         CmsCalendar entity = cmsCalendarRepository.save(req);
 
         BeanUtils.copyProperties(entity, result);

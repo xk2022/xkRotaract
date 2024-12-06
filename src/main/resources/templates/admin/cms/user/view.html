@@ -56,10 +56,10 @@
             <!-- <th th:each="i : ${page_thead}" class="min-w-125px" th:text="${i}">Name</th>-->
             <th class="min-w-5px" style="display:none">ID</th>
             <th class="min-w-125px">用戶</th>
-            <th class="min-w-125px">地區</th>
-            <th class="min-w-125px">扶青社</th>
+<!--            <th class="min-w-125px">地區</th>-->
+<!--            <th class="min-w-125px">扶青社</th>-->
             <th class="min-w-125px">phoneNumber</th>
-            <th class="min-w-125px">性別</th>
+<!--            <th class="min-w-125px">性別</th>-->
             <th class="text-end min-w-100px">動作</th>
         </tr>
         <!--end::Table row-->
@@ -94,12 +94,12 @@
             </td>
             <!--end::User=-->
             <!--begin::Role=-->
-            <td th:text="${data.district_id}"></td>
+<!--            <td th:text="${data.district_id}"></td>-->
             <!--end::Role=-->
             <!--begin::Last login=-->
-            <td>
-                <div class="badge badge-light fw-bolder" th:text="${data.rotaract_id}">5 hours ago</div>
-            </td>
+<!--            <td>-->
+<!--                <div class="badge badge-light fw-bolder" th:text="${data.rotaract_id}">5 hours ago</div>-->
+<!--            </td>-->
             <!--end::Last login=-->
             <!--begin::Two step=-->
             <!--                    <td>-->
@@ -110,11 +110,11 @@
             <td th:text="${data.phoneNumber}">20 Dec 2022, 9:23 pm</td>
             <!--end::Two step=-->
             <!--begin::Joined-->
-            <td th:text="${data.gender}">20 Dec 2022, 9:23 pm</td>
+<!--            <td th:text="${data.gender}">20 Dec 2022, 9:23 pm</td>-->
             <!--end::Joined-->
             <!--begin::Action=-->
             <th:block th:each="permission : ${session.permissionAction}">
-                <td th:if="${permission.id == upInfo.id and permission.action == T(com.xk.upms.model.enums.PermissionAction).WRITE and permission.active}"
+                <td th:if="${permission.id == upInfo.id and permission.action.equals( T(com.xk.upms.model.enums.PermissionAction).WRITE ) and permission.active}"
                     class="text-end">
                     <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
                     <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>

@@ -272,7 +272,8 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
 
             result.addAll(this.listBy(resource));
         }
-        return result;
+        // 去重複
+        return new ArrayList<>(new HashSet<>(result));
     }
 
     private UpmsRolePermission safeSaveURP(UpmsRolePermission entity, boolean setActive) {

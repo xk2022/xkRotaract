@@ -22,6 +22,8 @@ public interface CmsCompanyService {
      */
     List list(CmsCompanyReq resources);
 
+    List listByClub(CmsCompanyReq resources);
+
     List listByUser(long cms_user_id);
 
     List listByUserWithPay(long cms_user_id);

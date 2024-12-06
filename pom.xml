@@ -6,7 +6,7 @@
 
     <groupId>com.xk</groupId>
     <artifactId>xkRotaract</artifactId>
-    <version>2024.08.15</version>
+    <version>2024.12.05</version>
     <!--項目名稱，maven生成文擋時使用-->
     <name>xkRotaract</name>
     <packaging>war</packaging>

@@ -1,6 +1,7 @@
 package com.xk.cms.controller.rest;
 
 import com.xk.cms.model.bo.CmsCalendarReq;
+import com.xk.cms.model.bo.CmsCalendarSaveReq;
 import com.xk.cms.service.CmsCalendarService;
 import com.xk.common.base.BaseRepository;
 import io.swagger.annotations.Api;
@@ -14,8 +15,9 @@ import java.util.Map;
 
 /**
  * 行事曆 RestController
- * @author yuan
- * Created by yuan on 2024/09/25
+ * 管理行事曆的增刪改查操作。
+ *
+ * @author yuan Created on 2024/09/25.
  */
 @RestController
 @Api("行事曆管理api")
@@ -41,7 +43,6 @@ public class CmsCalendarRestController {
         return baseRepository.queryTableComment("cms_company");
     }
 
-
     @ApiOperation(value = "系统列表")
     @PostMapping("/showEvo")
     public Object showEvo(@RequestBody CmsCalendarReq req) {
@@ -53,6 +54,18 @@ public class CmsCalendarRestController {
     public Object findById(@RequestBody Map<String, Object> requestBody) {
         String id = (String) requestBody.get("id");
         return cmsCalendarService.findById(Long.valueOf(id));
+    }
+
+    /**
+     * 删除行事历事件
+     */
+    @ApiOperation(value = "删除行事历事件")
+    @DeleteMapping("/delete/{id}")
+    public Object deleteEvent(@PathVariable String id) {
+        CmsCalendarSaveReq req = new CmsCalendarSaveReq();
+        req.setId(id);
+        req.setLocked("true");
+        return cmsCalendarService.update(req);
     }
 
     /**

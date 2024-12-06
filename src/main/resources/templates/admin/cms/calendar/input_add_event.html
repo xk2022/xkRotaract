@@ -27,6 +27,8 @@
     // Event handler for adding a new event
     $("[name='add_btn']").click(function () {
         resetEventModal("新增事件");
+
+        $('#inputGroupSelect_type').val(1).trigger('change');
     });
 
     // Update
@@ -110,8 +112,9 @@
                 <label class="fs-6 fw-bold required mb-2">所屬地區</label>
                 <!--end::Label-->
                 <!--begin::Select-->
-                <select class="form-select form-control form-control-solid" id="inputGroupSelect_district">
-                    <option value="0">請選擇</option>
+                <select class="form-select form-control form-control-solid" id="inputGroupSelect_district"
+                        data-control="select2" data-placeholder="請選擇" >
+                    <option></option>
                 </select>
                 <!--end::Select-->
             </div>

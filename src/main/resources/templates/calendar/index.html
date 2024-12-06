@@ -41,6 +41,7 @@
 <!--            </div>-->
 <!--        </div>-->
 
+        <div th:replace="'admin/cms/calendar/input_view_event' :: model"></div>
         <!--begin::Footer Section-->
         <div class="separator separator-solid"></div>
         <!--/*/<th:block th:replace="_fragments/_fragments :: footer(title='Rotaract 行事曆')">/*/-->
@@ -64,6 +65,33 @@
 <script>
 
     var formattedEvents;
+    // View event modal
+    const viewElement = document.getElementById('kt_modal_input_view_event');
+    viewModal = new bootstrap.Modal(viewElement);
+
+    var data = {
+        id: '',
+        eventName: '',
+        eventDescription: '',
+        eventLocation: '',
+        startDate: '',
+        endDate: '',
+        allDay: false,
+        type: '',
+        district_id: '',
+        rotaract_id: ''
+    }; // 用來存儲日曆事件的屬性（如事件名稱、描述、開始時間、結束時間等）。
+    // Format FullCalendar reponses
+    const formatArgs = (res) => {
+        data.id = res.id;
+        data.eventName = res.title;
+        data.eventDescription = res.description;
+        data.eventLocation = res.location;
+        data.startDate = res.startStr;
+        data.endDate = res.endStr;
+        data.allDay = res.allDay;
+    }
+
     var initCalendarApp = function () {
         var calendarEl = document.getElementById('kt_calendar_app');
         var todayDate = moment().startOf('day');
@@ -79,8 +107,8 @@
             },
             initialDate: TODAY,
             navLinks: true,
-        height: 800,
-        contentHeight: 780,
+            height: 800,
+            contentHeight: 780,
             selectable: true,
             aspectRatio: 3,
             nowIndicator: true,
@@ -92,11 +120,66 @@
                 listMonth: { buttonText: '列表' }
             },
             editable: false,
-            events: formattedEvents
+            events: formattedEvents,
+
+            // Click event --- more info: https://fullcalendar.io/docs/eventClick
+            eventClick: function (arg) {
+
+                formatArgs({
+                    id: arg.event.id,
+                    title: arg.event.title,
+                    description: arg.event.extendedProps.description,
+                    location: arg.event.extendedProps.location,
+                    startStr: arg.event.startStr,
+                    endStr: arg.event.endStr,
+                    allDay: arg.event.allDay
+                });
+                handleViewEvent();
+            },
         });
 
         calendar.render();
     }
+    // Handle view event
+    const handleViewEvent = () => {
+        viewModal.show();
+        $('.initialDate').val(data.startDate);
+
+        // Detect all day event
+        var eventNameMod;
+        var startDateMod;
+        var endDateMod;
+
+        // Generate labels
+        if (data.allDay) {
+            eventNameMod = 'All Day';
+            startDateMod = moment(data.startDate).format('Do MMM, YYYY');
+            endDateMod = moment(data.endDate).format('Do MMM, YYYY');
+        } else {
+            eventNameMod = '';
+            startDateMod = moment(data.startDate).format('Do MMM, YYYY - h:mm a');
+            endDateMod = moment(data.endDate).format('Do MMM, YYYY - h:mm a');
+        }
+
+        $('#modal_name').text("新增事件");
+        $("[name='id']").val(null);
+        $("[name='viewEventName']").text(data.eventName);
+        $("[name='viewAllDay']").text(eventNameMod);
+        $("[name='viewEventDescription']").text(data.eventDescription ? data.eventDescription : '--');
+        $("[name='viewEventLocation']").text(data.eventLocation ? data.eventLocation : '--');
+
+        // 取得當前日期，並設置為 ISO 格式的日期字符串
+        const today = new Date().toISOString().slice(0, 10); // 格式為 YYYY-MM-DDTHH:mm
+        const now = new Date().toISOString().slice(11, 16); // 格式為 YYYY-MM-DDTHH:mm
+        $("[name='viewStartDate']").text(startDateMod);
+        $("[name='viewEndDate']").text(endDateMod);
+    }
+
+
+
+
+
+
 
     document.addEventListener('DOMContentLoaded', function() {
         handleDistrictChange('all');

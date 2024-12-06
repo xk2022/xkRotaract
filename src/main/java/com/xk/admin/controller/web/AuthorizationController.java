@@ -24,8 +24,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 
 /**
- * Created by yuan on 2024/01/11
  * 授權、根據token獲取用戶詳細訊息
+ * Controller for handling authorization and user details retrieval based on token.
+ * Provides endpoints for user login, registration, password reset, and related actions.
+ *
+ * @author yuan Created on 2024/01/11.
+ * @author yuan Updated on 2024/12/05 with code optimization.
  */
 @Controller
 @RequestMapping("/admin")
@@ -33,13 +37,16 @@ public class AuthorizationController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationController.class);
 
-    private static final String DIR_INDEX = "admin";
-    private static final String AUTH_INDEX = DIR_INDEX + "/auth/index";
-//    private static final String R_AUTH_INDEX = "redirect:/admin/auth/index"; // REDIRECT_ADDR
-    private static final String R_AUTH_SIGNIN = "redirect:/admin/signIn"; // REDIRECT_ADDR
-    private static final String R_AUTH_SIGNUP = "redirect:/admin/signUp"; // REDIRECT_ADDR
-    private static final String R_AUTH_PASSWORDRESET = "redirect:/admin/passwordReset"; // REDIRECT_ADDR
-    private static final String R_AUTH_NEWPASSWORD = "redirect:/admin/newPassword"; // REDIRECT_ADDR
+    // Base directory for admin views
+    private static final String ADMIN_DIR = "admin";
+    // View paths for authentication pages
+    private static final String VIEW_AUTH_INDEX = ADMIN_DIR + "/auth/index";
+    // Redirect paths for authentication actions
+    private static final String REDIRECT_SIGNIN = "redirect:/admin/signIn";
+    private static final String REDIRECT_SIGNUP = "redirect:/admin/signUp";
+    private static final String REDIRECT_PASSWORD_RESET = "redirect:/admin/passwordReset";
+    private static final String REDIRECT_NEW_PASSWORD = "redirect:/admin/newPassword";
+
 
     @Autowired
     private AuthService authService;
@@ -50,110 +57,126 @@ public class AuthorizationController extends BaseController {
     @Autowired
     private UpmsUserRoleService upmsUserRoleService;
 
+    /**
+     * Handles the sign-in page request.
+     * Adds required fragments to the model and returns the authentication view.
+     */
     @GetMapping("/signIn")
     public String signIn(Model model) {
-        model.addAttribute("fragmentSystem", "auth");
-        model.addAttribute("fragmentPackage", "signIn");
-        model.addAttribute("fragmentName", "view");
-        return AUTH_INDEX;
+//        this.addFragmentAttributes(model, "fragmentSystem", "fragmentPackage", "fragmentName");
+        this.addFragmentAttributes(model, "auth", "signIn", "view");
+        return VIEW_AUTH_INDEX;
     }
 
+    /**
+     * Handles user login requests.
+     */
     @PostMapping("/signIn")
-    public String login(@RequestParam String account, @RequestParam String password, Model model,
-                        HttpSession session, RedirectAttributes attributes) {
-        // 密码解密
-//        String password = MD5Utils.convertMD5(authUser.getPassword());
-        UserExample user = authService.checkUser(account, password);
+    public String login(@RequestParam String account, @RequestParam String password
+            , HttpSession session, RedirectAttributes attributes) {
+        try {
+            // 密码解密 Authenticate user credentials
+            UserExample user = authService.checkUser(account, password);
 
-        // TODO 20241104 快速通道，讓District & Club主帳號，快速建立密碼（看情況優化代碼刪除）
-        if (user == null) {
-            if (passWay(account)) {
+            // TODO 20241104 快速通道，讓District & Club主帳號，快速建立密碼（看情況優化代碼刪除）
+            // Handle quick password setup for specific accounts (District & Club main accounts)
+            if (user == null && passWay(account)) {
                 attributes.addFlashAttribute("email", account);
-                return R_AUTH_NEWPASSWORD;
+                return REDIRECT_NEW_PASSWORD;
             }
-        }
 
-        if (user != null) {
-            session.setAttribute("user", user);
-            this.versionSession(session);
-
-            return R_ADMIN_INDEX;
-        } else {
+            // Successful login
+            if (user != null) {
+                session.setAttribute("user", user);
+                this.versionSession(session); // Additional session setup
+                return REDIRECT_ADMIN_INDEX;
+            }
+            // Login failed
             attributes.addFlashAttribute("message", "用戶名和密碼錯誤");
-            return R_AUTH_SIGNIN;
+            return REDIRECT_SIGNIN;
+        } catch (Exception e) {
+            LOGGER.error("Login failed for account: {}", account, e);
+            attributes.addFlashAttribute("message", "系統錯誤，請稍後再試");
+            return REDIRECT_SIGNIN;
         }
     }
 
+    /**
+     * Checks if the account is allowed to use the quick password setup.
+     * for firstLoginIn.
+     */
     private Boolean passWay(String email) {
-        Boolean firstLoginIn = false;
-
+        // Quick password setup applies only to Club or District accounts with no password set
         if (email.contains("@Club") || email.contains("@District")) {
-            Boolean isPassNull_mainFirstLoginIn = authService.checkPassNullable(email);
             // 當密碼為空，result: true
-            firstLoginIn = isPassNull_mainFirstLoginIn;
+            return authService.checkPassNullable(email);
         }
-        return firstLoginIn;
+        return false;
     }
 
+    /**
+     * Handles user logout requests.
+     * Clears user session and redirects to the sign-in page.\
+     */
     @GetMapping("/logout")
     public String logout(Model model, HttpSession session) {
-        model.addAttribute("fragmentSystem", "auth");
-        model.addAttribute("fragmentPackage", "signIn");
-        model.addAttribute("fragmentName", "view");
+        // Add fragments for the sign-in view
+        this.addFragmentAttributes(model, "auth", "signIn", "view");
 
+        // 销毁 session, Clear session data
         session.removeAttribute("user");
-        session.invalidate(); // 销毁 session
-        return AUTH_INDEX;
+        session.invalidate(); // Invalidate the session
+        return VIEW_AUTH_INDEX;
     }
 
+    /**
+     * Handles the sign-up page request.
+     * Sets up the necessary fragments and an empty entity for user input.
+     */
     @GetMapping("/signUp")
     public String signUp(Model model) {
-        model.addAttribute("fragmentSystem", "auth");
-        model.addAttribute("fragmentPackage", "signUp");
-        model.addAttribute("fragmentName", "view");
-
-        model.addAttribute("entity", new UpmsUser());
-        return AUTH_INDEX;
+        // Add fragments for the sign-up view
+        addFragmentAttributes(model, "auth", "signUp", "view");
+        // Initialize an empty entity for user input
+        model.addAttribute("entity", new UpmsUserSaveReq());
+        return VIEW_AUTH_INDEX;
     }
 
+    /**
+     * Handles user sign-up requests.
+     */
     @PostMapping("/signUp")
-    public String signUp(UpmsUserSaveReq resources, RedirectAttributes attributes, HttpSession session) throws Exception {
-        UpmsUserSaveResp result;
+    public String signUp(UpmsUserSaveReq resources, RedirectAttributes attributes) {
 
-        // 01. check referral Code first
-        boolean isReferralCodeExist = upmsUserService.checkField("referralCode", resources.getReferralCode());
-        if (!isReferralCodeExist) {
-            // 如果角色不存在，可以處理相應邏輯
-            attributes.addFlashAttribute("message", "推薦碼有誤，請重新取得");
-            return R_AUTH_SIGNUP;
-        }
-        // 02. check email first
-        boolean isEmailExist = upmsUserService.checkField("email", resources.getEmail());
-        if (isEmailExist) {
-            // 如果email已經存在
+        // Validate email uniqueness
+        if (upmsUserService.checkField("email", resources.getEmail())) {
             attributes.addFlashAttribute("message", "電子郵件，先前已註冊使用中。請返回登入頁面");
-            return R_AUTH_SIGNUP;
+            return REDIRECT_SIGNUP;
         }
-
+        // Validate referral code
+        if (!upmsUserService.checkField("referralCode", resources.getReferralCode())) {
+            attributes.addFlashAttribute("message", "推薦碼有誤，請重新取得");
+            return REDIRECT_SIGNUP;
+        }
+        // Create user account
         resources.setCreateBy("signUp by self");
-        result = upmsUserService.create(resources);
-        LOGGER.info("新增用户，主键：userId={}", result.getId());
+        UpmsUserSaveResp result = upmsUserService.create(resources);
 
+        if (result == null) {
+            attributes.addFlashAttribute("message", "操作失敗，請稍後再試");
+            return REDIRECT_SIGNUP;
+        }
+        LOGGER.info("新增用户，主键：userId={}", result.getId());
+        // Assign default role
         UpmsRole role = upmsRoleService.selectByCode("rookie");
         if (role == null) {
             // 如果角色不存在，可以處理相應邏輯
             attributes.addFlashAttribute("message", "操作失敗，系統角色有誤，通知管理員");
-            return R_AUTH_SIGNUP;
+            return REDIRECT_SIGNUP;
         }
         String[] roleIds = {String.valueOf(role.getId())};
         upmsUserRoleService.role(result.getId(), roleIds);
-
-        if (result != null) {
-            return R_AUTH_SIGNIN;
-        } else {
-            attributes.addFlashAttribute("message", "操作失敗");
-            return R_AUTH_SIGNUP;
-        }
+        return REDIRECT_SIGNIN;
     }
 
     @GetMapping("/passwordReset")
@@ -161,7 +184,7 @@ public class AuthorizationController extends BaseController {
         model.addAttribute("fragmentSystem", "auth");
         model.addAttribute("fragmentPackage", "passwordReset");
         model.addAttribute("fragmentName", "view");
-        return AUTH_INDEX;
+        return VIEW_AUTH_INDEX;
     }
 
     @PostMapping("/passwordReset")
@@ -171,10 +194,10 @@ public class AuthorizationController extends BaseController {
         Boolean hasUser = authService.checkUser(email);
         if (hasUser) {
             attributes.addFlashAttribute("email", email);
-            return R_AUTH_NEWPASSWORD;
+            return REDIRECT_NEW_PASSWORD;
         } else {
             attributes.addFlashAttribute("message", "用戶名錯誤");
-            return R_AUTH_PASSWORDRESET;
+            return REDIRECT_PASSWORD_RESET;
         }
     }
 
@@ -183,7 +206,7 @@ public class AuthorizationController extends BaseController {
         model.addAttribute("fragmentSystem", "auth");
         model.addAttribute("fragmentPackage", "newPassword");
         model.addAttribute("fragmentName", "view");
-        return AUTH_INDEX;
+        return VIEW_AUTH_INDEX;
     }
 
     @PostMapping("/newPassword")
@@ -191,10 +214,10 @@ public class AuthorizationController extends BaseController {
                                 HttpSession session, RedirectAttributes attributes) {
         UpmsUser user = authService.resetPassword(email, password);
         if (user != null) {
-            return R_AUTH_SIGNIN;
+            return REDIRECT_SIGNIN;
         } else {
             attributes.addFlashAttribute("message", "系統錯誤");
-            return R_AUTH_NEWPASSWORD;
+            return REDIRECT_NEW_PASSWORD;
         }
     }
 

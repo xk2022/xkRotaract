@@ -39,4 +39,6 @@ public class CmsCalendarSaveReq {
 
     private String initialDate;
 
+    private String locked;
+
 }
