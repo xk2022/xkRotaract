@@ -22,6 +22,7 @@ import com.xk.upms.dao.repository.UpmsDictionaryCategoryRepository;
 import com.xk.upms.dao.repository.UpmsDictionaryDataRepository;
 import com.xk.upms.model.vo.UpmsOrganizationResp;
 import com.xk.upms.service.UpmsOrganizationService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -296,11 +297,15 @@ public class CmsCompanyServiceImpl implements CmsCompanyService {
         result.setUserId(cuEntity.getId());
         BeanUtils.copyProperties(cuEntity, result);
 
-        UpmsOrganizationResp districtUOR = upmsOrganizationService.findById(Long.valueOf(result.getDistrict_id()));
-        result.setDistrict_name(districtUOR.getName());
+        if (StringUtils.isNotBlank(result.getDistrict_id())) {
+            UpmsOrganizationResp districtUOR = upmsOrganizationService.findById(Long.valueOf(result.getDistrict_id()));
+            result.setDistrict_name(districtUOR.getName());
+        }
 
-        UpmsOrganizationResp clubUOR = upmsOrganizationService.findById(Long.valueOf(result.getRotaract_id()));
-        result.setRotaract_name(clubUOR.getName());
+        if (StringUtils.isNotBlank(result.getRotaract_id())) {
+            UpmsOrganizationResp clubUOR = upmsOrganizationService.findById(Long.valueOf(result.getRotaract_id()));
+            result.setRotaract_name(clubUOR.getName());
+        }
         /**
          * CmsCompanyPay
          */

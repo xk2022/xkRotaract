@@ -8,6 +8,7 @@ package com.xk.common.util;
  */
 @FunctionalInterface
 public interface XkBeanUtilsCallBack<S, T> {
+
     /**
      * 自定义属性拷贝逻辑
      *
@@ -15,4 +16,5 @@ public interface XkBeanUtilsCallBack<S, T> {
      * @param target 目标对象
      */
     void callBack(S source, T target);
+
 }

@@ -28,9 +28,10 @@ public class BaseEntity implements Serializable {
 //    @Comment("90_資料排序")
 //    private Long orders;
 
-//    @Column(name = "status", columnDefinition = "boolean default true")
-//    @Comment("91_狀態，表示是否有效或啟用")
-//    private Boolean status;
+//    @Column(name = "status", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+//    @ColumnDefault("true")
+//    @Comment("91_狀態（啟用/禁用）")
+//    private Boolean status = true;
 
 //    @Column(name = "locked", columnDefinition = "boolean default false")
 //    @Comment("92_狀態(0:正常,1:锁定)")

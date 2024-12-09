@@ -56,7 +56,7 @@ public class UpmsOrganizationController extends BaseController {
      * @return the path to the admin index page
      */
     @ApiOperation(value = "組織管理首頁", notes = "顯示組織列表")
-    @GetMapping()
+    @GetMapping
     public String index(Model model) {
         this.info(model, this.getClass().getAnnotation(RequestMapping.class).value()[0]);
         model.addAttribute("fragmentName", "list");
