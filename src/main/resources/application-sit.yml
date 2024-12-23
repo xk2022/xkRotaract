@@ -12,7 +12,7 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver # 驅動類型(注意MySQL 8.0的值是com.mysql.cj.jdbc.Driver和之前不同)
     url: jdbc:mysql://localhost:3306/xkrotaract?useSSL=false&useUnicode=yes&characterEncoding=UTF-8&characterSetResults=UTF-8 # 數據庫連接字符串
     username: root # 數據庫用戶名
-    password: root # 數據庫密碼
+    password: 1qaz@WSX # 数据库密码
     type: com.alibaba.druid.pool.DruidDataSource
 
 
