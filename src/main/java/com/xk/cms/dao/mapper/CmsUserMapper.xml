@@ -10,7 +10,7 @@
         <result property="district_id" column="district_id"/>
         <result property="rotaract_id" column="rotaract_id"/>
         <result property="avatarUrl" column="avatarUrl"/>
-        <result property="phoneNumber" column="phoneNumber"/>
+        <result property="phoneNumber" column="phone_number"/>
         <result property="gender" column="gender"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
@@ -19,22 +19,30 @@
     </resultMap>
     <resultMap type="com.xk.cms.model.dto.CmsUserExample" id="cuDto" extends="baseRM">
         <!-- 继承自 baseRM 的映射 -->
-        <result property="companyName" column="companyName"/>
-        <result property="cmsCompanyPayId" column="company_pay_id"/>
-        <result property="payDate" column="pay_date"/>
-        <result property="locked" column="locked"/>
+        <result property="email" column="email"/>
+        <result property="roleId" column="role_id"/>
+        <result property="roleDescription" column="role_description"/>
     </resultMap>
+<!--    <resultMap type="com.xk.upms.model.dto.CmsUserExample" id="cuDto">-->
+<!--        <id property="id" column="user_id"></id>-->
+<!--        <result property="username" column="username"/>-->
+<!--        <result property="realname" column="realname"/>-->
+<!--        <result property="avatarUrl" column="avatar_url"/>-->
+<!--        <result property="email" column="email"/>-->
+<!--        <result property="locked" column="locked"/>-->
+<!--        <result property="lastLogin" column="last_login"/>-->
+<!--        <result property="createTime" column="create_time"/>-->
+<!--        <result property="role_title" column="role_title"/>-->
+<!--    </resultMap>-->
 
-    <select id="selectAll" resultMap="cuDto">
-        SELECT  cc.company_id,
-                cc.name as companyName,
-                cc.create_time,
-                ccp.company_pay_id,
-                ccp.pay_date,
-                ccp.locked
-        FROM cms_company cc
-            LEFT JOIN cms_company_pay ccp ON cc.company_id = ccp.fk_cms_company_id
-        ORDER BY cc.company_id DESC
+    <select id="getClubUsers" resultMap="cuDto">
+        SELECT  cu.*, ur.`role_id`, ur.`description` AS role_description, uu.`email`
+        FROM `cms_user` cu
+        LEFT JOIN `upms_user` uu ON cu.`fk_upms_user_id` = uu.`user_id`
+        LEFT JOIN `upms_user_role` uur ON uu.user_id = uur.user_id
+        LEFT JOIN `upms_role` ur ON uur.role_id = ur.role_id
+        WHERE cu.`rotaract_id` = #{rotaract_id} AND ur.`role_id` NOT IN ('1', '10')
+        ORDER BY ur.`orders` ASC
     </select>
 
 </mapper>

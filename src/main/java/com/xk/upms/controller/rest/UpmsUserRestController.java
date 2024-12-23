@@ -210,7 +210,7 @@ public class UpmsUserRestController {
         /**
          * member
          */
-        respRole = upmsRoleService.selectByCode("member");
+        respRole = upmsRoleService.selectByCode("club_member");
 
         resources.setUsername("member");
         respUser = upmsUserService.findByUsername(resources);

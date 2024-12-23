@@ -55,10 +55,11 @@
             </th>
             <!-- <th th:each="i : ${page_thead}" class="min-w-125px" th:text="${i}">Name</th>-->
             <th class="min-w-5px" style="display:none">ID</th>
+            <th class="min-w-5px" style="display:none">信箱(登入帳號)</th>
             <th class="min-w-125px">用戶</th>
-<!--            <th class="min-w-125px">地區</th>-->
-<!--            <th class="min-w-125px">扶青社</th>-->
             <th class="min-w-125px">phoneNumber</th>
+            <th class="min-w-5px" style="display:none">roleId</th>
+            <th class="min-w-125px">角色</th>
 <!--            <th class="min-w-125px">性別</th>-->
             <th class="text-end min-w-100px">動作</th>
         </tr>
@@ -74,7 +75,9 @@
                     <input class="form-check-input" type="checkbox" value="1"/>
                 </div>
             </td>
-            <td style="display:none" th:text="${data.id}"></td><!--begin::User=-->
+            <td style="display:none" th:text="${data.id}"></td>
+            <td style="display:none" th:text="${data.email}"></td>
+            <!--begin::User=-->
             <td class="d-flex align-items-center">
                 <!--begin:: Avatar -->
                 <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
@@ -108,17 +111,23 @@
             <!--                             th:classappend="${data.locked==0 ? 'badge-light-success' : 'badge-light-danger'}" >Enabled</div>-->
             <!--                    </td>-->
             <td th:text="${data.phoneNumber}">20 Dec 2022, 9:23 pm</td>
+            <td style="display:none" th:text="${data.roleId}"></td>
+            <td th:text="${data.roleDescription}">20 Dec 2022, 9:23 pm</td>
             <!--end::Two step=-->
             <!--begin::Joined-->
 <!--            <td th:text="${data.gender}">20 Dec 2022, 9:23 pm</td>-->
             <!--end::Joined-->
             <!--begin::Action=-->
             <th:block th:each="permission : ${session.permissionAction}">
-                <td th:if="${permission.id == upInfo.id and permission.action.equals( T(com.xk.upms.model.enums.PermissionAction).WRITE ) and permission.active}"
-                    class="text-end">
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_update"></th:block>
-                    <th:block th:replace="admin/_fragments/table_basic :: btn_delete"></th:block>
-                </td>
+                <th:block th:if="${permission != null
+                     and upInfo != null
+                     and permission.id == upInfo.id
+                     and permission.action.equals(T(com.xk.upms.model.enums.PermissionAction).WRITE)
+                     and permission.active}">
+                    <td class="text-end">
+                        <th:block th:replace="admin/_fragments/table_basic :: btn_update(update_btn_text='變更權限')"></th:block>
+                    </td>
+                </th:block>
             </th:block>
             <!--end::Action=-->
         </tr>

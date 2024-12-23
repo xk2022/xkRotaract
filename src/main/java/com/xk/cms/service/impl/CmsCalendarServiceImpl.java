@@ -1,9 +1,11 @@
 package com.xk.cms.service.impl;
 
+import com.xk.cms.dao.mapper.CmsCalendarMapper;
 import com.xk.cms.dao.repository.CmsCalendarRepository;
 import com.xk.cms.dao.repository.CmsClubRepository;
 import com.xk.cms.model.bo.CmsCalendarReq;
 import com.xk.cms.model.bo.CmsCalendarSaveReq;
+import com.xk.cms.model.dto.CmsCalendarExample;
 import com.xk.cms.model.po.CmsCalendar;
 import com.xk.cms.model.vo.CmsCalendarEvoResp;
 import com.xk.cms.model.vo.CmsCalendarResp;
@@ -27,9 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the CmsCalendar Service.
@@ -50,6 +54,8 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
     private UpmsOrganizationService upmsOrganizationService;
     @Autowired
     private UpmsOrganizationRepository upmsOrganizationRepository;
+    @Autowired
+    private CmsCalendarMapper cmsCalendarMapper;
 
     @Override
     public List list(CmsCalendarReq resource) {
@@ -86,7 +92,7 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         for (CmsCalendar entity : entities) {
-            CmsCalendarResp temp =  new CmsCalendarResp();
+            CmsCalendarResp temp = new CmsCalendarResp();
 
             temp.setId(String.valueOf(entity.getId()));
             if (StringUtils.isBlank(entity.getRotaract_id()) || "0".equals(entity.getRotaract_id())) {
@@ -205,53 +211,72 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
     }
 
     @Override
-    public List evoList(CmsCalendarReq req) {
-        List<CmsCalendarEvoResp> resultList = new ArrayList<>();
-
-        // 目標格式
-        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM/dd/yyyy");
-
+    public List<CmsCalendarEvoResp> evoList(CmsCalendarReq req) {
         List<CmsCalendar> entities = cmsCalendarRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        for (CmsCalendar entity : entities) {
-            CmsCalendarEvoResp temp =  new CmsCalendarEvoResp();
+        List<CmsCalendarExample> events = XkBeanUtils.copyListProperties(entities, CmsCalendarExample::new);
+        return events.stream()
+                .map(this::mapToCmsCalendarEvoResp)
+                .collect(Collectors.toList());
+    }
 
-            temp.setId(String.valueOf(entity.getId()));
-            if (StringUtils.isBlank(entity.getRotaract_id()) || "0".equals(entity.getRotaract_id())) {
-                // 地區活動
-                UpmsOrganizationResp district = upmsOrganizationService.findById(Long.valueOf(entity.getDistrict_id()));
-                if (district != null) {
-                    temp.setName("[" + district.getName() + "]" + entity.getEventName());
-                } else {
-                    temp.setName(entity.getEventName());
-                }
-            } else {
-                // 社內活動
-//                Optional<CmsClub> club = cmsClubRepository.findById(Long.valueOf(entity.getRotaract_id()));
-                UpmsOrganizationResp club = upmsOrganizationService.findById(Long.valueOf(entity.getRotaract_id()));
-                if (club != null) {
-                    temp.setName("[" + club.getName() + "]" + entity.getEventName());
-                } else {
-                    temp.setName(entity.getEventName());
-                }
-            }
-            temp.setDescription(entity.getEventDescription());
-            temp.setBadge("測試顯示");
-            temp.setDate(outputFormat.format(entity.getStartDate()));
-            if (StringUtils.isBlank(entity.getStartTime())) {
-                temp.setStartTime("");
-//                temp.setEnd(outputFormat.format(entity.getEndDate()));
-            } else {
-                temp.setStartTime(entity.getStartTime());
-//                temp.setEnd(outputFormat.format(entity.getEndDate()) + 'T' + entity.getEndTime());
-            }
-            String type = "0".equals(entity.getType()) ? "birthday" :
-                    ("1".equals(entity.getType()) ? "event" : "holiday");
-            temp.setType(type);
-            temp.setEveryYear("!0");
+    @Override
+    public List<CmsCalendarEvoResp> getCalendarDataByYear(Integer year) {
+        // 設定活動範圍，例如 7/1 當年到 6/30 次年
+        LocalDate startDate = LocalDate.of(year, 7, 1);
+        LocalDate endDate = LocalDate.of(year + 1, 6, 30);
+        // 從資料庫中查詢數據
+        List<CmsCalendarExample> events = cmsCalendarMapper.findByDateRange(startDate, endDate);
+        // 使用 mapToCmsCalendarEvoResp 方法轉換數據
+        return events.stream()
+                .map(this::mapToCmsCalendarEvoResp)
+                .collect(Collectors.toList());
+    }
 
-            resultList.add(temp);
+
+    private CmsCalendarEvoResp mapToCmsCalendarEvoResp(CmsCalendarExample entity) {
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM/dd/yyyy");
+        CmsCalendarEvoResp temp = new CmsCalendarEvoResp();
+
+        temp.setId(String.valueOf(entity.getId()));
+
+        if (StringUtils.isBlank(entity.getRotaract_id()) || "0".equals(entity.getRotaract_id())) {
+            // 地區活動
+            UpmsOrganizationResp district = upmsOrganizationService.findById(Long.valueOf(entity.getDistrict_id()));
+            if (district != null) {
+                temp.setName("[" + district.getName() + "]" + entity.getEventName());
+            } else {
+                temp.setName(entity.getEventName());
+            }
+        } else {
+            // 社內活動
+            UpmsOrganizationResp club = upmsOrganizationService.findById(Long.valueOf(entity.getRotaract_id()));
+            if (club != null) {
+                temp.setName("[" + club.getName() + "]" + entity.getEventName());
+            } else {
+                temp.setName(entity.getEventName());
+            }
         }
-        return resultList;
+
+        temp.setDescription(entity.getEventDescription());
+        temp.setBadge("測試顯示");
+        temp.setDate(outputFormat.format(entity.getStartDate()));
+
+        if (StringUtils.isBlank(entity.getStartTime())) {
+            temp.setStartTime("");
+        } else {
+            temp.setStartTime(entity.getStartTime());
+        }
+
+        String type = "0".equals(entity.getType()) ? "birthday" :
+                ("1".equals(entity.getType()) ? "event" : "holiday");
+        temp.setType(type);
+        temp.setEveryYear("!0");
+
+        if (StringUtils.isNotBlank(entity.getOrgCode())) {
+            temp.setOrgCodes(entity.getOrgCode().split(","));
+        }
+
+        return temp;
     }
 
 }

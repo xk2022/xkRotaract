@@ -10,12 +10,14 @@ import com.xk.cms.service.CmsUserService;
 import com.xk.common.util.GenericUpdateService;
 import com.xk.common.util.XkBeanUtils;
 import com.xk.common.util.XkTypeUtils;
+import com.xk.upms.dao.mapper.UpmsOrganizationMapper;
 import com.xk.upms.dao.repository.UpmsOrganizationRepository;
 import com.xk.upms.dao.repository.UpmsOrganizationUserRepository;
 import com.xk.upms.dao.repository.UpmsRoleRepository;
 import com.xk.upms.model.bo.UpmsOrganizationReq;
 import com.xk.upms.model.bo.UpmsOrganizationSaveReq;
 import com.xk.upms.model.bo.UpmsUserSaveReq;
+import com.xk.upms.model.dto.UpmsOrganizationExample;
 import com.xk.upms.model.po.UpmsOrganization;
 import com.xk.upms.model.vo.UpmsOrganizationResp;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
@@ -64,6 +66,8 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
     private CmsClubService cmsClubService;
     @Autowired
     private CmsClubInfoService cmsClubInfoService;
+    @Autowired
+    private UpmsOrganizationMapper upmsOrganizationMapper;
 
     @Override
     public List<UpmsOrganizationResp> list(UpmsOrganizationReq resources) {
@@ -303,6 +307,36 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
                 .orElseThrow(() -> new IllegalArgumentException("父类组织 ID 不存在: " + parentId));
 
         return XkBeanUtils.copyProperties(parentOrg, UpmsOrganizationResp::new);
+    }
+
+    /**
+     * 获取所有 District 数据
+     */
+    @Override
+    public Map<String, List<String>> getAllDistricts() {
+        Map<String, List<String>> resultMap = new HashMap<>();
+
+        List<UpmsOrganizationResp> districts = this.findChildren("RIT");
+        // TODO
+        resultMap.put("0", this.top20EventsClub().stream()
+                .map(UpmsOrganizationResp::getName)
+                .collect(Collectors.toList()));
+        // 遍历顶级 District
+        for (UpmsOrganizationResp district : districts) {
+            String districtCode = district.getCode(); // 獲取 District Code
+            List<UpmsOrganizationResp> clubs = this.findChildren(districtCode); // 獲取子組織
+            // 将子组织的名称加入 Map
+            List<String> clubNames = clubs.stream()
+                    .map(UpmsOrganizationResp::getName)
+                    .collect(Collectors.toList());
+            resultMap.put(districtCode, clubNames);
+        }
+        return resultMap;
+    }
+
+    private List<UpmsOrganizationResp> top20EventsClub() {
+        List<UpmsOrganizationExample> organizations = upmsOrganizationMapper.top20EventsClub();
+        return XkBeanUtils.copyListProperties(organizations, UpmsOrganizationResp::new);
     }
 
 

@@ -2,6 +2,7 @@ package com.xk.cms.controller.rest;
 
 import com.xk.cms.model.bo.CmsCalendarReq;
 import com.xk.cms.model.bo.CmsCalendarSaveReq;
+import com.xk.cms.model.vo.CmsCalendarEvoResp;
 import com.xk.cms.service.CmsCalendarService;
 import com.xk.common.base.BaseRepository;
 import io.swagger.annotations.Api;
@@ -9,8 +10,12 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,6 +52,24 @@ public class CmsCalendarRestController {
     @PostMapping("/showEvo")
     public Object showEvo(@RequestBody CmsCalendarReq req) {
         return cmsCalendarService.evoList(req);
+    }
+
+    @PostMapping("/getAllByYear")
+    @ApiOperation(value = "獲取所有行事曆數據")
+    public ResponseEntity<List<CmsCalendarEvoResp>> getAllByYear(@RequestBody Map<String, Object> requestBody) {
+        Integer year = (Integer) requestBody.get("year");
+
+        if (year == null) {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+
+        try {
+            List<CmsCalendarEvoResp> calendarData = cmsCalendarService.getCalendarDataByYear(year);
+            return ResponseEntity.ok(calendarData);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching calendar data", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
+        }
     }
 
     @ApiOperation(value = "findById")

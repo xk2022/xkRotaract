@@ -35,4 +35,8 @@ public class CmsUserResp {
     private String phoneNumber;
     private String gender;
 
+    private String email;
+    private String roleId;
+    private String roleDescription;
+
 }
