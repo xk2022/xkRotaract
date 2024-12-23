@@ -44,11 +44,16 @@ public class UpmsOrganizationRestController {
                 code = resp.getCode();
             }
         }
-
         LOGGER.info("查詢子組織，父組織代碼: {}", code);
         return upmsOrganizationService.findChildren(code);
     }
 
+    @ApiOperation(value = "获取所有 District 数据")
+    @PostMapping("/getAllDistricts")
+    public Map<String, List<String>> getAllDistricts() {
+        LOGGER.info("获取所有 District 数据");
+        return upmsOrganizationService.getAllDistricts();
+    }
 
     @ApiOperation(value = "初始化設置")
     @GetMapping("/init")

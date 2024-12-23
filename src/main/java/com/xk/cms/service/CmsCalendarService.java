@@ -2,6 +2,7 @@ package com.xk.cms.service;
 
 import com.xk.cms.model.bo.CmsCalendarReq;
 import com.xk.cms.model.bo.CmsCalendarSaveReq;
+import com.xk.cms.model.vo.CmsCalendarEvoResp;
 import com.xk.cms.model.vo.CmsCalendarSaveResp;
 
 import java.util.List;
@@ -26,4 +27,7 @@ public interface CmsCalendarService {
     void deleteByPrimaryKeys(String ids);
 
     List evoList(CmsCalendarReq req);
+
+    List<CmsCalendarEvoResp> getCalendarDataByYear(Integer year);
+
 }

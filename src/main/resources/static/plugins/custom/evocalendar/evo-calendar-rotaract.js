@@ -8,7 +8,64 @@
  * Docs: https://edlynvillegas.github.com/evo-calendar
  * Repo: https://github.com/edlynvillegas/evo-calendar
  * Issues: https://github.com/edlynvillegas/evo-calendar/issues
- * 
+ *
+ *
+ *
+    ***** 初始化與核心邏輯 *****
+    init() {} - Initialize Calendar
+    (private)initializeSidebarAndEventList(isTabletOrMobile) {} -
+    buildTheBones() {} - Build the bones!
+    initEventListener() {} - Initialize event listeners
+    resize() {} - Called in every resize
+
+    ***** 側邊欄與主介面管理 *****
+    toggleSidebar(show) {} - Toggle Sidebar
+    toggleDBlock(showFBlock, showGBlock) {} - Toggle F and G Blocks
+    toggleEventList(show) {} - Toggle Event list
+    (private)generateHeadbarDistricts() {} - Generate Headbar District Tabs
+    (private)fetchDistrictCodes() {} - Fetch District Codes
+    (private)generateSidebarMonths() {} - Generate Sidebar Month List
+    (private)generateHeaderWeekdays() {} - Generate Weekdays
+    (private)generateSidebarClubs() {} - Generate Sidebar Club List
+    (private)fetchClubs() {} - Fetch Clubs
+    buildSidebarYear() {} - Build Sidebar: Year text
+    buildSidebarMonths() {} - Build Sidebar: Months list text
+
+    ***** 日曆生成與更新 *****
+    calculateDays() {} - Calculate days
+    buildCalendar() {} - Build Calendar
+    buildEventList() {} - Build Event
+    selectYear(event) {} - Select year
+    selectMonth(event) {} - Select month
+    selectDate(event) {} - Select specific date
+
+    ***** 事件管理 *****
+    addEventIndicator(event) {} - Add event indicator/s (dots)
+    removeEventIndicator(event) {} - Remove event indicator/s (dots)
+    (此版供display用，未更新過此方法)addCalendarEvent
+    (此版供display用，未更新過此方法)removeCalendarEvent
+    addEventList(eventData) {} - Add single event to event list
+    removeEventList(eventId) {} - Remove single event from event list
+    selectEvent(event) {} - Select event
+    getActiveEvents() {} - Return active events
+    (private)selectDistrict(event) {} - Select District
+    collapseCalendar() {} -
+
+    ***** 工具函數 *****
+    formatDate(date, format) {} - Format date
+    parseFormat(format) {} - Parse format (date)
+    isBetweenDates(date, range) {} - Check if date is between the passed calendar date
+    isValidDate(date) {} - Check if date is valid
+    (private)getBetweenDates(dates) {} - Get Dates Between Two Dates
+    (private)hasSameDayEventType(date, type) {} - Check Same Day Event Type
+    (private)setTheme(themeName) {} - Set Calendar Theme
+    (private)buildEventIndicator() {} - Build Event Indicator
+    (private)getActiveDate() {} - Get Active Date
+    (private)toggleOutside(event) {} - Toggle Sidebar/Event List
+    (private)destroyEventListener() {} - Destroy Event Listeners
+    (private)destroy() {} - Destroy Plugin
+    (private)limitTitle(title, limit) {} - Limit Title
+    (private)escapeSpecialCharacters - (stringCheck) Check and filter strings
  */
 
 ;(function(factory) {
@@ -20,7 +77,6 @@
     } else {
         factory(jQuery);
     }
-
 }(function($) {
     'use strict';
     var EvoCalendar = window.EvoCalendar || {};
@@ -53,8 +109,8 @@
                         days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
                         daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
                         daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-                        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-                        monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        months: ["July", "August", "September", "October", "November", "December", "January", "February", "March", "April", "May", "June"],
+                        monthsShort: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"],
                         noEventForToday: "No event for today.. so take a rest! :)",
                         noEventForThisDay: "No event for this day.. so take a rest! :)",
                         previousYearText: "往前一年度",
@@ -67,7 +123,7 @@
                         daysShort: ["週日", "週ㄧ", "週二", "週三", "週四", "週五", "週六"],
                         daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
                         months: ["七月", "八月", "九月", "十月", "十一月", "十二月", "一月", "二月", "三月", "四月", "五月", "六月"],
-                        monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        monthsShort: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"],
                         noEventForToday: "No event for today.. so take a rest! :)",
                         noEventForThisDay: "No event for this day.. so take a rest! :)",
                         previousYearText: "往前一年度",
@@ -81,7 +137,6 @@
                 sun: _.initials.dates[_.options.language].daysShort[0],
                 sat: _.initials.dates[_.options.language].daysShort[6]
             }
-
 
             // Format Calendar Events into selected format
             if(_.options.calendarEvents != null) {
@@ -99,14 +154,27 @@
             // Global variables
             _.startingDay = null;
             _.monthLength = null;
+            _.districtData = null;
             _.windowW = $(window).width();
-            
+
             // CURRENT
+            // 初始化當前日期配置
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            // 計算扶輪月邏輯
+//            const indexOfRotaryMonth = (currentMonth - 6 <= 0) ? currentMonth + 6 : currentMonth - 6;
+            // 配置當前日期
             _.$current = {
-                month: (isNaN(this.month) || this.month == null) ? new Date().getMonth() : this.month,
-                year: (isNaN(this.year) || this.year == null) ? new Date().getFullYear() : this.year,
-                date: _.formatDate(_.initials.dates[_.defaults.language].months[new Date().getMonth()]+' '+new Date().getDate()+' '+ new Date().getFullYear(), _.options.format)
-            }
+                month: isNaN(this.month) || this.month == null ? currentMonth : this.month,
+                year: isNaN(this.year) || this.year == null ? currentYear : this.year,
+                date: _.formatDate(new Date(currentYear, currentMonth, today.getDate()), _.options.format)
+            };
+//            _.$current = {
+//                month: (isNaN(this.month) || this.month == null) ? new Date().getMonth() : this.month,
+//                year: (isNaN(this.year) || this.year == null) ? new Date().getFullYear() : this.year,
+//                date: _.formatDate(_.initials.dates[_.defaults.language].months[indexOfRotaryMonth]+' '+new Date().getDate()+' '+ new Date().getFullYear(), _.options.format)
+//            }
 
             // ACTIVE 原本邏輯運算用
             _.$activeBase = {
@@ -178,7 +246,6 @@
             _.selectYear = $.proxy(_.selectYear, _);
             _.selectDistrict = $.proxy(_.selectDistrict, _);
             _.selectEvent = $.proxy(_.selectEvent, _);
-            _.toggleHeaderDistrict = $.proxy(_.toggleHeaderDistrict, _);
             _.toggleSidebar = $.proxy(_.toggleSidebar, _);
             _.toggleEventList = $.proxy(_.toggleEventList, _);
             
@@ -191,928 +258,1348 @@
 
     }());
 
+    /******************************
+    *****    初始化與核心邏輯    *****
+    ******************************/
+    // init() {} - Initialize Calendar
+    EvoCalendar.prototype.init = function(init) {
+        const _ = this;
+
+        $(document).ready(() => { // 確保 DOM 已載入
+            $(_.element).addClass('evo-calendar');
+            // 防止重複初始化
+            if (!$(_.$elements.calendarEl).hasClass('calendar-initialized')) {
+                $(_.$elements.calendarEl).addClass('evo-calendars calendar-initialized');
+                // 設置初始狀態（根據螢幕尺寸切換）
+                const isTabletOrMobile = (_.windowW <= _.$breakpoints.tablet);
+                _.initializeSidebarAndEventList(isTabletOrMobile);
+                // 設置主題
+                if (_.options.theme) _.setTheme(_.options.theme);
+                // 構建日曆和事件監聽器
+                _.buildTheBones();
+                _.initEventListener();
+            }
+        });
+    };
+    // 新增一個輔助方法來初始化側邊欄和事件列表狀態
+    EvoCalendar.prototype.initializeSidebarAndEventList = function(isTabletOrMobile) {
+        const _ = this;
+
+        if (isTabletOrMobile) {
+            _.toggleSidebar(false);
+            _.toggleEventList(false);
+        } else {
+            _.toggleSidebar(_.options.sidebarDisplayDefault);
+            _.toggleEventList(_.options.eventDisplayDefault);
+        }
+    };
 
     // v1.0.0 - Build the bones! (incl. sidebar, inner, events), called once in every initialization
     EvoCalendar.prototype.buildTheBones = function() {
-        var _ = this;
+        const _ = this;
         _.calculateDays();
         
-        if (!_.$elements.calendarEl.html()) {
-            var markup;
+        if (_.$elements.calendarEl.html()) {
+            // Build essential components
+            _.buildSidebarYear();
+            _.buildSidebarMonths();
+            _.buildCalendar();
+            _.buildEventList();
+            _.resize();
+            return;
+        }
 
-            // --- BUILDING MARKUP BEGINS --- //
-            //headbar
-            var headerTabs = ['全部資料', '3461', '3462', '3481', '3482', '3470', '3490', '3501', '3502', '3510', '3521', '3522', '3523'];
+        // --- BUILDING MARKUP BEGINS --- //
+        const markup = `
+            <!-- A 區塊 (5%) Header Section -->
+            <div class="calendar-headbar main-shadow text-center">
+                <div class="district-list"> <!-- 電腦版 row district-list -->
+                    <!-- generateHeadbarDistricts() -->
+                </div>
+            </div>
+
+            <!-- B 區塊 (95%) Calendar Body -->
+            <div class="calendar-body">
+                <!-- C 區塊 (20%) Sidebar Left -->
+                <div class="calendar-sidebar calendar-sidebar-left main-shadow">
+                    <div class="calendar-year">
+                        <div class="years_icon" data-year-val="prev">&lt;</div>
+                        <div data-year-val="now"><p>YYYY-YYYY</p></div>
+                        <div class="years_icon" data-year-val="next">&gt;</div>
+                    </div>
+                    <div id="calendar-sidebar-left" class="calendar-months">
+                        <!-- generateSidebarMonths() -->
+                    </div>
+                </div>
+
+                <!-- D 區塊 (60%) Calendar Middle -->
+                <div class="calendar-middle">
+                    <!-- F 區塊 (60%) generateHeaderWeekdays -->
+                    <div class="calendar-inner">
+                        <div class="calendar-table">
+                            <div class="row align-items-center">
+                                <div class="col-2">
+                                    <button id="toggleC" class="btn toggleC radius-item">☰</button>
+                                </div>
+                                <div class="col-8">
+                                    <div class="calendar-header calendar-header-dline">十月</div>
+                                </div>
+                                <div class="col-2">
+                                    <button id="toggleE" class="btn toggleE radius-item">＞</button>
+                                </div>
+                            </div>
+                            <div class="calendar-table-inner">
+                                <div class="row calendar-table-header">
+                                    <!-- generateHeaderWeekdays() -->
+                                </div>
+                            </div>
+
+                            <div class="calendar-table-end">
+                                <div class="calendar-end-actions">
+                                    <button id="collapseCalendar" class="btn collapse-calendar calendar-header-dline">︽ 收起</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- G 區塊 (40%) 滾動區塊 -->
+                    <div class="calendar-events">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                <div class="card bg-white">
+                                    <!-- 選中的日期 -->
+                                    <div class="card-header event-header">
+                                        <div class="row d-flex align-items-center flex-nowrap">
+                                            <div class="col-4">
+                                                <div id="event-header-year" class="calendar-header-dline">2024</div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div id="event-header-month" class="calendar-header calendar-header-dline toggleF">十月</div>
+                                            </div>
+                                            <div class="col-4 d-flex align-items-center justify-content-center">
+                                                <div id="event-header-day" class="calendar-header-dline me-3">05</div>
+                                        <!--        <div class="d-flex flex-column"> -->
+                                        <!--            <div class="radius-item"> -->
+                                        <!--                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16"> -->
+                                        <!--                    <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/> -->
+                                        <!--                </svg> -->
+                                        <!--            </div> -->
+                                        <!--            <div class="radius-item"> -->
+                                        <!--                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16"> -->
+                                        <!--                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/> -->
+                                        <!--                </svg> -->
+                                        <!--            </div> -->
+                                        <!--        </div> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 事件列表 -->
+                                    <div class="card-body">
+                                        <div class="timeline event-list"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- E 區塊 (20%) Sidebar Right -->
+                <div class="calendar-sidebar calendar-sidebar-right main-shadow">
+                    <div id="calendar-sidebar-right" class="calendar-clubs">
+                        <!-- generateSidebarClubs() -->
+                    </div>
+                </div>
+            </div>
+        `;
+        // --- Insert Markup into DOM --- //
+        _.$elements.calendarEl.html(markup);
+        _.generateHeadbarDistricts();
+        _.generateSidebarMonths();
+        _.generateHeaderWeekdays();
+        _.generateSidebarClubs();
+
+        // Cache key DOM elements
+        _.$elements.headbarEl = _.$elements.calendarEl.find('.calendar-headbar');
+        _.$elements.sidebarEl = _.$elements.calendarEl.find('.calendar-sidebar');
+        _.$elements.innerEl = _.$elements.calendarEl.find('.calendar-inner');
+        _.$elements.eventEl = _.$elements.calendarEl.find('.calendar-events');
+
+        // Build essential components (top)
+        _.buildTheBones();
+    };
+
+    // v1.0.0 - Initialize event listeners
+    EvoCalendar.prototype.initEventListener = function() {
+        const _ = this;
+        // Resize listener
+        $(window)
+            .off(`resize.evocalendar.evo-${_.instanceUid}`)
+            .on(`resize.evocalendar.evo-${_.instanceUid}`, $.proxy(_.resize, _));
+
+        // Helper function to safely add event listeners
+        const safeAddEventListener = (selector, event, handler) => {
+            const elements = document.querySelectorAll(selector);
+            if (elements.length > 0) {
+                elements.forEach(el => el.addEventListener(event, handler));
+            } else {
+                console.warn(`No elements found for selector: ${selector}`);
+            }
+        };
+        // Add general event listeners
+        safeAddEventListener('[data-month-val]', 'click', _.selectMonth.bind(_));
+        safeAddEventListener('[data-year-val]', 'click', _.selectYear.bind(_));
+        safeAddEventListener('[data-event-index]', 'click', _.selectEvent.bind(_));
+        // 修正使用await監聽綁定失效方式
+//        safeAddEventListener('[data-district-val]', 'click', _.selectDistrict.bind(_));
+        document.addEventListener('click', function(event) {
+            const target = event.target.closest('[data-district-val]');
+            if (target) {
+                _.selectDistrict.call(_, event); // 绑定你的方法
+            }
+        });
+
+
+        // Sidebar toggle controls
+        const toggleSidebar = (selector, sidebarClass, middleClass, collapsedWidth, expandedWidth) => {
+            safeAddEventListener(selector, 'click', function() {
+                const sidebar = document.querySelector(sidebarClass);
+                const middle = document.querySelector(middleClass);
+                if (!sidebar || !middle) return;
+
+                // Toggle collapsed state
+                sidebar.classList.toggle('collapsed');
+                const isCollapsed = sidebar.classList.contains('collapsed');
+                sidebar.style.width = isCollapsed ? collapsedWidth : expandedWidth;
+                middle.style.width = isCollapsed ? '100%' : '60%'; // Adjust middle section width
+            });
+        };
+        toggleSidebar('#toggleC', '.calendar-sidebar-left', '.calendar-middle', '0', '20%');
+        toggleSidebar('#toggleE', '.calendar-sidebar-right', '.calendar-middle', '0', '20%');
+        document.querySelector('#toggleE')?.click();
+
+
+        // F and G Block toggle controls
+        const calendarInner = document.querySelector('.calendar-inner');
+        const calendarTableInner = document.querySelector('.calendar-table-inner');
+        const calendarEvents = document.querySelector('.calendar-events');
+        const $toggleText = $('#collapseCalendar'); // 找到按鈕本身
+        if (calendarInner && calendarEvents) {
+            safeAddEventListener('.day', 'click', function() {
+                const isCollapsed = calendarInner.classList.contains('collapsed');
+                calendarInner.style.height = isCollapsed ? '0%' : 'auto';
+                calendarTableInner.style.height = isCollapsed ? '0%' : 'auto';
+                if (_.windowW <= _.$breakpoints.tablet) {
+                    $('#collapseCalendar').click();
+//                    calendarTableInner.classList.toggle('collapsed');
+                    calendarEvents.style.height = isCollapsed ? '100%' : 'auto';
+                } else {
+                    calendarEvents.style.height = isCollapsed ? '100%' : '50%';
+                }
+            });
+
+            safeAddEventListener('.toggleF', 'click', function() {
+                calendarTableInner.classList.toggle('collapsed');
+                if (!calendarTableInner.classList.contains('collapsed')) {
+                    calendarTableInner.style.removeProperty('height');
+                }
+            });
+
+            safeAddEventListener('#collapseCalendar', 'click', function() {
+                $('.toggleF').click();
+                // 包装 calendarTableInner 为 jQuery 对象
+                const $calendarTableInner = $(calendarTableInner);
+
+                if (!$calendarTableInner.hasClass('collapsed')) {
+                    // 如果日历已经展开，折叠它
+//                    $calendarTableInner.addClass('collapsed').slideUp(300); // 使用 jQuery 添加折叠状态并添加动画
+                    $toggleText.text('＾收起'); // 更新按钮文字或图标
+                } else {
+                    // 如果日历已折叠，展开它
+//                    $calendarTableInner.removeClass('collapsed').slideDown(300); // 移除折叠状态并添加动画
+                    $toggleText.text('＞展開'); // 更新按钮文字或图标
+                }
+            });
+        }
+
+        // Year dropdown toggle for smaller screens
+        safeAddEventListener('.calendar-year', 'click', function() {
+            if (_.windowW <= _.$breakpoints.tablet) {
+                const calendarMonths = document.querySelector('.calendar-months');
+                if (!calendarMonths) return;
+
+                calendarMonths.classList.toggle('active');
+                calendarMonths.style.maxHeight = calendarMonths.classList.contains('active')
+                    ? `${calendarMonths.scrollHeight}px`
+                    : '0';
+            }
+        });
+    };
+
+    // v1.0.0 - Called in every resize
+    EvoCalendar.prototype.resize = function() {
+        const _ = this;
+        _.windowW = window.innerWidth;
+        // Helper function to toggle elements
+        const toggleElement = (condition, element, showCallback, hideCallback) => {
+            if (condition) {
+                showCallback();
+            } else {
+                hideCallback();
+            }
+        };
+
+        // Tablet and mobile view handling
+        if (_.windowW <= _.$breakpoints.tablet) { // Tablet view
+            _.toggleSidebar(false);
+            _.toggleEventList(false);
+
+            // Handle outside click events for tablets
+            toggleElement(
+                _.windowW > _.$breakpoints.mobile,
+                window,
+                () => $(window).on(`click.evocalendar.evo-${_.instanceUid}`, $.proxy(_.toggleOutside, _)),
+                () => $(window).off(`click.evocalendar.evo-${_.instanceUid}`)
+            );
+        } else { // Desktop view
+            // Toggle sidebar based on default setting
+            toggleElement(
+                _.options.sidebarDisplayDefault,
+                null,
+                () => _.toggleSidebar(true),
+                () => _.toggleSidebar(false)
+            );
+            // Toggle event list based on default setting
+            toggleElement(
+                _.options.eventDisplayDefault,
+                null,
+                () => _.toggleEventList(true),
+                () => _.toggleEventList(false)
+            );
+            // Remove outside click listener for desktop
+            $(window).off(`click.evocalendar.evo-${_.instanceUid}`);
+        }
+    };
+
+
+
+    /******************************
+    ****    側邊欄與主介面管理    ****
+    ******************************/
+    // v1.0.0 - Toggle Sidebar
+    EvoCalendar.prototype.toggleSidebar = function(show) {
+        var _ = this;
+
+        // 決定是否要切換側邊欄的顯示狀態
+        const shouldShow = (show === undefined) ? !_.$UI.hasSidebar : show;
+        // 更新側邊欄的顯示狀態
+        $(_.$elements.calendarEl).toggleClass('sidebar-hide', !shouldShow);
+        _.$UI.hasSidebar = shouldShow;
+        // 平板模式下，若側邊欄顯示，則隱藏事件列表
+        if (_.windowW <= _.$breakpoints.tablet && _.$UI.hasSidebar && _.$UI.hasEvent) {
+            _.toggleEventList(false);
+        }
+    };
+
+    // Toggle F and G Blocks
+    EvoCalendar.prototype.toggleDBlock = function(showFBlock = true, showGBlock = true) {
+        const calendarInner = document.querySelector('.calendar-inner.calendar-inner'); // F 區塊
+        const calendarEvents = document.querySelector('.calendar-events'); // G 區塊
+        if (!calendarInner || !calendarEvents) {
+            console.error("Cannot find calendar-inner or calendar-events element.");
+            return;
+        }
+        // 顯示或隱藏 F 區塊
+        calendarInner.style.display = showFBlock ? 'block' : 'none';
+        // 顯示或隱藏 G 區塊
+        calendarEvents.style.display = showGBlock ? 'block' : 'none';
+    };
+
+    // v1.0.0 - Toggle Event list
+    EvoCalendar.prototype.toggleEventList = function(show) {
+        const _ = this;
+
+        // 決定是否要切換事件列表的顯示狀態
+        const shouldShow = (show === undefined) ? !_.$UI.hasEvent : show;
+        // 更新事件列表的顯示狀態
+        $(_.$elements.calendarEl).toggleClass('event-hide', !shouldShow);
+        _.$UI.hasEvent = shouldShow;
+        // 平板模式下，若事件列表顯示，則隱藏側邊欄
+        if (_.windowW <= _.$breakpoints.tablet && _.$UI.hasEvent && _.$UI.hasSidebar) {
+            _.toggleSidebar(false);
+        }
+    };
+
+    // (private) Helper to Generate Headbar District Tabs
+    EvoCalendar.prototype.generateHeadbarDistricts = async function() {
+        const _ = this;
+
+        // 確保 .district-list 容器存在
+        const container = document.querySelector('.district-list');
+        if (!container) {
+            console.error("未找到 .district-list，請檢查 HTML 結構！");
+            return;
+        }
+        // 初始化內容：添加 "ALL DISTRICT" 預設按鈕
+        container.innerHTML = `
+            <div class="btn tab-btn active" data-district-val="ALL">ALL DISTRICT</div>
+        `;
+        try {
+            // 獲取地區代碼
+            const districtCodes = await _.fetchDistrictCodes();
+            // 動態生成地區按鈕
+            const districtButtons = districtCodes.map(code => `
+                <div class="btn tab-btn" data-district-val="${code}">${code}</div>
+            `).join('');
+            // 插入按鈕到容器中
+            container.insertAdjacentHTML('beforeend', districtButtons);
+        } catch (error) {
+            // 錯誤處理
+            console.error("生成 District Tabs 失敗:", error);
+            container.insertAdjacentHTML('beforeend', `
+                <div class="btn tab-btn error">無法載入地區資訊</div>
+            `);
+        }
+    };
+
+    // (private) Helper to Fetch District Codes
+    EvoCalendar.prototype.fetchDistrictCodes = function() {
+        return new Promise((resolve, reject) => {
             $.ajax({
-                url: '/xkRotaract/api/manage/dictionary/listDictionaryData',
+                url: '/xkRotaract/api/manage/organization/findChildren',
                 method: 'POST',
-                data: JSON.stringify({ 'code': 'dropdown_DISTRICT' }), // 修改为适合你的代码
+                data: JSON.stringify({ 'code': 'RIT' }),
                 processData: false,
                 contentType: 'application/json',
                 success: function(response) {
-                    console.log('AJAX 请求成功：', response);
-
-                    headerTabs = response;
+                    const districtCodes = response.map(item => item.code);
+                    resolve(districtCodes);
                 },
                 error: function(xhr, status, error) {
-                    console.error('AJAX 请求失败：', error);
+                    console.error("AJAX 失敗:", error);
+                    reject(error);
                 }
             });
-            // TODO loc.
-            headerTabs = [{        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 1,        "parentId": 1,        "code": "3461",        "description": "3461地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 2,        "parentId": 1,        "code": "3462",        "description": "3462地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 3,        "parentId": 1,        "code": "3470",        "description": "3470地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 4,        "parentId": 1,        "code": "3481",        "description": "3481地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 5,        "parentId": 1,        "code": "3482",        "description": "3482地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 6,        "parentId": 1,        "code": "3490",        "description": "3490地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 7,        "parentId": 1,        "code": "3501",        "description": "3501地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 8,        "parentId": 1,        "code": "3502",        "description": "3502地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 9,        "parentId": 1,        "code": "3510",        "description": "3510地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 10,        "parentId": 1,        "code": "3521",        "description": "3521地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 11,        "parentId": 1,        "code": "3522",        "description": "3522地區"    },    {        "createBy": null,        "createTime": 1724314936000,        "updateBy": null,        "updateTime": 1724314936000,        "id": 12,        "parentId": 1,        "code": "3523",        "description": "3523地區"    }];
-            // v_Rotary - Append Calendar Header with Tabs
-            markup = '<!-- A 區塊 (5%) -->'+
-                    '<div class="calendar-headbar main-shadow text-center">';
+        });
+    };
 
-            // 電腦版 row district-list
-            markup +=   '<div class="district-list">'+
-                            '<div class="btn tab-btn active" data-district-val="0">ALL DISTRICT</div>'
-                            for (var i = 0; i < headerTabs.length; i++) {
-                                markup += '<div class="btn tab-btn" data-district-val="'+headerTabs[i].code+'">D' + headerTabs[i].code + '</div>';
-                            }
-            markup +=   '</div>'+
-                    '</div>';
+    // (private) Helper to Generate Sidebar Month List
+    EvoCalendar.prototype.generateSidebarMonths = function() {
+        const _ = this;
 
-            // .calendar-body
-            markup += '<!-- B 區塊 (95%) -->'+
-                    '<div class="calendar-body">';
-            // sidebar
-            markup += '<!-- C 區塊 (20%) -->'+
-                        '<div class="calendar-sidebar calendar-sidebar-left main-shadow">'+
-                            '<div class="calendar-year">'+
-                                '<div class="years_icon" data-year-val="prev"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16"><path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/></svg></div>'+
-                                '<div data-year-val="now"><p>2024-2025</p></div>'+
-                                '<div class="years_icon" data-year-val="next"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16"><path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/></svg></div>'+
-                            '</div>'+
-                            '<div class="calendar-months">';
-                                for(var i = 0; i < _.$label.months.length; i++) {
-                                    if (_.$activeR.num === 12) _.$activeR.num = 0;
-                                    var activeClass = (_.$activeR.month === i) ? ' active' : '';
-                                    markup += '<div class="calendar-month'+activeClass+'" role="button" data-month-val="'+_.$activeR.num+'">'+_.initials.dates[_.options.language].months[i]+'</div>';
-                                    _.$activeR.num = _.$activeR.num+1;
-                                }
-            markup +=      '</div>'+
-                        '</div>';
-        
-            // .calendar-middle
-            markup += '<!-- D 區塊 (60%) -->'+
-                        '<div class="calendar-middle">';
-            // inner
-            markup += '<!-- F 區塊 (60%) -->'+
-                            '<div class="calendar-inner">'+
-                                '<div class="calendar-table">'+
-                                    '<div class="row align-items-center">'+
-                                        '<div class="col-2"><button id="toggleC" class="btn toggleC radius-item">☰</button></div>'+
-                                        '<div class="col-8"><div class="calendar-header calendar-header-dline">十月</div></div>'+
-                                        '<div class="col-2"><button id="toggleE" class="btn toggleE radius-item">＞</button></div>'+
-                                    '</div>'+
-                                    '<div class="calendar-table-inner">'+
-                                        '<div class="row calendar-table-header">';
-                                        for(var i = 0; i < _.$label.days.length; i++ ){
-                                            var headerClass = "calendar-header-day";
-                                            if (_.$label.days[i] === _.initials.weekends.sat || _.$label.days[i] === _.initials.weekends.sun) {
-                                                headerClass += ' --weekend';
-                                            }
-                                            markup += '<div class="col '+headerClass+'"><div class="week">'+_.$label.days[i]+'</div></div>';
-                                        }
-            markup +=                  '</div>'+
-                                    '</div>'+
-                                '</div>'+
-                            '</div>';
+        const container = document.getElementById('calendar-sidebar-left');
+        // 確保容器存在
+        if (!container) {
+            console.error("未找到 #calendar-sidebar-left，請檢查 HTML 結構！");
+            return;
+        }
+        // 生成月份的 HTML 字符串
+        let activeNum = _.$activeR.num;
+        const monthsMarkup =
+            _.initials.dates[_.options.language].months.map((month, i) => {
+                if (activeNum === 12) activeNum = 0; // 循環重置月份計數
+                const activeClass = activeNum === _.$activeR.month ? ' active' : '';
+                const markup = `<div class="calendar-month${activeClass}" role="button" data-month-val="${activeNum}">${month}</div>`;
+                activeNum++;
+                return markup;
+            }).join(''); // 將數組轉換為單一 HTML 字符串
+        // 插入按鈕到容器中
+        container.insertAdjacentHTML('beforeend', monthsMarkup);
+    };
 
-            // events
-            markup += '<!-- G 區塊 (40%) 滾動區塊 -->'+
-                            '<div class="calendar-events">'+
-                                '<div class="row">'+
-                                    '<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">'+
-                                        '<div class="card bg-white">';
-            // 選中的日期
-            markup +=                       '<div class="card-header event-header">'+
-                                                '<div class="row d-flex align-items-center flex-nowrap">'+
-                                                    '<div class="col-4">'+
-                                                        '<div class="calendar-header-dline">2024</div>'+
-                                                    '</div>'+
-                                                    '<div class="col-4">'+
-                                                        '<div class="calendar-header calendar-header-dline toggleF">十月</div>'+
-                                                    '</div>'+
-                                                    '<div class="col-4 d-flex align-items-center justify-content-center">'+
-                                                        '<div class="calendar-header-dline me-3">05</div>'+
-                                                        '<div class="d-flex flex-column">'+
-                                                            '<div class="radius-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16"><path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/></svg></div>'+
-                                                            '<div class="radius-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg></div>'+
-                                                        '</div>'+
-                                                    '</div>'+
-                                                '</div>'+  
-                                            '</div>';
-            // 事件列表
-            markup +=                       '<div class="card-body">'+
-                                                '<div class="timeline event-list">'+
-                                                '</div>'
-                                            '</div>';
-            markup +=                   '</div>'+
-                                    '</div>'+
-                                '</div>'+
-                            '</div>'+
-                        '</div>'+
-                    '</div>';
-            // .calendar-sidebar-right
-            markup += '<!-- E 區塊 (20%) -->'+
-                    '<div class="calendar-sidebar calendar-sidebar-right main-shadow collapsed">'+
-                        '<div class="calendar-months">'+
-                            '<div class="calendar-month" role="button">台北西門扶青社</div><div class="calendar-month" role="button">三重扶青社</div><div class="calendar-month" role="button">土城扶青社</div><div class="calendar-month" role="button">桃園扶青社</div><div class="calendar-month" role="button">台北西區扶青社</div><div class="calendar-month" role="button">台北延平扶青社</div><div class="calendar-month" role="button">中和扶青社</div><div class="calendar-month" role="button">台中扶青社</div><div class="calendar-month" role="button">東區扶青社</div><div class="calendar-month" role="button">台中東南扶青社</div><div class="calendar-month" role="button">台北艋舺扶青社</div><div class="calendar-month" role="button">大甲扶青社</div><div class="calendar-month" role="button">北區扶青社</div><div class="calendar-month" role="button">員林扶青社</div><div class="calendar-month" role="button">基隆東南扶青社</div><div class="calendar-month" role="button">首都扶青社</div><div class="calendar-month" role="button">圓山扶青社</div><div class="calendar-month" role="button">忠孝扶青社</div><div class="calendar-month" role="button">高雄東北扶青社</div><div class="calendar-month" role="button">宜蘭扶青社</div><div class="calendar-month" role="button">楊梅扶青社</div><div class="calendar-month" role="button">台中港扶青社</div><div class="calendar-month" role="button">永和扶青社</div><div class="calendar-month" role="button">銘傳扶青社</div><div class="calendar-month" role="button">雙溪扶青社</div><div class="calendar-month" role="button">台北城中扶青社</div><div class="calendar-month" role="button">百齡扶青社</div><div class="calendar-month" role="button">新東扶青社</div><div class="calendar-month" role="button">陽光扶青社</div>'+
-                        '</div>'+
-                    '</div>';
+    // (private) Helper to Generate Header Weekdays of calendar-table-header
+    EvoCalendar.prototype.generateHeaderWeekdays = function() {
+        const _ = this;
 
-            markup += '</div>';
-            // --- Finally, build it now! --- //
-            _.$elements.calendarEl.html(markup);
+        const container = document.querySelector('.calendar-table-header');
+        // 確保容器存在
+        if (!container) {
+            console.error("未找到 .calendar-table-header，請檢查 HTML 結構！");
+            return;
+        }
+        // 逐一插入每個星期標籤
+        _.$label.days.forEach(day => {
+            const headerClass = (_.initials.weekends.sat === day || _.initials.weekends.sun === day)
+                ? 'calendar-header-day --weekend'
+                : 'calendar-header-day';
+            const markup = `<div class="col ${headerClass}"><div class="week">${day}</div></div>`;
+            container.insertAdjacentHTML('beforeend', markup); // 動態插入 HTML
+        });
+    };
 
-            if (!_.$elements.headbarEl) _.$elements.headbarEl = $(_.$elements.calendarEl).find('.calendar-headbar');
-            if (!_.$elements.sidebarEl) _.$elements.sidebarEl = $(_.$elements.calendarEl).find('.calendar-sidebar');
-            if (!_.$elements.innerEl) _.$elements.innerEl = $(_.$elements.calendarEl).find('.calendar-inner');
-            if (!_.$elements.eventEl) _.$elements.eventEl = $(_.$elements.calendarEl).find('.calendar-events');
+    // (private) Helper to Generate Sidebar Club List
+    EvoCalendar.prototype.generateSidebarClubs = function() {
+        var clubs = ["台北西門扶青社", "三重扶青社", "土城扶青社", "桃園扶青社"];
+        return clubs.map(club =>
+            `<div class="calendar-club" role="button">${club}</div>`
+        ).join('');
+    };
 
-            // if: _.options.sidebarToggler
-            // if(_.options.sidebarToggler) {
-            //     $(_.$elements.sidebarEl).append('<span id="sidebarToggler" role="button" aria-pressed title="'+_.initials.dates[_.options.language].closeSidebarText+'"><button class="icon-button"><span class="bars"></span></button></span>');
-            //     if(!_.$elements.sidebarToggler) _.$elements.sidebarToggler = $(_.$elements.sidebarEl).find('span#sidebarToggler');
-            // }
-            // if(_.options.eventListToggler) {
-            //     $(_.$elements.calendarEl).append('<span id="eventListToggler" role="button" aria-pressed title="'+_.initials.dates[_.options.language].closeEventListText+'"><button class="icon-button"><span class="chevron-arrow-right"></span></button></span>');
-            //     if(!_.$elements.eventListToggler) _.$elements.eventListToggler = $(_.$elements.calendarEl).find('span#eventListToggler');
-            // }
+    // (private) Helper to Generate Sidebar Clubs
+    EvoCalendar.prototype.generateSidebarClubs = async function() {
+        const _ = this;
+
+        // 獲取 Sidebar 容器
+        const container = document.querySelector('.calendar-sidebar-right .calendar-clubs');
+        if (!container) {
+            console.error("未找到 .calendar-clubs，請檢查 HTML 結構！");
+            return;
         }
 
-        _.buildSidebarYear();
-        _.buildSidebarMonths();
-        _.buildCalendar();
-        _.buildEventList();
-        _.initEventListener(); // test
+        try {
+            // 確保容器為空，避免重複插入
+            container.innerHTML = '';
+            // 使用異步方法取得社團資料
+            const districtData = await _.fetchClubs();
+            // 根據 districtData 生成 HTML
+            const districtId = _.$active.districtId || "0"; // 預設載入 ID 為 "0"
+            const clubs =
+            districtData[districtId] || ["無相關資料"];
+            // 生成 HTML 並插入
+            const markup = clubs.map(club =>
+                `<div class="calendar-club" role="button">${club}</div>`
+            ).join(''); // 將數組轉換為單一 HTML 字符串
+            // 插入生成的 HTML 到容器中
+            container.insertAdjacentHTML('beforeend', markup);
+        } catch (error) {
+            console.error("載入社團資料失敗:", error);
 
-        _.resize();
-    }
-
-    // v1.0.0 - Initialize plugin
-    EvoCalendar.prototype.init = function(init) {
-        var _ = this;
-        
-        if (!$(_.$elements.calendarEl).hasClass('calendar-initialized')) {
-            $(_.$elements.calendarEl).addClass('evo-calendars calendar-initialized');
-            if (_.windowW <= _.$breakpoints.tablet) { // tablet/mobile
-                _.toggleHeaderDistrict(true);
-                _.toggleSidebar(false);
-                _.toggleEventList(false);
-            } else {
-                if (!_.options.sidebarDisplayDefault) _.toggleSidebar(false);
-                else _.toggleSidebar(true);
-
-                if (!_.options.eventDisplayDefault) _.toggleEventList(false);
-                else _.toggleEventList(true);
-            }
-            if (_.options.theme) _.setTheme(_.options.theme); // set calendar theme
-            _.buildTheBones(); // start building the calendar components
+            // 插入預設的錯誤提示
+            container.innerHTML = `<div class="calendar-club">無法載入社團資料</div>`;
         }
     };
 
-    // v_Rotary - 切換 Header 區域按鈕
-    EvoCalendar.prototype.toggleHeaderDistrict = function(event) {
-        var _ = this;
+    // (private) Helper to Fetch District Codes
+    EvoCalendar.prototype.fetchClubs = function() {
+        const _ = this;
 
-        // 檢查事件是否未定義或是由實際事件觸發
-        if (event === undefined || event.originalEvent) {
-            // 切換 'header-hide' 類別，來控制 header 顯示或隱藏
-            $(_.$elements.calendarEl).toggleClass('header-hide');
-            _.$UI.hasHeaderDistrict = !_.$UI.hasHeaderDistrict; // 切換狀態
-        } else {
-            // 如果事件為 true，顯示 header
-            if(event) {
-                $(_.$elements.calendarEl).removeClass('header-hide');
-                _.$UI.hasHeaderDistrict = true;
-            } else {
-                // 如果事件為 false，隱藏 header
-                $(_.$elements.calendarEl).addClass('header-hide');
-                _.$UI.hasHeaderDistrict = false;
-            }
-        }
-
-        // 如果螢幕寬度小於平板裝置的斷點，則處理相應的動作
-        if (_.windowW <= _.$breakpoints.tablet) {
-            if (_.$UI.hasHeaderDistrict && _.$UI.hasSidebar) _.toggleSidebar(false);
-        }
-    };
-
-    // v1.0.0 - Toggle Sidebar
-    EvoCalendar.prototype.toggleSidebar = function(event) {
-        var _ = this;
-
-        if (event === undefined || event.originalEvent) {
-            $(_.$elements.calendarEl).toggleClass('sidebar-hide');
-            _.$UI.hasSidebar = !_.$UI.hasSidebar;
-        } else {
-            if(event) {
-                $(_.$elements.calendarEl).removeClass('sidebar-hide');
-                _.$UI.hasSidebar = true;
-            } else {
-                $(_.$elements.calendarEl).addClass('sidebar-hide');
-                _.$UI.hasSidebar = false;
-            }
-        }
-
-        if (_.windowW <= _.$breakpoints.tablet) {
-            if (_.$UI.hasSidebar && _.$UI.hasEvent) _.toggleEventList();
-        }
-    };
-
-    // v1.0.0 - Calculate days (incl. monthLength, startingDays based on :firstDayOfWeekName)
-    EvoCalendar.prototype.calculateDays = function() {
-        var _ = this, nameDays, weekStart, firstDay, rotaryYear;
-        _.monthLength = _.$label.days_in_month[_.$active.month]; // find number of days in month
-        if (_.$active.month <= 5 ) {
-            rotaryYear = _.$active.year + 1;
-        } else {
-            rotaryYear = _.$active.year
-        }
-        if (_.$active.month == 1) { // compensate for leap year - february only!
-            if((rotaryYear % 4 == 0 && rotaryYear % 100 != 0) || rotaryYear % 400 == 0){
-                _.monthLength = 29;
-            }
-        }
-        nameDays = _.initials.dates[_.options.language].daysShort;
-        weekStart = _.options.firstDayOfWeek;
-        
-        while (_.$label.days.length < nameDays.length) {
-            if (weekStart == nameDays.length) {
-                weekStart=0;
-            }
-            _.$label.days.push(nameDays[weekStart]);
-            weekStart++;
-        }
-        firstDay = new Date(rotaryYear, _.$active.month).getDay() - weekStart;
-        _.startingDay = firstDay < 0 ? (_.$label.days.length + firstDay) : firstDay;
-    }
-
-    // v1.0.0 - Build Calendar: Title, Days
-    EvoCalendar.prototype.buildCalendar = function() {
-        var _ = this, markup, title, rotaryYear, rotaryMonth;
-        
-        _.calculateDays();
-
-        if (_.$active.month <= 5 ) {
-            rotaryYear = _.$active.year + 1;
-            rotaryMonth = _.$active.month+6;
-        } else {
-            rotaryYear = _.$active.year;
-            rotaryMonth = _.$active.month-6;
-        }
-
-        title = _.formatDate(new Date(_.$label.months[rotaryMonth] +' 1 '+ rotaryYear), _.options.titleFormat, _.options.language);
-        // _.$elements.innerEl.find('.calendar-inner > div > div > div > div').text(title);
-        $('.calendar-header').text(title);
-
-        _.$elements.innerEl.find('.calendar-table-body').remove(); // Clear days
-        
-        markup = '<div class="row calendar-table-body">';
-                    var day = 1;
-                    for (var i = 0; i < 9; i++) { // this loop is for is weeks (rows)
-                        for (var j = 0; j < _.$label.days.length; j++) { // this loop is for weekdays (cells)
-                            if (day <= _.monthLength && (i > 0 || j >= _.startingDay)) {
-                                var dayClass = "col calendar-day";
-                                if (_.$label.days[j] === _.initials.weekends.sat || _.$label.days[j] === _.initials.weekends.sun) {
-                                    dayClass += ' --weekend'; // add '--weekend' to sat sun
-                                }
-                                markup += '<div class="'+dayClass+'">';
-
-                                var thisDay = _.formatDate(_.$label.months[_.$active.month]+' '+day+' '+rotaryYear, _.options.format);
-                                markup += '<div class="day" role="button" data-date-val="'+thisDay+'">'+day+'</div>';
-                                day++;
-                            } else {
-                                markup += '<div class="col calendar-day">';
-                            }
-                            markup += '</div>';
-                        }
-                        if (day > _.monthLength) {
-                            break; // stop making rows if we've run out of days
-                        } else {
-                            markup += '</div><div class="row calendar-table-body">'; // add if not
-                        }
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/xkRotaract/api/manage/organization/getAllDistricts',
+                method: 'POST',
+                processData: false,
+                contentType: 'application/json',
+                success: function(response) {
+                    if (typeof response === 'object') {
+                        _.districtData = response; // 将数据赋值到实例变量中
+//                        console.info("District Data fetched successfully:", response);
+                        resolve(response); // 完成 Promise，返回数据
+                    } else {
+                        console.warn("Unexpected response format:", response);
+                        reject("Invalid response format");
                     }
-                    markup += '</div>';
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX 请求失败:", error);
+                    reject(error); // 将错误传递给 Promise 链
+                }
+            });
+        });
+    };
+
+    // v_Rotary - Build Sidebar: Year text
+    EvoCalendar.prototype.buildSidebarYear = async function() {
+        const _ = this;
+
+        // 獲取當前年份與月份
+        const { year: currentYear, month: currentMonth } = _.$active;
+        // 計算顯示的年份範圍
+        const displayedYears = currentMonth < 6
+            ? `${currentYear - 1}-${currentYear}` // 上半年
+            : `${currentYear}-${currentYear + 1}`; // 下半年
+        // 更新側邊欄年份顯示
+        _.$elements.sidebarEl.find('.calendar-year > div > p').text(displayedYears);
+
+        // 使用異步方法取得資料
+        await _.fetchCalendarData(_.$active.year);
+        // Transforming calendarDistrictMap to calendarEvents
+        _.options.calendarEvents = Object.values(_.options.calendarDistrictMap)
+            .flat()
+            .map(event => {
+                // Optional: Add custom transformations if needed
+                return {
+                    ...event, // Preserve existing properties
+                    eventName: event.name // Example transformation: Rename 'name' to 'eventName'
+                };
+            });
+        _.buildEventList();
+//        console.info('Transformed Calendar Events:', _.options.calendarEvents);
+    };
+
+    // v_Rotary - Build Sidebar: Months list text
+    EvoCalendar.prototype.buildSidebarMonths = function() {
+        const _ = this;
+
+        // 獲取所有月份節點
+        const months = _.$elements.sidebarEl.find('.calendar-months > [data-month-val]');
+        // 移除所有 `active-month` 樣式
+        months.removeClass('active-month');
+        // 添加 `active-month` 樣式到當前月份
+        months.filter(`[data-month-val="${_.$active.month}"]`).addClass('active-month');
+    };
+
+
+
+
+
+    /******************************
+    *****     日曆生成與更新     *****
+    ******************************/
+    // v_Rotary - Calculate days (incl. monthLength, startingDays based on :firstDayOfWeekName)
+    EvoCalendar.prototype.calculateDays = function() {
+        const _ = this;
+
+        // 計算當前年份的扶輪年度
+        const rotaryYear = _.$active.month <= 5 ? _.$active.year + 1 : _.$active.year;
+        // 獲取當前月份的天數
+        _.monthLength = _.$label.days_in_month[_.$active.month];
+        // 如果是閏年的二月，設置天數為 29
+        if (_.$active.month === 1 && isLeapYear(rotaryYear)) {
+            _.monthLength = 29;
+        }
+        // 判斷是否為閏年的工具函數
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+        // 根據首日偏移，生成對應的星期排列
+        const { daysShort: nameDays } = _.initials.dates[_.options.language];
+        const weekStart = _.options.firstDayOfWeek;
+        _.$label.days = [...nameDays.slice(weekStart), ...nameDays.slice(0, weekStart)];
+        // 計算該月份的第一天是星期幾
+        _.startingDay = (new Date(rotaryYear, _.$active.month).getDay() - weekStart + 7) % 7;
+    };
+
+    // v_Rotary - Build Calendar: Title, Days
+    EvoCalendar.prototype.buildCalendar = function() {
+        const _ = this;
+
+        // 計算每月的天數與開始日期
+        _.calculateDays();
+        // 確定扶輪年度與月份
+        const rotaryYear = _.$active.year;
+        const rotaryMonth = _.adjustRotaryIndex(_.$active.month);
+        // 設置日曆標題
+        const title = _.formatDate(
+            new Date(_.$label.months[rotaryMonth] + ' 1 ' + rotaryYear),
+            _.options.titleFormat,
+            _.options.language
+        );
+        $('.calendar-header').text(title);
+        // 清除舊的日曆表格
+        _.$elements.innerEl.find('.calendar-table-body').remove();
+        // 開始生成日曆表格的 HTML 結構
+        let markup = `<div class="row calendar-table-body">`;
+        let day = 1, dayClass, thisDay;
+
+        for (let week = 0; week < 6; week++) { // 最多六週
+            for (let weekday = 0; weekday < _.$label.days.length; weekday++) {
+                // 判斷是否需要填充當前日期
+                if (day <= _.monthLength && (week > 0 || weekday >= _.startingDay)) {
+                    dayClass = (_.initials.weekends.sat === _.$label.days[weekday] ||
+                                _.initials.weekends.sun === _.$label.days[weekday])
+                                ? 'calendar-day --weekend' : 'calendar-day';
+                    thisDay = _.formatDate(
+                        `${_.$label.months[_.$activeR.month]} ${day} ${rotaryYear}`,
+                        _.options.format
+                    );
+                    markup += `
+                        <div class="col ${dayClass}">
+                            <div class="day" role="button" data-date-val="${thisDay}">${day}</div>
+                        </div>
+                    `;
+                    day++;
+                } else {
+                    // 空白補充
+                    markup += `<div class="col calendar-day"></div>`;
+                }
+            }
+            markup += '</div>';
+
+            if (day > _.monthLength) {
+                break; // 當月日期已完成
+            } else {
+                markup += `</div><div class="row calendar-table-body">`; // 新增下一週
+            }
+        }
+        markup += '</div>';
+        // 更新日曆表格內容
         _.$elements.innerEl.find('.calendar-table-inner').append(markup);
 
-        if(_.options.todayHighlight) {
-            _.$elements.innerEl.find("[data-date-val='" + _.$current.date + "']").addClass('calendar-today');
+        // 高亮今天
+        if (_.options.todayHighlight) {
+            _.$elements.innerEl.find(`[data-date-val="${_.$current.date}"]`).addClass('calendar-today');
         }
-        
-        // set event listener for each day
-        _.$elements.innerEl.find('.calendar-day').children()
-        .off('click.evocalendar')
-        .on('click.evocalendar', _.selectDate)
-
-        var selectedDate = _.$elements.innerEl.find("[data-date-val='" + _.$active.date + "']");
-        
-        if (selectedDate) {
-            // Remove active class to all
-            _.$elements.innerEl.children().removeClass('calendar-active');
-            // Add active class to selected date
-            selectedDate.addClass('calendar-active');
+        // 高亮當前選中的日期
+        const selectedDateElement = _.$elements.innerEl.find(`[data-date-val="${_.$active.date}"]`);
+        if (selectedDateElement) {
+            _.$elements.innerEl.find('.calendar-day .day').removeClass('calendar-active');
+            selectedDateElement.addClass('calendar-active');
         }
-        if(_.options.calendarEvents != null) { // For event indicator (dots)
+        // 如果有日曆事件，添加事件指示器
+        if (_.options.calendarEvents) {
             _.buildEventIndicator();
+        }
+        // 設置點擊事件監聽器
+        _.$elements.innerEl
+            .find('.calendar-day .day')
+            .off('click.evocalendar')
+            .on('click.evocalendar', _.selectDate);
+    };
+
+    EvoCalendar.prototype.buildEventHeader = function () {
+        const _ = this;
+
+        try {
+            // 格式化當前日期為標題格式
+            const title = _.formatDate(
+                new Date(_.$active.date),
+                _.options.eventHeaderFormat,
+                _.options.language
+            );
+            // 假設格式為 "十二月 1, 2024"，將標題分解為年份、月份和日期
+            const [month, day, year] = title.split(/[\s,]+/);
+            // 更新 DOM 元素
+            $('#event-header-year').text(year);
+            $('#event-header-month').text(month);
+            $('#event-header-day').text(day.padStart(2, '0')); // 左側補零，確保日期為兩位數
+            // 記錄日誌
+//            console.info(`[EvoCalendar] Event header updated: Year=${year}, Month=${month}, Day=${day.padStart(2, '0')}`);
+        } catch (error) {
+            console.error('[EvoCalendar] Failed to build event header:', error);
         }
     };
 
     // v1.0.0 - Build Event: Event list
-    EvoCalendar.prototype.buildEventList = function() {
-        var _ = this, markup, hasEventToday = false, rotaryYear, rotaryMonth;
-        
-        if (_.$active.month <= 5 ) {
-            rotaryYear = _.$active.year + 1;
-            rotaryMonth = _.$active.month+6;
-        } else {
-            rotaryYear = _.$active.year;
-            rotaryMonth = _.$active.month-6;
-        }
-        
+    EvoCalendar.prototype.buildEventList = function () {
+        const _ = this;
+        let hasEventToday = false;
+
+        _.buildEventHeader();
+        // 清空事件列表
+        const eventListEl = document.querySelector('.event-list');
+        eventListEl.innerHTML = ''; // 使用原生 JavaScript 清空內容
+
+        // 重置當前活動事件
         _.$active.events = [];
-        // Event date
-        var title = _.formatDate(new Date(_.$label.months[rotaryMonth] +' 1 '+ rotaryYear), _.options.eventHeaderFormat, _.options.language);
-        _.$elements.eventEl.find('.event-header > p').text(title);
-        // Event list
-        var eventListEl = _.$elements.eventEl.find('.event-list');
-        // Clear event list item(s)
-        if (eventListEl.children().length > 0) eventListEl.empty();
-        if (_.options.calendarEvents) {
-            for (var i = 0; i < _.options.calendarEvents.length; i++) {
-                if(_.isBetweenDates(_.$active.date, _.options.calendarEvents[i].date)) {
-                    eventAdder(_.options.calendarEvents[i])
+        // 檢查並生成事件列表
+        if (_.options.calendarEvents && _.options.calendarEvents.length > 0) {
+            _.options.calendarEvents.forEach((event) => {
+                if (_.isBetweenDates(_.$active.date, event.date) || isEveryYearMatch(event)) {
+                    hasEventToday = true;
+                    addEvent(event);
                 }
-                else if (_.options.calendarEvents[i].everyYear) {
-                    var d = new Date(_.$active.date).getMonth() + 1 + ' ' + new Date(_.$active.date).getDate();
-                    var dd = new Date(_.options.calendarEvents[i].date).getMonth() + 1 + ' ' + new Date(_.options.calendarEvents[i].date).getDate();
-                    // var dates = [_.formatDate(_.options.calendarEvents[i].date[0], 'mm/dd'), _.formatDate(_.options.calendarEvents[i].date[1], 'mm/dd')];
+            });
+        }
+        // 無事件的情況
+        if (!hasEventToday) {
+            const noEventMessage = (_.$active.date === _.$current.date)
+                    ? _.initials.dates[_.options.language].noEventForToday
+                    : _.initials.dates[_.options.language].noEventForThisDay;
+            const noEventMarkup = `
+                <div class="event-empty">
+                    <p>${noEventMessage}</p>
+                </div>
+                `;
+            eventListEl.insertAdjacentHTML('beforeend', noEventMarkup);
+        }
 
-                    if(d==dd) {
-                        eventAdder(_.options.calendarEvents[i])
-                    }
-                }
-            };
+        // 添加事件到事件列表
+        function addEvent(event) {
+            _.addEventList(event);
         }
-        function eventAdder(event) {
-            hasEventToday = true;
-            _.addEventList(event)
+        // 每年事件匹配檢查
+        function isEveryYearMatch(event) {
+            if (!event.everyYear) return false;
+
+            const activeDate = new Date(_.$active.date);
+            const eventDate = new Date(event.date);
+            return (
+                activeDate.getMonth() === eventDate.getMonth() &&
+                activeDate.getDate() === eventDate.getDate()
+            );
         }
-        // IF: no event for the selected date
-        if(!hasEventToday) {
-            markup = '<div class="event-empty">';
-            if (_.$active.date === _.$current.date) {
-                markup += '<p>'+_.initials.dates[_.options.language].noEventForToday+'</p>';
-            } else {
-                markup += '<p>'+_.initials.dates[_.options.language].noEventForThisDay+'</p>';
-            }
-            markup += '</div>';
-        }
-        eventListEl.append(markup)
     };
 
-    // v1.0.0 - Add single event to event list
-    EvoCalendar.prototype.addEventList = function(event_data) {
-        var _ = this, markup;
-        var eventListEl = _.$elements.eventEl.find('.event-list');
-        if (eventListEl.find('[data-event-index]').length === 0) eventListEl.empty();
-        _.$active.events.push(event_data);
-        markup =    '<div class="timeline-row" role="button" data-event-index="'+(event_data.id)+'">';
-        // markup +=       '<div class="timeline-time">7:45PM</div>'
-        markup +=       '<div class="timeline-time">'+event_data.startTime+'</div>';
-        // markup += '<div class="event-icon"><div class="event-bullet-'+event_data.type+'"';
-        markup +=       '<div class="timeline-dot fb-bg"></div>';
-        markup +=       '<div class="timeline-content">';
-        // markup +=           '<h4>No.191 帶你進入不動產世界</h4>';
-//        markup +=           '<h4>'+_.limitTitle(event_data.name, 30)+'</h4>';
-        markup +=           '<h4>'+event_data.name+'</h4>';
-        // markup +=           '<p>[八德陽德扶青社]</p>';
-        markup +=           '<p>['+event_data.badge+']</p>';
-        markup +=       '</div>';
-        markup +=   '</div>';
-        eventListEl.append(markup);
-        // markup += '<div class="event-icon"><div class="event-bullet-'+event_data.type+'"';
-        // if (event_data.color) {
-        //     markup += 'style="background-color:'+event_data.color+'"'
-        // }
-        // markup += '></div></div><div class="event-info"><p class="event-title">'+_.limitTitle(event_data.name);
-        // if (event_data.badge) markup += '<span>'+event_data.badge+'</span>';
-        // markup += '</p>'
-        // if (event_data.description) markup += '<p class="event-desc">'+event_data.description+'</p>';
-        // markup += '</div>';
-        // markup += '</div>';
-        // eventListEl.append(markup);
+    // (private) Helper to Fetch Calendar Data
+    EvoCalendar.prototype.fetchCalendarData = function(year) {
+        const _ = this;
 
-        _.$elements.eventEl.find('[data-event-index="'+(event_data.id)+'"]')
-        .off('click.evocalendar')
-        .on('click.evocalendar', _.selectEvent);
-    };
-
-    // v1.0.0 - Limit title (...)
-    EvoCalendar.prototype.limitTitle = function(title, limit) {
-        var newTitle = [];
-        limit = limit === undefined ? 18 : limit;
-        if ((title).split(' ').join('').length > limit) {
-            var t = title.split(' ');
-            for (var i=0; i<t.length; i++) {
-                if (t[i].length + newTitle.join('').length <= limit) {
-                    newTitle.push(t[i])
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/xkRotaract/api/manage/calendar/getAllByYear',
+                method: 'POST',
+                data: JSON.stringify({ year: year }),
+                contentType: 'application/json',
+                success: function(response) {
+                    _.options.calendarDistrictMap = response;
+//                    console.info("Successfully fetched calendar data:", response);
+                    resolve(response); // Return the fetched data
+                },
+                error: function(xhr, status, error) {
+                    console.error("Failed to fetch calendar data:", error);
+                    reject(error);
                 }
-            }
-            return newTitle.join(' ') + '...'
-        }
-        return title;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    // r1.0.0 - Select Dirtrict
-    EvoCalendar.prototype.selectDistrict = function(event) {
-        var _ = this;
-        var el, districtId;
-
-        // 防止默認行為
-        event.preventDefault();
-        // 使用 jQuery 獲取 data-district-val 屬性值
-        districtId = $(event.currentTarget).data('district-val');
-
-        _.$elements.headbarEl.find('.district-list > [data-district-val]').removeClass('active');
-        _.$elements.headbarEl.find('.district-list > [data-district-val="'+districtId+'"]').addClass('active');
-
-
-
-        $.ajax({
-            url: '/xkRotaract/api/manage/club/list',
-            method: 'POST',
-            data: JSON.stringify({ 'district': districtId }),
-            processData: false,
-            contentType: 'application/json',
-            success: function(response) {
-                console.log('AJAX 请求成功：', response);
-
-//                _.options.calendarEvents = response;
-                // 找到 E 區塊中的 .calendar-months 容器
-                const calendarMonthsContainer = document.querySelector('.calendar-sidebar-right .calendar-months');
-
-                // 清空現有內容
-                calendarMonthsContainer.innerHTML = '';
-
-                // 動態插入新內容
-                response.forEach(item => {
-                    const calendarMonthDiv = document.createElement('div');
-                    calendarMonthDiv.className = 'calendar-month';
-                    calendarMonthDiv.setAttribute('role', 'button');
-                    calendarMonthDiv.setAttribute('data-rotaract-id', item.id); // 可根據需求加上其他屬性
-                    calendarMonthDiv.textContent = item.name;
-
-                    // 插入到容器中
-                    calendarMonthsContainer.appendChild(calendarMonthDiv);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX 请求失败：', error);
-            }
+            });
         });
-
-//
-//        if(yearVal == "prev") {
-//            --_.$active.year;
-//        } else if (yearVal == "next") {
-//            ++_.$active.year;
-//        } else if (yearVal == "now") {
-//            _.$active.year = _.$current.year;
-//        } else if (typeof yearVal === 'number') {
-//            _.$active.year = yearVal;
-//        }
-//
-//        if (_.windowW <= _.$breakpoints.mobile) {
-//            if(_.$UI.hasSidebar) _.toggleSidebar(false);
-//        }
-//
-//        $(_.$elements.calendarEl).trigger("selectYear", [_.$active.year])
-//
-//        _.buildSidebarYear();
-//        _.buildCalendar();
     };
 
     // v1.0.0 - Select year
-    EvoCalendar.prototype.selectYear = function(event) {
-        var _ = this;
-        var el, yearVal;
+    EvoCalendar.prototype.selectYear = function (event) {
+        const _ = this;
+        let yearVal;
 
-        if (typeof event === 'string' || typeof event === 'number') {
-            if ((parseInt(event)).toString().length === 4) {
-                yearVal = parseInt(event);
+        // 判斷輸入是年份值還是事件對象
+        if (typeof event === "string" || typeof event === "number") {
+            // 檢查年份值是否為有效四位數年份
+            yearVal = parseInt(event, 10);
+            if (isNaN(yearVal) || yearVal.toString().length !== 4) {
+                console.warn("Invalid year value:", event);
+                return;
             }
         } else {
-            el = $(event.target).closest('[data-year-val]');
-            yearVal = $(el).data('yearVal');
+            // 從事件目標中提取年份值
+            const el = event.target.closest("[data-year-val]");
+            if (!el) {
+                console.warn("Year element not found:", event);
+                return;
+            }
+            yearVal = el.dataset.yearVal;
+        }
+        // 處理特殊值（prev、next、now）或具體年份
+        switch (yearVal) {
+            case "prev":
+                _.$active.year--;
+                break;
+            case "next":
+                _.$active.year++;
+                break;
+            case "now":
+                _.$active.year = _.$current.year;
+                break;
+            default:
+                if (typeof yearVal === 'number') {
+                    _.$active.year = yearVal;
+                } else {
+                    console.warn("Unexpected year value:", yearVal);
+                    return;
+                }
         }
 
-        if(yearVal == "prev") {
-            --_.$active.year;
-        } else if (yearVal == "next") {
-            ++_.$active.year;
-        } else if (yearVal == "now") {
-            _.$active.year = _.$current.year;
-        } else if (typeof yearVal === 'number') {
-            _.$active.year = yearVal;
+        // 移動設備：自動關閉側邊欄
+        if (_.windowW <= _.$breakpoints.mobile && _.$UI.hasSidebar) {
+            _.toggleSidebar(false);
         }
-        
-        if (_.windowW <= _.$breakpoints.mobile) {
-            if(_.$UI.hasSidebar) _.toggleSidebar(false);
-        }
-        
-        $(_.$elements.calendarEl).trigger("selectYear", [_.$active.year])
-
+        // 觸發年份選擇事件
+        $(_.$elements.calendarEl).trigger("selectYear", [_.$active.year]);
+        // 重建年份側邊欄和日曆
         _.buildSidebarYear();
         _.buildCalendar();
     };
 
-    // v1.0.0 - Build Sidebar: Year text
-    // EvoCalendar.prototype.buildSidebarYear = function() {
-    //     var _ = this;
-        
-    //     _.$elements.sidebarEl.find('.calendar-year > p').text(_.$active.year);
-    // }
-    EvoCalendar.prototype.buildSidebarYear = function() {
-        var _ = this;
-
-        var currentYear = _.$active.year;  // 獲取當前年份
-        var currentMonth = _.$active.month;    // 獲取當前月份 (0: January, 11: December)
-
-        var displayedYears;
-
-        // 根據當前年份和月份來決定顯示的年份範圍
-        if (currentMonth < 6) { // 上半年 (0-5 月)
-            displayedYears = [currentYear - 1, currentYear];
-        } else { // 下半年 (6-11 月)
-            displayedYears = [currentYear, currentYear + 1];
-        }
-
-        // 更新側邊欄顯示的年份     
-        _.$elements.sidebarEl.find('.calendar-year > div > p').text(displayedYears[0] + "-" + displayedYears[1]);
-    };
-
     // v1.0.0 - Select month
     EvoCalendar.prototype.selectMonth = function(event) {
-        var _ = this;
-        
-        if (typeof event === 'string' || typeof event === 'number') {
-            if (event >= 0 && event <=_.$label.months.length) {
-                // if: 0-11
-                _.$active.month = (event).toString();
-            }
+        const _ = this;
+
+        // 獲取月份值
+        let monthVal;
+        if (typeof event === 'number' || typeof event === 'string') {
+            monthVal = parseInt(event, 10);
+        } else if (event && event.currentTarget) {
+            monthVal = $(event.currentTarget).data('monthVal');
         } else {
-            // if month is manually selected
-            _.$active.month = $(event.currentTarget).data('monthVal');
+            console.warn("Invalid event type for selecting a month:", event);
+            return;
         }
-        
+        // 驗證月份範圍
+        if (isNaN(monthVal) || monthVal < 0 || monthVal >= _.$label.months.length) {
+            console.warn("Invalid month value:", monthVal);
+            return;
+        }
+
+        // 更新月份數據
+        _.$active.year = (monthVal <= 5) ? _.$current.year+1 : _.$current.year
+        _.$active.month = monthVal;
+        _.$activeR.month = _.adjustRotaryIndex(monthVal);
+        const firstDayOfMonth = _.formatDate(
+                    new Date(_.$label.months[_.$activeR.month] + ' 1 ' + _.$active.year),
+                    _.options.format
+                );
+        _.$active.date = firstDayOfMonth;
+//        _.$active.event_date = firstDayOfMonth;
+        // 更新 UI
         _.buildSidebarMonths();
         _.buildCalendar();
-        
+        _.buildEventList();
+        // 平板或更小的設備：關閉側邊欄
         if (_.windowW <= _.$breakpoints.tablet) {
-            if(_.$UI.hasSidebar) _.toggleSidebar(false);
+//            if(_.$UI.hasSidebar) _.toggleSidebar(false);
+            $('.calendar-year').click();
         }
-
-        // EVENT FIRED: selectMonth
-        $(_.$elements.calendarEl).trigger("selectMonth", [_.initials.dates[_.options.language].months[_.$active.month], _.$active.month])
-    };
-
-    // v1.0.0 - Build Sidebar: Months list text
-    // EvoCalendar.prototype.buildSidebarMonths = function() {
-    //     var _ = this;
-        
-    //     _.$elements.sidebarEl.find('.calendar-months > [data-month-val]').removeClass('active-month');
-    //     _.$elements.sidebarEl.find('.calendar-months > [data-month-val="'+_.$active.month+'"]').addClass('active-month');
-    // }
-    EvoCalendar.prototype.buildSidebarMonths = function() {
-        var _ = this;
-
-        _.$elements.sidebarEl.find('.calendar-months > [data-month-val]').removeClass('active-month');
-        _.$elements.sidebarEl.find('.calendar-months > [data-month-val="'+_.$active.month+'"]').addClass('active-month');
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    // v1.0.0 - Parse format (date)
-    EvoCalendar.prototype.parseFormat = function(format) {
-        var _ = this;
-        if (typeof format.toValue === 'function' && typeof format.toDisplay === 'function')
-            return format;
-        // IE treats \0 as a string end in inputs (truncating the value),
-        // so it's a bad format delimiter, anyway
-        var separators = format.replace(_.initials.validParts, '\0').split('\0'),
-            parts = format.match(_.initials.validParts);
-        if (!separators || !separators.length || !parts || parts.length === 0){
-            console.log("%c Invalid date format ", "color:white;font-weight:bold;background-color:#e21d1d;");
-        }
-        return {separators: separators, parts: parts};
-    };
-    
-    // v1.0.0 - Format date
-    EvoCalendar.prototype.formatDate = function(date, format, language) {
-        var _ = this;
-        if (!date)
-            return '';
-        language = language ? language : _.defaults.language
-        if (typeof format === 'string')
-            format = _.parseFormat(format);
-        if (format.toDisplay)
-            return format.toDisplay(date, format, language);
-
-        var ndate = new Date(date);
-        // if (!_.isValidDate(ndate)) { // test
-        //     ndate = new Date(date.replace(/-/g, '/'))
-        // }
-        
-        var val = {
-            d: ndate.getDate(),
-            D: _.initials.dates[language].daysShort[ndate.getDay()],
-            DD: _.initials.dates[language].days[ndate.getDay()],
-            m: ndate.getMonth() + 1,
-            M: _.initials.dates[language].monthsShort[ndate.getMonth()],
-            MM: _.initials.dates[language].months[ndate.getMonth()],
-            yy: ndate.getFullYear().toString().substring(2),
-            yyyy: ndate.getFullYear()
-        };
-        
-        val.dd = (val.d < 10 ? '0' : '') + val.d;
-        val.mm = (val.m < 10 ? '0' : '') + val.m;
-        date = [];
-        var seps = $.extend([], format.separators);
-        for (var i=0, cnt = format.parts.length; i <= cnt; i++){
-            if (seps.length)
-                date.push(seps.shift());
-            date.push(val[format.parts[i]]);
-        }
-        return date.join('');
-    };
-
-    // v1.0.0 - Get dates between two dates
-    EvoCalendar.prototype.getBetweenDates = function(dates) {
-        var _ = this, betweenDates = [];
-        for (var x = 0; x < _.monthLength; x++) {
-            var active_date = _.formatDate(_.$label.months[_.$active.month] +' '+ (x + 1) +' '+ _.$active.year, _.options.format);
-            if (_.isBetweenDates(active_date, dates)) {
-                betweenDates.push(active_date);
-            }
-        }
-        return betweenDates;
-    };
-    
-    // v1.0.0 - Check if event has the same event type in the same date
-    EvoCalendar.prototype.hasSameDayEventType = function(date, type) {
-        var _ = this, eventLength = 0;
-
-        for (var i = 0; i < _.options.calendarEvents.length; i++) {
-            if (_.options.calendarEvents[i].date instanceof Array) {
-                var arr = _.getBetweenDates(_.options.calendarEvents[i].date);
-                for (var x = 0; x < arr.length; x++) {
-                    if(date === arr[x] && type === _.options.calendarEvents[i].type) {
-                        eventLength++;
-                    }
-                }
-            } else {
-                if(date === _.options.calendarEvents[i].date && type === _.options.calendarEvents[i].type) {
-                    eventLength++;
-                }
-            }
-        }
-
-        if (eventLength > 0) {
-            return true;
-        }
-        return false;
-    }
-    
-    // v1.0.0 - Set calendar theme
-    EvoCalendar.prototype.setTheme = function(themeName) {
-        var _ = this;
-        var prevTheme = _.options.theme;
-        _.options.theme = themeName.toLowerCase().split(' ').join('-');
-
-        if (_.options.theme) $(_.$elements.calendarEl).removeClass(prevTheme);
-        if (_.options.theme !== 'default') $(_.$elements.calendarEl).addClass(_.options.theme);
-    }
-
-    // v1.0.0 - Called in every resize
-    EvoCalendar.prototype.resize = function() {
-        var _ = this;
-        _.windowW = $(window).width();
-
-        if (_.windowW <= _.$breakpoints.tablet) { // tablet
-            _.toggleSidebar(false);
-            _.toggleEventList(false);
-
-            if (_.windowW <= _.$breakpoints.mobile) { // mobile
-                $(window)
-                    .off('click.evocalendar.evo-' + _.instanceUid)
-            } else {
-                $(window)
-                    .on('click.evocalendar.evo-' + _.instanceUid, $.proxy(_.toggleOutside, _));
-            }
-        } else {
-            if (!_.options.sidebarDisplayDefault) _.toggleSidebar(false);
-            else _.toggleSidebar(true);
-
-            if (!_.options.eventDisplayDefault) _.toggleEventList(false);
-            else _.toggleEventList(true);
-            
-            $(window)
-                .off('click.evocalendar.evo-' + _.instanceUid);
-        }
-    }
-
-    // v1.0.0 - Initialize event listeners
-    EvoCalendar.prototype.initEventListener = function() {
-        var _ = this;
-
-        // resize
-        $(window)
-            .off('resize.evocalendar.evo-' + _.instanceUid)
-            .on('resize.evocalendar.evo-' + _.instanceUid, $.proxy(_.resize, _));
-
-        // IF sidebarToggler: set event listener: toggleSidebar
-        // if(_.options.sidebarToggler) {
-        //     _.$elements.sidebarToggler
-        //     .off('click.evocalendar')
-        //     .on('click.evocalendar', _.toggleSidebar);
-        // }
-        
-        // IF eventListToggler: set event listener: toggleEventList
-        // if(_.options.eventListToggler) {
-        //     _.$elements.eventListToggler
-        //     .off('click.evocalendars')
-        //     .on('click.evocalendars', _.toggleEventList);
-        // }
-
-        // set event listener for each month
-        _.$elements.sidebarEl.find('[data-month-val]')
-        .off('click.evocalendar')
-        .on('click.evocalendar', _.selectMonth);
-
-        // set event listener for year
-        _.$elements.sidebarEl.find('[data-year-val]')
-        .off('click.evocalendar')
-        .on('click.evocalendar', _.selectYear);
-
-        // set event listener for every event listed
-        _.$elements.eventEl.find('[data-event-index]')
-        .off('click.evocalendar')
-        .on('click.evocalendar', _.selectEvent);
-
-        // set event listener for district
-        _.$elements.headbarEl.find('[data-district-val]')
-        .off('click.evocalendar')
-        .on('click.evocalendar', _.selectDistrict);
-
-
-        // 控制 C 區塊的開關
-        document.querySelectorAll('.toggleC').forEach(function(element) {
-            element.addEventListener('click', function () {
-                var calendarSidebar = document.querySelector('.calendar-sidebar-left');
-                var calendarMiddle = document.querySelector('.calendar-middle');
-
-                // 切換 C 區塊的折疊狀態
-                calendarSidebar.classList.toggle('collapsed');
-
-                // 根據 C 區塊是否折疊，調整 D 區塊的寬度
-                if (calendarSidebar.classList.contains('collapsed')) {
-                    calendarSidebar.style.width = '0';  // 折疊 C 區塊
-                    calendarMiddle.style.width = '80%';  // 增加 D 區塊的寬度
-                } else {
-                    calendarSidebar.style.width = '20%';  // 還原 C 區塊寬度
-                    calendarMiddle.style.width = '60%';  // 還原 D 區塊寬度
-                }
-            });
-        });
-
-
-        // 控制 E 區塊的開關
-        document.getElementById('toggleE').addEventListener('click', function () {
-            var calendarSidebar = document.querySelector('.calendar-sidebar-right');
-            var calendarMiddle = document.querySelector('.calendar-middle');
-
-            // 切換 E 區塊的折疊狀態
-            calendarSidebar.classList.toggle('collapsed');
-
-            // 根據 E 區塊是否折疊，調整 D 區塊的寬度
-            if (calendarSidebar.classList.contains('collapsed')) {
-                calendarSidebar.style.width = '0';  // 折疊 E 區塊
-                calendarMiddle.style.width = '80%';  // 增加 D 區塊的寬度
-            } else {
-                calendarSidebar.style.width = '20%';  // 還原 E 區塊的寬度
-                calendarMiddle.style.width = '60%';  // 還原 D 區塊的寬度
-            }
-        });
-
-
-        // 控制 F 區塊的開關
-        // 選擇所有的 day 元素
-        const dayElements = document.querySelectorAll('.day');
-
-        // 選擇 calendar-table 元素
-        const calendarInner = document.querySelector('.calendar-inner');
-        const calendarEvents = document.querySelector('.calendar-events');
-        // 添加點擊事件給每個 day 元素
-        dayElements.forEach(day => {
-            day.addEventListener('click', function() {
-                // 切換 calendar-table 的折疊狀態
-                calendarInner.classList.toggle('collapsed');
-
-                if (calendarInner.classList.contains('collapsed')) {
-                    calendarInner.style.height = '0%';
-                    calendarEvents.style.height = '100%';
-                }
-            });
-        });
-        document.querySelectorAll('.toggleF').forEach(function(element) {
-            element.addEventListener('click', function() {
-                // 切換 calendar-table 的折疊狀態
-                calendarInner.classList.toggle('collapsed');
-
-                if (!calendarInner.classList.contains('collapsed')) {
-                    calendarInner.style.removeProperty('height'); // 移除高度設置
-                    // calendarInner.style.height = '100%';
-                    // calendarEvents.style.height = '50%';
-                }
-            });
-        });
-        document.querySelector('.calendar-year').addEventListener('click', function () {
-            const calendarMonths = document.querySelector('.calendar-months');
-
-            // 檢查視窗寬度，僅當寬度小於768px時生效
-            if (window.innerWidth < 768) {
-                // 切換 active 類
-                calendarMonths.classList.toggle('active');
-
-                // 根據 active 類設置最大高度
-                if (calendarMonths.classList.contains('active')) {
-                    calendarMonths.style.maxHeight = calendarMonths.scrollHeight + 'px';
-                } else {
-                    calendarMonths.style.maxHeight = '0';
-                }
-            }
-        });
+        // 觸發自定義事件
+        $(_.$elements.calendarEl).trigger("selectMonth", [
+            _.initials.dates[_.options.language].months[_.$active.month],
+            _.$active.month
+        ]);
     };
 
     // v1.0.0 - Select specific date
     EvoCalendar.prototype.selectDate = function(event) {
-        var _ = this;
-        var oldDate = _.$active.date;
-        var date, year, month, activeDayEl, isSameDate;
+        const _ = this;
+        const oldDate = _.$active.date;
+        let date, year, month, activeDayEl;
+        // 統一解析日期
+        const parseDate = (input) => {
+            if (typeof input === 'string' || typeof input === 'number' || input instanceof Date) {
+                return _.formatDate(new Date(input), _.options.format);
+            } else if (input && input.currentTarget) {
+                return $(input.currentTarget).data('dateVal');
+            } else {
+                console.warn("Invalid date input:", input);
+                return null;
+            }
+        };
+        // 解析並驗證日期
+        date = parseDate(event);
+        if (!date) return;
 
-        if (typeof event === 'string' || typeof event === 'number' || event instanceof Date) {
-            date = _.formatDate(new Date(event), _.options.format)
-            year = new Date(date).getFullYear();
-            month = new Date(date).getMonth();
-            
-            if (_.$active.year !== year) _.selectYear(year);
-            if (_.$active.month !== month) _.selectMonth(month);
-            activeDayEl = _.$elements.innerEl.find("[data-date-val='" + date + "']");
-        } else {
-            activeDayEl = $(event.currentTarget);
-            date = activeDayEl.data('dateVal')
+        const parsedDate = new Date(date);
+        year = parsedDate.getFullYear();
+        month = parsedDate.getMonth();
+        // 檢查是否需要更新年份或月份
+        if (_.$active.year !== year) _.selectYear(year);
+        if (_.$active.month !== month) _.selectMonth(month);
+        // 更新活動日期
+        if (_.$active.date === date) {
+            console.info("Selected date is already active:", date);
+            return;
         }
-        isSameDate = _.$active.date === date;
-        // Set new active date
         _.$active.date = date;
         _.$active.event_date = date;
-        // Remove active class to all
+        // 更新 UI
+        activeDayEl = _.$elements.innerEl.find(`[data-date-val='${date}']`);
         _.$elements.innerEl.find('[data-date-val]').removeClass('calendar-active');
-        // Add active class to selected date
-        activeDayEl.addClass('calendar-active');
-        // Build event list if not the same date events built
-        if (!isSameDate) _.buildEventList();
-
-        // EVENT FIRED: selectDate
-        $(_.$elements.calendarEl).trigger("selectDate", [_.$active.date, oldDate])
+        if (activeDayEl.length > 0) {
+            activeDayEl.addClass('calendar-active');
+        } else {
+            console.warn("Active day element not found for date:", date);
+        }
+        // 重建事件列表
+        _.buildEventList();
+        // 觸發事件：selectDate
+        $(_.$elements.calendarEl).trigger("selectDate", [_.$active.date, oldDate]);
     };
 
-    // v1.0.0 - Check if date is between the passed calendar date 
+
+
+    /******************************
+    *****       事件管理        *****
+    ******************************/
+    // v1.0.0 - Add event indicator/s (dots)
+    EvoCalendar.prototype.addEventIndicator = function(event) {
+        const _ = this;
+
+        // 確保事件類型和日期正確
+        let eventDates = Array.isArray(event.date) ? [...event.date] : [event.date];
+        const type = _.escapeSpecialCharacters(event.type);
+        // 如果事件為每年重複，調整年份
+        if (event.everyYear != "!0") {
+            eventDates = eventDates.map(date =>
+                _.formatDate(new Date(date).setFullYear(_.$active.year), _.options.format)
+            );
+        }
+        // 為每個事件日期添加指示點
+        eventDates.forEach(date => {
+            const formattedDates = Array.isArray(date)
+                ? _.getBetweenDates(date)
+                : [_.formatDate(date, _.options.format)];
+
+            formattedDates.forEach(appendDot);
+        });
+        // 子函數：向特定日期添加事件指示點
+        function appendDot(date) {
+            const thisDate = _.$elements.innerEl.find(`[data-date-val="${date}"]`);
+            if (thisDate.length === 0) return; // 找不到對應的日期元素則跳過
+
+            // 確保存在事件指示容器
+            let eventIndicator = thisDate.find('span.event-indicator');
+            if (eventIndicator.length === 0) {
+                eventIndicator = $(`<span class="event-indicator"></span>`);
+                thisDate.append(eventIndicator);
+            }
+            // 檢查是否已存在相同類型的事件
+            if (eventIndicator.find(`.type-bullet .type-${type}`).length === 0) {
+                const bulletHTML = `
+                    <div class="type-bullet">
+                        <div class="type-${type}" ${event.color ? `style="background-color:${event.color};"` : ''}></div>
+                    </div>
+                `;
+                eventIndicator.append(bulletHTML);
+            }
+        }
+    };
+
+    // v1.0.0 - Remove event indicator/s (dots)
+    EvoCalendar.prototype.removeEventIndicator = function(event) {
+        const _ = this;
+
+        // 確保事件類型和日期正確
+        let eventDates = Array.isArray(event.date) ? [...event.date] : [event.date];
+        const type = _.escapeSpecialCharacters(event.type);
+        // 遍歷每個日期並移除指示點
+        eventDates.forEach(date => {
+            const formattedDates = Array.isArray(date)
+                ? _.getBetweenDates(date)
+                : [_.formatDate(date, _.options.format)];
+            formattedDates.forEach(removeDot);
+        });
+        // 子函數：移除特定日期的事件指示點
+        function removeDot(date) {
+            const dateElement = _.$elements.innerEl.find(`[data-date-val="${date}"] span.event-indicator`);
+            if (dateElement.length === 0) return; // 如果沒有事件指示點，跳過該日期
+
+            // 移除指定類型的事件指示點
+            const typeIndicator = dateElement.find(`.type-bullet > .type-${type}`);
+            if (typeIndicator.length > 0) typeIndicator.parent().remove();
+            // 如果指示器容器中已無子元素，則移除容器本身
+            if (dateElement.children().length === 0) dateElement.remove();
+        }
+    };
+
+    // v1.0.0 - Add Calendar Event(s)
+    EvoCalendar.prototype.addCalendarEvent = function(events) {
+        const _ = this;
+
+        // 添加單個事件
+        function addEvent(data) {
+            if (!data.id) {
+                console.warn(`Event named "${data.name}" is missing a unique ID.`);
+                return;
+            }
+            // 處理日期格式
+            if (Array.isArray(data.date)) {
+                data.date = data.date.map(date => {
+                    if (isDateValid(date)) {
+                        return _.formatDate(new Date(date), _.options.format);
+                    }
+                    return null;
+                }).filter(Boolean); // 過濾掉無效日期
+            } else if (isDateValid(data.date)) {
+                data.date = _.formatDate(new Date(data.date), _.options.format);
+            } else {
+                console.warn(`Event named "${data.name}" has an invalid date.`);
+                return;
+            }
+            // 初始化 calendarEvents
+            if (!_.options.calendarEvents) _.options.calendarEvents = [];
+            _.options.calendarEvents.push(data);
+            // 添加事件指示器
+            _.addEventIndicator(data);
+            // 如果事件日期與當前激活日期匹配，添加到事件列表
+            if (Array.isArray(data.date) && data.date.includes(_.$active.event_date)) {
+                _.addEventList(data);
+            } else if (data.date === _.$active.event_date) {
+                _.addEventList(data);
+            }
+        }
+        // 驗證日期是否有效
+        function isDateValid(date) {
+            if (_.isValidDate(date)) {
+                return true;
+            } else {
+                console.warn(`Invalid date detected: ${date}`);
+                return false;
+            }
+        }
+        // 處理單個事件或事件數組
+        if (Array.isArray(events)) {
+            events.forEach(event => addEvent(event));
+        } else if (typeof events === 'object' && events !== null) {
+            addEvent(events);
+        } else {
+            console.error("Invalid input: Expected an event object or an array of events.");
+        }
+    };
+
+    // v1.0.0 - Remove Calendar Event(s)
+    EvoCalendar.prototype.removeCalendarEvent = function(events) {
+        const _ = this;
+
+        // 刪除單個事件
+        function deleteEvent(eventId) {
+            // 查找事件索引
+            const index = _.options.calendarEvents.findIndex(event => event.id === eventId);
+
+            if (index >= 0) {
+                const event = _.options.calendarEvents[index];
+                // 從事件列表中刪除事件
+                _.options.calendarEvents.splice(index, 1);
+                // 更新事件指示器和事件列表
+                _.removeEventList(eventId);
+                _.removeEventIndicator(event);
+            } else {
+                console.warn(`Event with ID "${eventId}" not found.`);
+            }
+        }
+        // 處理單個或多個事件
+        if (Array.isArray(events)) {
+            events.forEach(eventId => deleteEvent(eventId));
+        } else if (typeof events === 'string' || typeof events === 'number') {
+            deleteEvent(events);
+        } else {
+            console.error("Invalid input: Expected an event ID or an array of event IDs.");
+        }
+    };
+
+    // v1.0.0 - Add single event to event list
+    EvoCalendar.prototype.addEventList = function(eventData) {
+        const _ = this;
+
+        // 確保事件列表元素存在
+        const eventListEl = _.$elements.eventEl.find('.event-list');
+        if (!eventListEl.length) {
+            console.error("Event list element not found.");
+            return;
+        }
+        // 如果列表為空，清除任何占位符
+        if (!eventListEl.children('[data-event-index]').length) eventListEl.empty();
+        // 將事件數據加入活動數據
+        _.$active.events.push(eventData);
+        // 生成事件的 HTML 標記
+        const markup = `
+            <div class="timeline-row" role="button" data-event-index="${eventData.id}">
+                <div class="timeline-time">${eventData.startTime || 'All day'}</div>
+                <div class="timeline-dot fb-bg"></div>
+                <div class="timeline-content">
+                    <h4>${_.sanitize(eventData.eventName)}</h4>
+                    <p>[${_.sanitize(eventData.badge || 'No Badge')}]</p>
+                </div>
+            </div>
+        `;
+        // 插入事件並綁定點擊事件
+        eventListEl.append(markup);
+
+        const newEventElement = eventListEl.find(`[data-event-index="${eventData.id}"]`);
+        newEventElement
+            .off('click.evocalendar')
+            .on('click.evocalendar', _.selectEvent);
+    };
+
+    // v1.0.0 - Remove single event from event list
+    EvoCalendar.prototype.removeEventList = function(eventId) {
+        const _ = this;
+
+        // 獲取事件列表元素
+        const eventListEl = _.$elements.eventEl.find('.event-list');
+        if (!eventListEl.length) {
+            console.error("Event list element not found.");
+            return;
+        }
+        // 查找要移除的事件元素
+        const eventEl = eventListEl.find(`[data-event-index="${eventId}"]`);
+        if (!eventEl.length) {
+            console.warn(`Event with ID ${eventId} not found in the list.`);
+            return;
+        }
+        // 移除指定事件
+        eventEl.remove();
+
+        // 如果列表中已無任何事件
+        if (!eventListEl.find('[data-event-index]').length) {
+            eventListEl.empty(); // 清空事件列表
+            // 設置提示信息
+            const isToday = _.$active.date === _.$current.date;
+            const message = isToday
+                ? _.initials.dates[_.options.language].noEventForToday
+                : _.initials.dates[_.options.language].noEventForThisDay;
+            // 添加提示信息標記
+            const emptyMarkup = `
+                <div class="event-empty">
+                    <p>${message}</p>
+                </div>
+            `;
+            eventListEl.append(emptyMarkup);
+        }
+    };
+
+    // v1.0.0 - Select event
+    EvoCalendar.prototype.selectEvent = function(event) {
+        const _ = this;
+
+        // 獲取事件 DOM 元素
+        const el = $(event.target).closest('.event-container');
+        if (!el.length) {
+            console.warn("No event container found.");
+            return; // 防止空元素選取
+        }
+        // 獲取事件 ID
+        const eventId = el.data('eventIndex')?.toString();
+        if (!eventId) {
+            console.warn("No event ID found in the selected element.");
+            return; // 如果沒有事件 ID，退出
+        }
+        // 查找對應的事件數據
+        const selectedEvent = _.options.calendarEvents.find(e => e.id.toString() === eventId);
+        if (!selectedEvent) {
+            console.warn(`Event with ID ${eventId} not found.`);
+            return; // 如果找不到事件，退出
+        }
+        // 如果事件包含日期範圍，計算範圍內的日期
+        if (Array.isArray(selectedEvent.date)) {
+            selectedEvent.dates_range = _.getBetweenDates(selectedEvent.date);
+        }
+        // 觸發自定義事件，並傳遞所選事件的數據
+        $(_.$elements.calendarEl).trigger("selectEvent", [selectedEvent]);
+        console.info("Event selected:", selectedEvent);
+    };
+
+    // v1.0.0 - Select District
+    EvoCalendar.prototype.selectDistrict = function(event) {
+        const _ = this;
+        // 防止默認行為
+        event.preventDefault();
+        // 獲取點擊的 district ID
+        const districtId = $(event.target).closest('[data-district-val]').data('district-val');
+        if (!districtId) {
+            console.warn("No district ID found in the selected element.");
+            return;
+        }
+        // 更新 Headbar 中的 active 樣式
+        _.$elements.headbarEl
+            .find('.district-list > [data-district-val]')
+            .removeClass('active');
+        _.$elements.headbarEl
+            .find(`.district-list > [data-district-val="${districtId}"]`)
+            .addClass('active');
+        // 更新 E 區塊 (右側邊欄) 的內容
+        const container = document.getElementById("calendar-sidebar-right");
+        if (!container) {
+            console.error("Calendar sidebar container not found.");
+            return;
+        }
+        container.innerHTML = ""; // 清空內容
+
+        const clubs = _.districtData[districtId] || ["無相關資料"];
+        // 使用模板字串生成 HTML
+        const markup = clubs.map(
+                        club => `
+                        <div class="calendar-club" role="button">
+                            ${club}
+                        </div>`
+                    )
+                    .join(""); // 將數組轉換為單一字串
+        container.innerHTML = markup; // 一次性插入到 DOM 中
+        // 可選：觸發自定義事件
+        $(_.$elements.calendarEl).trigger("selectDistrict", [districtId, clubs]);
+//        console.info(`District ${districtId} selected. Clubs updated:`, clubs);
+        // 更新事件
+        if (districtId === "ALL") {
+            _.options.calendarEvents = Object.values(_.options.calendarDistrictMap)
+                .flat()
+                .map(event => {
+                    // Optional: Add custom transformations if needed
+                    return {
+                        ...event, // Preserve existing properties
+                        eventName: event.name // Example transformation: Rename 'name' to 'eventName'
+                    };
+                });
+        } else {
+            // 過濾符合條件的活動並重新命名屬性
+            _.options.calendarEvents = _.options.calendarDistrictMap
+                .filter(event => event.orgCodes && event.orgCodes.includes(districtId)) // 篩選符合條件的活動
+                .map(event => {
+                    const { name, ...rest } = event; // 解構出 name 並保留其他屬性
+                    return {
+                        ...rest, // 保留原本的屬性
+                        eventName: name // 將 'name' 重新命名為 'eventName'
+                    };
+                });
+            // 檢查結果
+            console.log(_.options.calendarEvents);
+        }
+        _.buildCalendar();
+        _.buildEventList();
+    };
+
+    // v1.0.0 - Return active events
+    EvoCalendar.prototype.getActiveEvents = function() {
+        return this.$active?.events || [];
+    };
+
+
+
+    /******************************
+    *****   METHODS 工具函數    *****
+    ******************************/
+    // v1.0.0 - Format date
+    EvoCalendar.prototype.formatDate = function(date, format, language) {
+        var _ = this;
+        if (!date) return '';
+
+        language = language || _.defaults.language;
+        // 如果傳入的格式是函數，直接調用 format.toDisplay
+        if (typeof format === 'string') format = _.parseFormat(format);
+        if (format.toDisplay) return format.toDisplay(date, format, language);
+
+        var ndate = new Date(date);
+        // 如果日期無效，嘗試修復格式並重建日期
+        if (isNaN(ndate)) {
+            ndate = new Date(date.replace(/-/g, '/'));
+            if (isNaN(ndate)) return ''; // 如果仍然無效，返回空字串
+        }
+        // 計算扶輪月份
+        var indexOfRotaryMonth = _.adjustRotaryIndex(ndate.getMonth());
+        // 構建日期格式的值
+        var val = {
+            d: ndate.getDate(),
+            dd: String(ndate.getDate()).padStart(2, '0'),
+            D: _.initials.dates[language].daysShort[ndate.getDay()],
+            DD: _.initials.dates[language].days[ndate.getDay()],
+            m: ndate.getMonth() + 1,
+            mm: String(ndate.getMonth() + 1).padStart(2, '0'),
+            M: _.initials.dates[language].monthsShort[indexOfRotaryMonth],
+            MM: _.initials.dates[language].months[indexOfRotaryMonth],
+            yy: String(ndate.getFullYear()).substring(2),
+            yyyy: ndate.getFullYear()
+        };
+
+        // 組裝最終的日期字串
+        var result = [];
+        var seps = [...format.separators];
+        for (var i = 0; i < format.parts.length; i++) {
+            if (seps.length) result.push(seps.shift());
+            if (val[format.parts[i]]) result.push(val[format.parts[i]]);
+        }
+        if (seps.length) result.push(seps.shift()); // 處理尾部分隔符
+
+        return result.join('');
+    };
+
+    // v1.0.0 - Parse format (date)
+    EvoCalendar.prototype.parseFormat = function(format) {
+        var _ = this;
+
+        // 檢查是否為自定義格式物件
+        if (typeof format.toValue === 'function' && typeof format.toDisplay === 'function') return format;
+        // IE treats \0 as a string end in inputs (truncating the value),
+        // so it's a bad format delimiter, anyway
+        try {
+            // 提取分隔符
+            var separators = format.replace(_.initials.validParts, '\0').split('\0');
+            // 提取有效的日期部分
+            var parts = format.match(_.initials.validParts);
+            // 驗證格式結構是否正確
+            if (!separators || separators.length === 0 || !parts || parts.length === 0) {
+                console.warn( "%c Invalid date format: Check your input format string.",
+                    "color:white;font-weight:bold;background-color:#e21d1d;");
+                return { separators: [], parts: [] };
+            }
+            return { separators: separators, parts: parts };
+        } catch (error) {
+            console.error("%c Error parsing date format: " + error.message,
+                "color:white;font-weight:bold;background-color:red;");
+            return { separators: [], parts: [] };
+        }
+    };
+
+    // v1.0.0 - Check if date is between the passed calendar date
     EvoCalendar.prototype.isBetweenDates = function(active_date, dates) {
         var sd, ed;
         if (dates instanceof Array) {
@@ -1128,314 +1615,157 @@
         return false;
     };
 
-
-
-
-    // v1.0.0 - Toggle Event list
-    EvoCalendar.prototype.toggleEventList = function(event) {
-        var _ = this;
-
-        if (event === undefined || event.originalEvent) {
-            $(_.$elements.calendarEl).toggleClass('event-hide');
-            _.$UI.hasEvent = !_.$UI.hasEvent;
-        } else {
-            if(event) {
-                $(_.$elements.calendarEl).removeClass('event-hide');
-                _.$UI.hasEvent = true;
-            } else {
-                $(_.$elements.calendarEl).addClass('event-hide');
-                _.$UI.hasEvent = false;
-            }
-        }
-
-        if (_.windowW <= _.$breakpoints.tablet) {
-            if (_.$UI.hasEvent && _.$UI.hasSidebar) _.toggleSidebar();
-        }
+    // v1.0.0 - Check if date is valid
+    EvoCalendar.prototype.isValidDate = function(d){
+        return new Date(d) && !isNaN(new Date(d).getTime());
     };
 
-
-
-   
-
-
-
-    // v1.0.0 - Remove single event to event list
-    EvoCalendar.prototype.removeEventList = function(event_data) {
-        var _ = this, markup;
-        var eventListEl = _.$elements.eventEl.find('.event-list');
-        if (eventListEl.find('[data-event-index="'+event_data+'"]').length === 0) return; // event not in active events
-        eventListEl.find('[data-event-index="'+event_data+'"]').remove();
-        if (eventListEl.find('[data-event-index]').length === 0) {
-            eventListEl.empty();
-            if (_.$active.date === _.$current.date) {
-                markup += '<p>'+_.initials.dates[_.options.language].noEventForToday+'</p>';
-            } else {
-                markup += '<p>'+_.initials.dates[_.options.language].noEventForThisDay+'</p>';
+    // (private) v1.0.0 - Get dates between two dates
+    EvoCalendar.prototype.getBetweenDates = function(dates) {
+        var _ = this, betweenDates = [];
+        for (var x = 0; x < _.monthLength; x++) {
+            var activeDate = _.formatDate(`${_.$label.months[_.$active.month]} ${x + 1} ${_.$active.year}`, _.options.format);
+            if (_.isBetweenDates(activeDate, dates)) {
+                betweenDates.push(activeDate);
             }
-            eventListEl.append(markup)
         }
-    }
-    
-    // v1.1.2 - Check and filter strings
-    EvoCalendar.prototype.stringCheck = function(d) {
-        return d.replace(/[^\w]/g, '\\$&');
-    }
+        return betweenDates;
+    };
 
-    // v1.0.0 - Add event indicator/s (dots)
-    EvoCalendar.prototype.addEventIndicator = function(event) {
-        var _ = this, htmlToAppend, thisDate;
-        var event_date = event.date;
-        var type = _.stringCheck(event.type);
-        
-        if (event_date instanceof Array) {
-            if (event.everyYear) {
-                for (var x=0; x<event_date.length; x++) {
-                    event_date[x] = _.formatDate(new Date(event_date[x]).setFullYear(_.$active.year), _.options.format);
+    // (private) v1.0.0 - Check if event has the same event type in the same date (Check Same Day Event Type)
+    EvoCalendar.prototype.hasSameDayEventType = function(date, type) {
+        var _ = this, eventCount = 0;
+
+        _.options.calendarEvents.forEach(event => {
+            if (Array.isArray(event.date)) {
+                var dateRange = _.getBetweenDates(event.date);
+                if (dateRange.some(d => d === date && event.type === type)) {
+                    eventCount++;
                 }
+            } else if (event.date === date && event.type === type) {
+                eventCount++;
             }
-            var active_date = _.getBetweenDates(event_date);
-            
-            for (var i=0; i<active_date.length; i++) {
-                appendDot(active_date[i]);
-            }
-        } else {
-            if (event.everyYear) {
-                event_date = _.formatDate(new Date(event_date).setFullYear(_.$active.year), _.options.format);
-            }
-            appendDot(event_date);
-        }
-
-        function appendDot(date) {
-            thisDate = _.$elements.innerEl.find('[data-date-val="'+date+'"]');
-
-            if (thisDate.find('span.event-indicator').length === 0) {
-                thisDate.append('<span class="event-indicator"></span>');
-            }
-            
-            if (thisDate.find('span.event-indicator > .type-bullet > .type-'+type).length === 0) {
-                htmlToAppend = '<div class="type-bullet"><div ';
-                
-                htmlToAppend += 'class="type-'+event.type+'"'
-                if (event.color) { htmlToAppend += 'style="background-color:'+event.color+'"' }
-                htmlToAppend += '></div></div>';
-                thisDate.find('.event-indicator').append(htmlToAppend);
-            }
-        }      
+        });
+        return eventCount > 0;
     };
-    
-    // v1.0.0 - Remove event indicator/s (dots)
-    EvoCalendar.prototype.removeEventIndicator = function(event) {
+
+    // (private) v1.0.0 - Set calendar theme
+    EvoCalendar.prototype.setTheme = function(themeName) {
         var _ = this;
-        var event_date = event.date;
-        var type = _.stringCheck(event.type);
+        var prevTheme = _.options.theme;
+        _.options.theme = themeName.toLowerCase().split(' ').join('-');
 
-        if (event_date instanceof Array) {
-            var active_date = _.getBetweenDates(event_date);
-            
-            for (var i=0; i<active_date.length; i++) {
-                removeDot(active_date[i]);
-            }
-        } else {
-            removeDot(event_date);
-        }
-
-        function removeDot(date) {
-            // Check if no '.event-indicator', 'cause nothing to remove
-            if (_.$elements.innerEl.find('[data-date-val="'+date+'"] span.event-indicator').length === 0) {
-                return;
-            }
-
-            // // If has no type of event, then delete 
-            if (!_.hasSameDayEventType(date, type)) {
-                _.$elements.innerEl.find('[data-date-val="'+date+'"] span.event-indicator > .type-bullet > .type-'+type).parent().remove();
-            }
-        }
+        if (_.options.theme) $(_.$elements.calendarEl).removeClass(prevTheme);
+        if (_.options.theme !== 'default') $(_.$elements.calendarEl).addClass(_.options.theme);
     };
-    
-    /****************
-    *    METHODS    *
-    ****************/
 
-    // v1.0.0 - Build event indicator on each date
+    // (private) v1.0.0 - Build event indicator on each date
     EvoCalendar.prototype.buildEventIndicator = function() {
         var _ = this;
-        
-        // prevent duplication
-        _.$elements.innerEl.find('.calendar-day > day > .event-indicator').empty();
-        
-        for (var i = 0; i < _.options.calendarEvents.length; i++) {
-            _.addEventIndicator(_.options.calendarEvents[i]);
-        }
+        // prevent duplication 防止重複添加指示器
+        _.$elements.innerEl.find('.calendar-day > .day > .event-indicator').empty();
+
+        _.options.calendarEvents.forEach(event => {
+            _.addEventIndicator(event);
+        });
     };
 
-    // v1.0.0 - Select event
-    EvoCalendar.prototype.selectEvent = function(event) {
-        var _ = this;
-        var el = $(event.target).closest('.event-container');
-        var id = $(el).data('eventIndex').toString();
-        var index = _.options.calendarEvents.map(function (event) { return (event.id).toString() }).indexOf(id);
-        var modified_event = _.options.calendarEvents[index];
-        if (modified_event.date instanceof Array) {
-            modified_event.dates_range = _.getBetweenDates(modified_event.date);
-        }
-        $(_.$elements.calendarEl).trigger("selectEvent", [_.options.calendarEvents[index]])
-    }
-
-    
-    // v1.0.0 - Return active date
+    // (private) v1.0.0 - Return active date (Get Active Date)
     EvoCalendar.prototype.getActiveDate = function() {
         var _ = this;
-        return _.$active.date;
-    }
-    
-    // v1.0.0 - Return active events
-    EvoCalendar.prototype.getActiveEvents = function() {
-        var _ = this;
-        return _.$active.events;
-    }
+        return _.$active?.date || null;
+    };
 
-    // v1.0.0 - Hide Sidebar/Event List if clicked outside
+    // (private) v1.0.0 - Hide Sidebar/Event List if clicked outside (Toggle Sidebar/Event List)
     EvoCalendar.prototype.toggleOutside = function(event) {
-        var _ = this, isInnerClicked;
-        
-        isInnerClicked = event.target === _.$elements.innerEl[0];
+        var _ = this;
+        var isInnerClicked = (event.target === _.$elements.innerEl[0]);
 
         if (_.$UI.hasSidebar && isInnerClicked) _.toggleSidebar(false);
         if (_.$UI.hasEvent && isInnerClicked) _.toggleEventList(false);
     }
 
-    // v1.0.0 - Add Calendar Event(s)
-    EvoCalendar.prototype.addCalendarEvent = function(arr) {
-        var _ = this;
-
-        function addEvent(data) {
-            if(!data.id) {
-                console.log("%c Event named: \""+data.name+"\" doesn't have a unique ID ", "color:white;font-weight:bold;background-color:#e21d1d;");
-            }
-
-            if (data.date instanceof Array) {
-                for (var j=0; j < data.date.length; j++) {
-                    if(isDateValid(data.date[j])) {
-                        data.date[j] = _.formatDate(new Date(data.date[j]), _.options.format);
-                    }
-                }
-            } else {
-                if(isDateValid(data.date)) {
-                    data.date = _.formatDate(new Date(data.date), _.options.format);
-                }
-            }
-            
-            if (!_.options.calendarEvents) _.options.calendarEvents = [];
-            _.options.calendarEvents.push(data);
-            // add to date's indicator
-            _.addEventIndicator(data);
-            // add to event list IF active.event_date === data.date
-            if (_.$active.event_date === data.date) _.addEventList(data);
-            // _.$elements.innerEl.find("[data-date-val='" + data.date + "']")
-
-            function isDateValid(date) {
-                if(_.isValidDate(date)) {
-                    return true;
-                } else {
-                    console.log("%c Event named: \""+data.name+"\" has invalid date ", "color:white;font-weight:bold;background-color:#e21d1d;");
-                }
-                return false;
-            }
-        }
-        if (arr instanceof Array) { // Arrays of events
-            for(var i=0; i < arr.length; i++) {
-                addEvent(arr[i])
-            }
-        } else if (typeof arr === 'object') { // Single event
-            addEvent(arr)
-        }
-    };
-
-    // v1.0.0 - Remove Calendar Event(s)
-    EvoCalendar.prototype.removeCalendarEvent = function(arr) {
-        var _ = this;
-
-        function deleteEvent(data) {
-            // Array index
-            var index = _.options.calendarEvents.map(function (event) { return event.id }).indexOf(data);
-            
-            if (index >= 0) {
-                var event = _.options.calendarEvents[index];
-                // Remove event from calendar events
-                _.options.calendarEvents.splice(index, 1);
-                // remove to event list
-                _.removeEventList(data);
-                // remove event indicator
-                _.removeEventIndicator(event);
-            } else {
-                console.log("%c "+data+": ID not found ", "color:white;font-weight:bold;background-color:#e21d1d;");
-            }
-        }
-        if (arr instanceof Array) { // Arrays of index
-            for(var i=0; i < arr.length; i++) {
-                deleteEvent(arr[i])
-            }
-        } else { // Single index
-            deleteEvent(arr)
-        }
-    };
-
-    // v1.0.0 - Check if date is valid
-    EvoCalendar.prototype.isValidDate = function(d){
-        return new Date(d) && !isNaN(new Date(d).getTime());
-    }
-
-    // v1.0.0 - Destroy event listeners
+    // (private) v1.0.0 - Destroy event listeners
     EvoCalendar.prototype.destroyEventListener = function() {
         var _ = this;
-        
+
         $(window).off('resize.evocalendar.evo-' + _.instanceUid);
         $(window).off('click.evocalendar.evo-' + _.instanceUid);
-        
-        // IF sidebarToggler: remove event listener: toggleSidebar
-        // if(_.options.sidebarToggler) {
-        //     _.$elements.sidebarToggler
-        //     .off('click.evocalendar');
-        // }
-        
-        // IF eventListToggler: remove event listener: toggleEventList
-        if(_.options.eventListToggler) {
-            _.$elements.eventListToggler
-            .off('click.evocalendar');
-        }
 
+        // IF sidebarToggler: remove event listener: toggleSidebar
+        if(_.options.sidebarToggler) _.$elements.sidebarToggler.off('click.evocalendar');
+        // IF eventListToggler: remove event listener: toggleEventList
+        if(_.options.eventListToggler) _.$elements.eventListToggler.off('click.evocalendar');
         // remove event listener for each day
         _.$elements.innerEl.find('.calendar-day').children()
         .off('click.evocalendar')
-
         // remove event listener for each month
         _.$elements.sidebarEl.find('[data-month-val]')
         .off('click.evocalendar');
-
         // remove event listener for year
         _.$elements.sidebarEl.find('[data-year-val]')
         .off('click.evocalendar');
-
         // remove event listener for every event listed
         _.$elements.eventEl.find('[data-event-index]')
         .off('click.evocalendar');
     };
 
-    // v1.0.0 - Destroy plugin
+    // (private) v1.0.0 - Destroy plugin
     EvoCalendar.prototype.destroy = function() {
         var _ = this;
         // code here
         _.destroyEventListener();
         if (_.$elements.calendarEl) {
-            _.$elements.calendarEl.removeClass('calendar-initialized');
-            _.$elements.calendarEl.removeClass('evo-calendar');
-            _.$elements.calendarEl.removeClass('sidebar-hide');
-            _.$elements.calendarEl.removeClass('event-hide');
+            _.$elements.calendarEl.classList.remove('calendar-initialized');
+            _.$elements.calendarEl.classList.remove('evo-calendar');
+            _.$elements.calendarEl.classList.remove('sidebar-hide');
+            _.$elements.calendarEl.classList.remove('event-hide');
         }
         _.$elements.calendarEl.empty();
         _.$elements.calendarEl.attr('class', _.initials.default_class);
         $(_.$elements.calendarEl).trigger("destroy", [_])
     };
+
+    // v1.0.0 - Limit title (...)
+    EvoCalendar.prototype.limitTitle = function(title, limit) {
+        var newTitle = [];
+        limit = (limit === undefined) ? 18 : limit;
+        if ((title).split(' ').join('').length > limit) {
+            var words = title.split(' ');
+            for (let word of words) {
+                if (word.length + newTitle.join('').length <= limit) {
+                    newTitle.push(word);
+                }
+            }
+            return `${newTitle.join(' ')}...`;
+        }
+        return title;
+    }
+
+    // v1.1.2 - Check and filter strings
+    EvoCalendar.prototype.escapeSpecialCharacters = function(d) {
+        return d.replace(/[^\w]/g, '\\$&');
+    };
+
+    // Adjust index for Rotary Year offset
+    EvoCalendar.prototype.adjustRotaryIndex = function(index) {
+        return (index - 6 < 0) ? index + 6 : index - 6;
+    };
+
+    // 安全處理字符串，防止 XSS 攻擊
+    EvoCalendar.prototype.sanitize = function(input) {
+        const tempDiv = document.createElement('div');
+        tempDiv.textContent = input;
+        return tempDiv.innerHTML;
+    };
+
+
+
+
+
+
+
+
 
     $.fn.evoCalendar = function() {
         var _ = this,

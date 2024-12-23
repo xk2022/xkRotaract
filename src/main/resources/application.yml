@@ -4,8 +4,8 @@ server:
 
 spring:
   profiles:
-    active: sit
-#    active: dev
+#    active: sit
+    active: dev
 #    active: uat
 #    active: prod
   application:

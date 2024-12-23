@@ -8,8 +8,8 @@ import java.util.List;
 @Mapper
 public interface CmsCompanyMapper {
 
-    public List<CmsCompanyExample> selectAll();
+    List<CmsCompanyExample> selectAll();
 
-    public List<CmsCompanyExample> findByFkCmsUserId(long id);
+    List<CmsCompanyExample> findByFkCmsUserId(long id);
 
 }

@@ -318,10 +318,10 @@ public class UpmsRolePermissionServiceImpl implements UpmsRolePermissionService 
             entity.setRoleId(roleId);
             entity.setPermissionId(parentId);
             entity.setAction(PermissionAction.READ); // 假设使用 READ 权限
-            // admin預設開啟，其他預設關閉
-            entity.setActive("1".equals(String.valueOf(roleId)) ? true : false); // 激活权限
 
             entity = this.safeSaveURP(entity, true);
+            // admin預設開啟，其他預設關閉
+            entity.setActive("1".equals(String.valueOf(roleId)) ? true : entity.getActive()); // 激活权限
             saveEntities.add(entity);
         }
         // 5. 保存更新后的父菜单权限

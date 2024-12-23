@@ -13,8 +13,22 @@
     <select id="findRolesByUserId" resultMap="baseRM">
         SELECT role.*
         FROM upms_role role
-            LEFT JOIN upms_user_role ur ON ur.role_id = role.role_id
+        LEFT JOIN upms_user_role ur ON ur.role_id = role.role_id
         WHERE ur.user_id = #{id}
     </select>
-
+    <resultMap type="com.xk.upms.model.dto.UpmsRoleCountUserExample" id="roleCount">
+        <id property="roleId" column="role_id"></id>
+        <result property="cnt" column="cnt"/>
+        <result property="description" column="description"/>
+    </resultMap>
+    <select id="countByClub" resultMap="roleCount">
+        SELECT count(*) AS cnt, uur.`role_id`, ur.`description`
+        FROM upms_user user
+        LEFT JOIN upms_user_role uur ON user.user_id = uur.user_id
+        LEFT JOIN cms_user cu ON cu.`fk_upms_user_id` = user.`user_id`
+        LEFT JOIN upms_role ur ON ur.`role_id` = uur.`role_id`
+        WHERE cu.`rotaract_id` = #{club_id}
+        GROUP BY uur.`role_id`, ur.`description`
+    </select>
 </mapper>
+

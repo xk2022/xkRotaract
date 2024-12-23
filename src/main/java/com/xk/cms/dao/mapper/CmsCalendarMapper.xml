@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xk.cms.dao.mapper.CmsCalendarMapper">
+
+    <resultMap id="baseRM" type="com.xk.cms.model.po.CmsCalendar">
+        <id column="calendar_id" property="id" />
+        <result column="event_name" property="eventName" />
+        <result column="event_description" property="eventDescription" />
+        <result column="event_location" property="eventLocation" />
+        <result column="all_day" property="allDay" />
+        <result column="start_date" property="startDate" />
+        <result column="start_time" property="startTime" />
+        <result column="end_date" property="endDate" />
+        <result column="end_time" property="endTime" />
+        <result column="type" property="type" />
+        <result column="district_id" property="district_id" />
+        <result column="rotaract_id" property="rotaract_id" />
+        <result column="locked" property="locked" />
+    </resultMap>
+    <resultMap id="ccDto" type="com.xk.cms.model.dto.CmsCalendarExample" extends="baseRM">
+        <!-- 继承自 baseRM 的映射 -->
+        <result column="org_code" property="orgCode" />
+    </resultMap>
+
+
+    <select id="findByDateRange" resultMap="ccDto">
+        SELECT
+            calendar.*,
+            district.code AS district_code,
+            club.code AS club_code,
+            CONCAT_WS(',', district.code, club.code) AS org_code
+        FROM
+            cms_calendar calendar
+        LEFT JOIN
+            upms_organization district ON calendar.district_id = district.organization_id
+        LEFT JOIN
+            upms_organization club ON calendar.rotaract_id = club.organization_id
+        GROUP BY
+            calendar.calendar_id
+    </select>
+
+</mapper>

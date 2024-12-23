@@ -1,10 +1,13 @@
 package com.xk.upms.service.impl;
 
 import com.xk.common.util.GenericUpdateService;
+import com.xk.common.util.XkBeanUtils;
+import com.xk.upms.dao.mapper.UpmsRoleMapper;
 import com.xk.upms.dao.repository.UpmsRolePermissionRepository;
 import com.xk.upms.dao.repository.UpmsRoleRepository;
 import com.xk.upms.dao.repository.UpmsUserRoleRepository;
 import com.xk.upms.model.bo.UpmsRoleSaveReq;
+import com.xk.upms.model.dto.UpmsRoleCountUserExample;
 import com.xk.upms.model.po.UpmsRole;
 import com.xk.upms.model.po.UpmsUserRole;
 import com.xk.upms.model.vo.UpmsRoleResp;
@@ -39,6 +42,8 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
     private UpmsUserRoleRepository upmsUserRoleRepository;
     @Autowired
     private UpmsRolePermissionRepository upmsRolePermissionRepository;
+    @Autowired
+    private UpmsRoleMapper upmsRoleMapper;
 
     @Override
     public List list() {
@@ -140,6 +145,47 @@ public class UpmsRoleServiceImpl implements UpmsRoleService {
                 .orElseThrow(() -> new EntityNotFoundException("Entity<UpmsUserRole> with userId " + upmsUserId + " not found"));
         saveEntity.setRoleId(roleEntity.getId());
         upmsUserRoleRepository.save(saveEntity);
+    }
+
+    private List getByCodeLike(String codeLike) {
+        List roles = upmsRoleRepository.findByCodeStartingWithOrderByOrdersAsc(codeLike);
+        // 記錄查詢結果數量（僅在 DEBUG 級別下）
+        LOGGER.info("查詢結果數量: {}", roles.size());
+
+        return XkBeanUtils.copyListProperties(roles, UpmsRoleResp::new);
+    }
+
+    @Override
+    public List getByCodeLikeWithActive(String codeLike, String rotaract_id) {
+        List<UpmsRoleResp> roles = this.getByCodeLike(codeLike);
+
+        List<UpmsRoleCountUserExample> clubCounts = upmsRoleMapper.countByClub(Long.valueOf(rotaract_id));
+
+        for (UpmsRoleResp singleRole : roles) {
+            long focusRoleId = singleRole.getId();
+            for (UpmsRoleCountUserExample clubCount : clubCounts) {
+                if (focusRoleId == clubCount.getRoleId()) {
+                    Boolean active = true;
+                    switch (clubCount.getDescription()) {
+                        case "社團主權限":
+                        case "社長":
+                        case "秘書":
+                            active = clubCount.getCnt() < 1 ? true : false;
+                            break;
+                        case "社團幹部":
+                        case "社友":
+                        case "榮譽社友":
+                        case "OB社友":
+                        case "過往社友":
+                            active = true;
+                        default:
+                            active = true;
+                    }
+                    singleRole.setActive(active.toString());
+                }
+            }
+        }
+        return roles;
     }
 
 }

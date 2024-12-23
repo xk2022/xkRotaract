@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xk.upms.dao.mapper.UpmsOrganizationMapper">
+
+    <resultMap type="com.xk.upms.model.po.UpmsOrganization" id="baseRM">
+        <id property="organizationId" column="organization_id"></id>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="description" column="description"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="level" column="level"/>
+        <result property="orders" column="orders"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    <resultMap type="com.xk.upms.model.dto.UpmsOrganizationExample" id="dto" extends="baseRM">
+        <!-- 继承自 baseRM 的映射 -->
+        <result property="eventCount" column="event_count" />
+    </resultMap>
+    <select id="top20EventsClub" resultMap="dto">
+        SELECT
+            COUNT(*) AS event_count,
+            org.`organization_id` AS organization_id,
+            org.`name`,
+            org.`code`,
+            org.`description`,
+            org.`parent_id` AS parentId,
+            org.`level`,
+            org.`orders`,
+            org.`status`
+        FROM
+            `cms_calendar` calendar
+        LEFT JOIN
+            `upms_organization` org ON calendar.`rotaract_id` = org.`organization_id`
+        WHERE 1=1
+            AND calendar.`rotaract_id` IS NOT NULL
+            AND calendar.`rotaract_id` != ''
+        GROUP BY
+            calendar.`rotaract_id`
+        ORDER BY
+            event_count DESC
+        LIMIT 20
+    </select>
+</mapper>

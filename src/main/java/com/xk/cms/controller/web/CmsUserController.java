@@ -6,7 +6,11 @@ import com.xk.cms.model.bo.CmsUserSaveReq;
 import com.xk.cms.model.vo.CmsUserSaveResp;
 import com.xk.cms.service.CmsUserService;
 import com.xk.common.base.BaseController;
+import com.xk.upms.model.bo.UpmsUserRoleSaveReq;
+import com.xk.upms.model.vo.UpmsUserResp;
 import com.xk.upms.service.UpmsRoleService;
+import com.xk.upms.service.UpmsUserRoleService;
+import com.xk.upms.service.UpmsUserService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,6 +45,10 @@ public class CmsUserController extends BaseController {
     private CmsUserService cmsUserService;
     @Autowired
     private UpmsRoleService upmsRoleService;
+    @Autowired
+    private UpmsUserRoleService upmsUserRoleService;
+    @Autowired
+    private UpmsUserService upmsUserService;
 
     /**
      * 查詢 用户 首頁
@@ -59,7 +67,7 @@ public class CmsUserController extends BaseController {
         model.addAttribute("fragmentName", "list");
 
         // 加入用戶列表和一個新的 UpmsUser 實體到模型中
-        model.addAttribute("page_list", cmsUserService.list(new CmsUserReq()));
+        model.addAttribute("page_list", cmsUserService.getList(new CmsUserReq()));
         model.addAttribute("entity", new CmsUserSaveReq());
         // 返回管理員首頁模板路徑
         return ADMIN_INDEX;
@@ -87,7 +95,7 @@ public class CmsUserController extends BaseController {
         // 添加用戶列表和新建的 CmsUserSaveReq 實體到模型中
         CmsUserReq req = new CmsUserReq();
         req.setDistrict_id(user.getDistrict_id());
-        model.addAttribute("page_list", cmsUserService.list(req));
+        model.addAttribute("page_list", cmsUserService.getList(req));
         model.addAttribute("entity", new CmsUserSaveReq());
         // 返回頁面模板路徑
         return ADMIN_INDEX;
@@ -115,8 +123,10 @@ public class CmsUserController extends BaseController {
         // 添加用戶列表和新建的 CmsUserSaveReq 實體到模型中
         CmsUserReq req = new CmsUserReq();
         req.setRotaract_id(user.getRotaract_id());
-        model.addAttribute("page_list", cmsUserService.list(req));
+        model.addAttribute("page_list", cmsUserService.getList(req));
         model.addAttribute("entity", new CmsUserSaveReq());
+        model.addAttribute("select_roles", upmsRoleService.getByCodeLikeWithActive("club", user.getRotaract_id()));
+        model.addAttribute("add_btn", "false");
         // 返回頁面模板路徑
         return ADMIN_INDEX;
     }
@@ -125,20 +135,14 @@ public class CmsUserController extends BaseController {
      * 新增/修改 用户 Create/Update
      */
     @PostMapping("/save")
-    public String saveOrUpdate(CmsUserSaveReq resources, RedirectAttributes attributes) {
-        CmsUserSaveResp result;
-
-        if (resources.getId() == null) {
-            result = cmsUserService.create(resources);
-            LOGGER.info("新增用户，主键：userId={}", result.getId());
-        } else {
-            result = cmsUserService.update(resources.getId(), resources);
+    public String saveOrUpdate(UpmsUserRoleSaveReq resources, RedirectAttributes attributes) {
+        UpmsUserResp upmsUser = upmsUserService.findByEmail(resources.getEmail());
+        upmsUserRoleService.role(upmsUser.getId(), resources.getUserRole());
+        if (StringUtils.isNotBlank(resources.getAccess_scope())) {
+            return REDIRECT_URL + "/" + resources.getAccess_scope();
         }
-        // 根據操作結果設置提示訊息
-        attributes.addFlashAttribute("message", (result == null) ? "操作失敗" : "操作成功");
         return REDIRECT_URL;
     }
-
 
     /**
      * 新增/修改 用户 Create/Update
@@ -151,7 +155,7 @@ public class CmsUserController extends BaseController {
             result = cmsUserService.create(resources);
             LOGGER.info("新增用户，主键：userId={}", result.getId());
 
-            upmsRoleService.updateByUserIdAndRoleCode(result.getFkUpmsUserId(), "member");
+            upmsRoleService.updateByUserIdAndRoleCode(result.getFkUpmsUserId(), "club_member");
         } else {
             result = cmsUserService.update(resources.getId(), resources);
         }

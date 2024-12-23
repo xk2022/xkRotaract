@@ -12,4 +12,6 @@ public class UpmsRoleResp extends UpmsRole {
 
     private long countUser;
 
+    private String active = "true";
+
 }

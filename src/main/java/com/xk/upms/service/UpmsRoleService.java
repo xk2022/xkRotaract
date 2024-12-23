@@ -31,4 +31,8 @@ public interface UpmsRoleService {
     UpmsRoleResp findById(Long id);
 
     void updateByUserIdAndRoleCode(Long upmsUserId, String roleCode);
+
+    List getByCodeLikeWithActive(String codeLike, String rotaract_id);
+//    List getByCodeLike(String codeLike);
+
 }

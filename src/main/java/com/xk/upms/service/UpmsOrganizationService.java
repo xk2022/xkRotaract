@@ -6,6 +6,7 @@ import com.xk.upms.model.vo.UpmsOrganizationResp;
 import com.xk.upms.model.vo.UpmsOrganizationSaveResp;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * UpmsOrganizationService interface for managing UPMS organizations.
@@ -84,4 +85,5 @@ public interface UpmsOrganizationService {
      */
     UpmsOrganizationResp getParentOrganization(Long id);
 
+    Map<String, List<String>> getAllDistricts();
 }

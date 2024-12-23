@@ -149,13 +149,13 @@ public class UpmsRoleRestController {
         data.setOrders((long) 12);
         upmsRoleService.create(data);
 
-        data.setCode("club_member");
+        data.setCode("club_chairman");
         data.setTitle("社團幹部");
         data.setDescription("社團幹部");
         data.setOrders((long) 13);
         upmsRoleService.create(data);
 
-        data.setCode("member");
+        data.setCode("club_member");
         data.setTitle("社友");
         data.setDescription("社友");
         data.setOrders((long) 14);
