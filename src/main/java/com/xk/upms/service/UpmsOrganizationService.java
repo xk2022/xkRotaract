@@ -85,5 +85,5 @@ public interface UpmsOrganizationService {
      */
     UpmsOrganizationResp getParentOrganization(Long id);
 
-    Map<String, List<String>> getAllDistricts();
+    Map<String, List<UpmsOrganizationResp>> getAllDistricts();
 }

@@ -50,7 +50,7 @@ public class UpmsOrganizationRestController {
 
     @ApiOperation(value = "获取所有 District 数据")
     @PostMapping("/getAllDistricts")
-    public Map<String, List<String>> getAllDistricts() {
+    public Map<String, List<UpmsOrganizationResp>> getAllDistricts() {
         LOGGER.info("获取所有 District 数据");
         return upmsOrganizationService.getAllDistricts();
     }

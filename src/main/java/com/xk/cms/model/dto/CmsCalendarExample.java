@@ -8,4 +8,10 @@ public class CmsCalendarExample extends CmsCalendar {
 
     private String orgCode;
 
+    private String districtName;
+
+    private String clubName;
+
+    private String serviceLine;
+
 }

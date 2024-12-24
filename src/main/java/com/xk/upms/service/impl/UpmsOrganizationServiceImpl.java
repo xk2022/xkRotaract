@@ -313,23 +313,18 @@ public class UpmsOrganizationServiceImpl implements UpmsOrganizationService {
      * 获取所有 District 数据
      */
     @Override
-    public Map<String, List<String>> getAllDistricts() {
-        Map<String, List<String>> resultMap = new HashMap<>();
+    public Map<String, List<UpmsOrganizationResp>> getAllDistricts() {
+        Map<String, List<UpmsOrganizationResp>> resultMap = new HashMap<>();
 
         List<UpmsOrganizationResp> districts = this.findChildren("RIT");
-        // TODO
-        resultMap.put("0", this.top20EventsClub().stream()
-                .map(UpmsOrganizationResp::getName)
-                .collect(Collectors.toList()));
+        // TODO 添加顶级 District 中的 top20 事件 Club 数据
+        resultMap.put("ALL", this.top20EventsClub());
         // 遍历顶级 District
         for (UpmsOrganizationResp district : districts) {
             String districtCode = district.getCode(); // 獲取 District Code
             List<UpmsOrganizationResp> clubs = this.findChildren(districtCode); // 獲取子組織
-            // 将子组织的名称加入 Map
-            List<String> clubNames = clubs.stream()
-                    .map(UpmsOrganizationResp::getName)
-                    .collect(Collectors.toList());
-            resultMap.put(districtCode, clubNames);
+            // 将子组织加入 Map
+            resultMap.put(districtCode, clubs);
         }
         return resultMap;
     }

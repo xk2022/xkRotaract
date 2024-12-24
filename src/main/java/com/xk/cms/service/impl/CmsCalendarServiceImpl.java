@@ -239,26 +239,27 @@ public class CmsCalendarServiceImpl implements CmsCalendarService {
 
         temp.setId(String.valueOf(entity.getId()));
 
+        temp.setName(entity.getEventName());
         if (StringUtils.isBlank(entity.getRotaract_id()) || "0".equals(entity.getRotaract_id())) {
             // 地區活動
-            UpmsOrganizationResp district = upmsOrganizationService.findById(Long.valueOf(entity.getDistrict_id()));
-            if (district != null) {
-                temp.setName("[" + district.getName() + "]" + entity.getEventName());
-            } else {
-                temp.setName(entity.getEventName());
+//            UpmsOrganizationResp district = upmsOrganizationService.findById(Long.valueOf(entity.getDistrict_id()));
+            if (StringUtils.isNotBlank(entity.getDistrictName())) {
+                temp.setName("[" + entity.getDistrictName() + "]" + entity.getEventName());
             }
         } else {
             // 社內活動
-            UpmsOrganizationResp club = upmsOrganizationService.findById(Long.valueOf(entity.getRotaract_id()));
-            if (club != null) {
-                temp.setName("[" + club.getName() + "]" + entity.getEventName());
-            } else {
-                temp.setName(entity.getEventName());
+//            UpmsOrganizationResp club = upmsOrganizationService.findById(Long.valueOf(entity.getRotaract_id()));
+            if (StringUtils.isNotBlank(entity.getClubName())) {
+                temp.setName("[" + entity.getClubName() + "]" + entity.getEventName());
             }
         }
 
         temp.setDescription(entity.getEventDescription());
-        temp.setBadge("測試顯示");
+        if (StringUtils.isNotBlank(entity.getServiceLine())) {
+            temp.setBadge("報名請洽Line ID: " + entity.getServiceLine());
+        } else {
+            temp.setBadge("歡迎詢問官方IG @rotaractkaleido");
+        }
         temp.setDate(outputFormat.format(entity.getStartDate()));
 
         if (StringUtils.isBlank(entity.getStartTime())) {

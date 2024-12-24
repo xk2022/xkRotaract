@@ -20,6 +20,9 @@
     <resultMap id="ccDto" type="com.xk.cms.model.dto.CmsCalendarExample" extends="baseRM">
         <!-- 继承自 baseRM 的映射 -->
         <result column="org_code" property="orgCode" />
+        <result column="district_name" property="districtName" />
+        <result column="club_name" property="clubName" />
+        <result column="service_line" property="serviceLine" />
     </resultMap>
 
 
@@ -27,16 +30,21 @@
         SELECT
             calendar.*,
             district.code AS district_code,
+            district.`name` AS district_name,
             club.code AS club_code,
-            CONCAT_WS(',', district.code, club.code) AS org_code
-        FROM
-            cms_calendar calendar
-        LEFT JOIN
-            upms_organization district ON calendar.district_id = district.organization_id
-        LEFT JOIN
-            upms_organization club ON calendar.rotaract_id = club.organization_id
+            club.`name` AS club_name,
+            CONCAT_WS(',', district.code, club.code) AS org_code,
+            cci.`info_value` AS service_line
+        FROM cms_calendar calendar
+        LEFT JOIN upms_organization district ON calendar.district_id = district.organization_id
+        LEFT JOIN upms_organization club ON calendar.rotaract_id = club.organization_id
+        LEFT JOIN `cms_club` ccb ON club.`organization_id` = ccb.`organization_id`
+        LEFT JOIN `cms_club_info` cci ON ccb.`club_id` = cci.`club_id` AND cci.`info_key` = 'service_line'
         GROUP BY
-            calendar.calendar_id
+            calendar.calendar_id,
+            district.code,
+            club.code,
+            cci.id -- 添加所有非聚合列
     </select>
 
 </mapper>

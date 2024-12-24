@@ -49,7 +49,7 @@
     selectEvent(event) {} - Select event
     getActiveEvents() {} - Return active events
     (private)selectDistrict(event) {} - Select District
-    collapseCalendar() {} -
+    (private)selectClub(event) {} - Select District
 
     ***** 工具函數 *****
     formatDate(date, format) {} - Format date
@@ -456,6 +456,12 @@
                 _.selectDistrict.call(_, event); // 绑定你的方法
             }
         });
+        document.addEventListener('click', function(event) {
+            const target = event.target.closest('[data-club-val]');
+            if (target) {
+                _.selectClub.call(_, event); // 绑定你的方法
+            }
+        });
 
 
         // Sidebar toggle controls
@@ -488,7 +494,7 @@
                 calendarInner.style.height = isCollapsed ? '0%' : 'auto';
                 calendarTableInner.style.height = isCollapsed ? '0%' : 'auto';
                 if (_.windowW <= _.$breakpoints.tablet) {
-                    $('#collapseCalendar').click();
+//                    $('#collapseCalendar').click();
 //                    calendarTableInner.classList.toggle('collapsed');
                     calendarEvents.style.height = isCollapsed ? '100%' : 'auto';
                 } else {
@@ -725,14 +731,6 @@
         });
     };
 
-    // (private) Helper to Generate Sidebar Club List
-    EvoCalendar.prototype.generateSidebarClubs = function() {
-        var clubs = ["台北西門扶青社", "三重扶青社", "土城扶青社", "桃園扶青社"];
-        return clubs.map(club =>
-            `<div class="calendar-club" role="button">${club}</div>`
-        ).join('');
-    };
-
     // (private) Helper to Generate Sidebar Clubs
     EvoCalendar.prototype.generateSidebarClubs = async function() {
         const _ = this;
@@ -750,18 +748,17 @@
             // 使用異步方法取得社團資料
             const districtData = await _.fetchClubs();
             // 根據 districtData 生成 HTML
-            const districtId = _.$active.districtId || "0"; // 預設載入 ID 為 "0"
+            const districtId = _.$active.districtId || "ALL"; // 預設載入 ID 為 "ALL"
             const clubs =
             districtData[districtId] || ["無相關資料"];
             // 生成 HTML 並插入
             const markup = clubs.map(club =>
-                `<div class="calendar-club" role="button">${club}</div>`
+                `<div class="calendar-club" role="button" data-club-val="${club.code}">${club.name}</div>`
             ).join(''); // 將數組轉換為單一 HTML 字符串
             // 插入生成的 HTML 到容器中
             container.insertAdjacentHTML('beforeend', markup);
         } catch (error) {
             console.error("載入社團資料失敗:", error);
-
             // 插入預設的錯誤提示
             container.innerHTML = `<div class="calendar-club">無法載入社團資料</div>`;
         }
@@ -1463,7 +1460,7 @@
         }
         // 更新 Headbar 中的 active 樣式
         _.$elements.headbarEl
-            .find('.district-list > [data-district-val]')
+            .find(`.district-list > [data-district-val]`)
             .removeClass('active');
         _.$elements.headbarEl
             .find(`.district-list > [data-district-val="${districtId}"]`)
@@ -1480,8 +1477,8 @@
         // 使用模板字串生成 HTML
         const markup = clubs.map(
                         club => `
-                        <div class="calendar-club" role="button">
-                            ${club}
+                        <div class="calendar-club" role="button" data-club-val="${club.code}">
+                            ${club.name}
                         </div>`
                     )
                     .join(""); // 將數組轉換為單一字串
@@ -1514,6 +1511,44 @@
             // 檢查結果
             console.log(_.options.calendarEvents);
         }
+        _.buildCalendar();
+        _.buildEventList();
+    };
+
+    // v1.0.0 - Select District
+    EvoCalendar.prototype.selectClub = function(event) {
+        const _ = this;
+        // 防止默認行為
+        event.preventDefault();
+        // 獲取點擊的 district ID
+        const clubId = $(event.target).closest('[data-club-val]').data('club-val');
+        if (!clubId) {
+            console.warn("No club ID found in the selected element.");
+            return;
+        }
+        // 更新 Headbar 中的 active 樣式
+        _.$elements.headbarEl
+            .find(`.calendar-clubs > [data-district-val]`)
+            .removeClass('active');
+        _.$elements.headbarEl
+            .find(`.calendar-clubs > [data-district-val="${clubId}"]`)
+            .addClass('active');
+        // 更新事件
+        _.options.calendarEvents = _.options.calendarDistrictMap
+            .filter(event => event.orgCodes && event.orgCodes.includes(clubId)) // 篩選符合條件的活動
+            .map(event => {
+                const { name, ...rest } = event; // 解構出 name 並保留其他屬性
+                return {
+                    ...rest, // 保留原本的屬性
+                    eventName: name // 將 'name' 重新命名為 'eventName'
+                };
+            });
+        // 檢查結果
+        console.log(_.options.calendarEvents);
+
+        // 可選：觸發自定義事件，供外部監聽使用
+        $(_.$elements.calendarEl).trigger("selectClub", [clubId, _.options.calendarEvents]);
+
         _.buildCalendar();
         _.buildEventList();
     };

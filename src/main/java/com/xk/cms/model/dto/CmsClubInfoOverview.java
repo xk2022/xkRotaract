@@ -33,5 +33,9 @@ public class CmsClubInfoOverview {
     private String serviceArea;
 
     private String serviceEmail;
+
+    private String serviceInstagram;
+
+    private String serviceLine;
     
 }

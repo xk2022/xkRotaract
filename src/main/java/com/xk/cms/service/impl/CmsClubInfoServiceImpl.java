@@ -87,6 +87,8 @@ public class CmsClubInfoServiceImpl implements CmsClubInfoService {
         overview.setContactNumber(dataMap.get("contact_number"));
         overview.setFaxNumber(dataMap.get("fax_number"));
         overview.setCorrespondenceAddress(dataMap.get("correspondence_address"));
+        overview.setServiceInstagram(dataMap.get("service_instagram"));
+        overview.setServiceLine(dataMap.get("service_line"));
 
         result.setCmsClubId(String.valueOf(ccEntity.getId()));
         result.setInfoHeader(header);
@@ -171,6 +173,8 @@ public class CmsClubInfoServiceImpl implements CmsClubInfoService {
         overviewData.put("correspondence_address", resources.getCorrespondenceAddress());
         overviewData.put("service_area", resources.getServiceArea());
         overviewData.put("service_email", resources.getServiceEmail());
+        overviewData.put("service_instagram", resources.getServiceInstagram());
+        overviewData.put("service_line", resources.getServiceLine());
 
         // 遍历并保存/更新每个 key-value
         for (Map.Entry<String, String> entry : overviewData.entrySet()) {

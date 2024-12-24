@@ -7,223 +7,84 @@
     <!--/*/</th:block>/*/-->
 
     <!--begin::Vendor Stylesheets(used for this page only)-->
-    <link rel="stylesheet" type="text/css" th:href="@{/plugins/custom/fullcalendar/fullcalendar.bundle.css}"/>
-    <link rel="stylesheet" type="text/css" th:href="@{/plugins/custom/datatables/datatables.bundle.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/custom/evocalendar/evo-calendar-rotaract.css}"/>
     <style>
+        .timeline .timeline-content {
+            width: auto;
+        }
     </style>
     <!--end::Vendor Stylesheets-->
 </head>
 <!--end::Head-->
 <!--begin::Body-->
 <body id="kt_app_body" data-bs-spy="scroll" data-bs-target="#kt_landing_menu" data-bs-offset="200" data-kt-app-layout="light-sidebar" class="body-bg position-relative app-blank">
-    <!--begin::Root-->
-    <div class="d-flex flex-column flex-root" id="kt_app_root">
-        <!--begin::Header Section-->
-        <!--/*/<th:block th:replace="_fragments/_fragments :: navbar(title='Rotaract 行事曆', iSearch='false')">/*/-->
-        <!--/*/</th:block>/*/-->
-        <!--end::Header Section-->
+<!--begin::Root-->
+<div class="d-flex flex-column flex-root" id="kt_app_root">
+    <!--begin::Header Section-->
+    <!--/*/<th:block th:replace="_fragments/_fragments :: navbar(title='Rotaract 行事曆', iSearch='false')">/*/-->
+    <!--/*/</th:block>/*/-->
+    <!--end::Header Section-->
 
-        <!-- 主內容 -->
-
-        <!--begin::Input-->
-        <select class="form-select form-control form-control-solid" id="inputGroupSelect_district" name="districtId" onchange="handleDistrictChange(this)">
-            <option value="all">全區行事曆</option>
-            <option th:each="data : ${select_district}"
-                    th:value="${data.id}"
-                    th:text="${data.description}">
-            </option>
-        </select>
-        <!--end::Input-->
-<!--        <div id="mainContent" class="container-fluid main-content d-flex align-items-center justify-content-center">-->
-<!--            <div class="flex-grow-1 calendar-wrapper content">-->
-            <!-- Calendar App -->
-            <div id="kt_calendar_app" style="height: 90vh !important;"></div>
-<!--            </div>-->
-<!--        </div>-->
-
-        <div th:replace="'admin/cms/calendar/input_view_event' :: model"></div>
-        <!--begin::Footer Section-->
-        <div class="separator separator-solid"></div>
-        <!--/*/<th:block th:replace="_fragments/_fragments :: footer(title='Rotaract 行事曆')">/*/-->
-        <!--/*/</th:block>/*/-->
-        <!--end::Footer Section-->
+    <!-- 主內容 -->
+    <!-- Main Content -->
+    <div id="mainContent" class="container-fluid main-content">
+        <div id="calendar"></div>
     </div>
-    <!--end::Root-->
+
+    <!--begin::Footer Section-->
+    <!--end::Footer Section-->
+</div>
+<!--end::Root-->
 
 <!--begin::Javascript-->
 <!--/*/<th:block th:replace="_fragments/_fragments :: script">/*/-->
 <!--/*/</th:block>/*/-->
 
 <!--begin::Vendors Javascript(used for this page only)-->
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-<script th:src="@{/plugins/custom/fullcalendar/fullcalendar.bundle.js}"></script>
-<script th:src="@{/plugins/custom/datatables/datatables.bundle.js}"></script>
+<script th:src="@{/plugins/custom/evocalendar/evo-calendar-rotaract.js}"></script>
 <!--end::Vendors Javascript-->
 <!--begin::Page Custom Javascript(used by this page)-->
 <!--begin::Page Custom Javascript(used by this page)-->
 <!--end::Page Custom Javascript-->
-<script>
-
-    var formattedEvents;
-    // View event modal
-    const viewElement = document.getElementById('kt_modal_input_view_event');
-    viewModal = new bootstrap.Modal(viewElement);
-
-    var data = {
-        id: '',
-        eventName: '',
-        eventDescription: '',
-        eventLocation: '',
-        startDate: '',
-        endDate: '',
-        allDay: false,
-        type: '',
-        district_id: '',
-        rotaract_id: ''
-    }; // 用來存儲日曆事件的屬性（如事件名稱、描述、開始時間、結束時間等）。
-    // Format FullCalendar reponses
-    const formatArgs = (res) => {
-        data.id = res.id;
-        data.eventName = res.title;
-        data.eventDescription = res.description;
-        data.eventLocation = res.location;
-        data.startDate = res.startStr;
-        data.endDate = res.endStr;
-        data.allDay = res.allDay;
-    }
-
-    var initCalendarApp = function () {
-        var calendarEl = document.getElementById('kt_calendar_app');
-        var todayDate = moment().startOf('day');
-        var TODAY = todayDate.format('YYYY-MM-DD');
-
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            locale: 'zh-tw',  // 使用繁體中文
-            timeZone: 'Asia/Taipei',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-            },
-            initialDate: TODAY,
-            navLinks: true,
-            height: 800,
-            contentHeight: 780,
-            selectable: true,
-            aspectRatio: 3,
-            nowIndicator: true,
-            initialView: 'listMonth',
-            views: {
-                dayGridMonth: { buttonText: '月份' },
-                timeGridWeek: { buttonText: '星期' },
-                timeGridDay: { buttonText: '日期' },
-                listMonth: { buttonText: '列表' }
-            },
-            editable: false,
-            events: formattedEvents,
-
-            // Click event --- more info: https://fullcalendar.io/docs/eventClick
-            eventClick: function (arg) {
-
-                formatArgs({
-                    id: arg.event.id,
-                    title: arg.event.title,
-                    description: arg.event.extendedProps.description,
-                    location: arg.event.extendedProps.location,
-                    startStr: arg.event.startStr,
-                    endStr: arg.event.endStr,
-                    allDay: arg.event.allDay
-                });
-                handleViewEvent();
-            },
-        });
-
-        calendar.render();
-    }
-    // Handle view event
-    const handleViewEvent = () => {
-        viewModal.show();
-        $('.initialDate').val(data.startDate);
-
-        // Detect all day event
-        var eventNameMod;
-        var startDateMod;
-        var endDateMod;
-
-        // Generate labels
-        if (data.allDay) {
-            eventNameMod = 'All Day';
-            startDateMod = moment(data.startDate).format('Do MMM, YYYY');
-            endDateMod = moment(data.endDate).format('Do MMM, YYYY');
-        } else {
-            eventNameMod = '';
-            startDateMod = moment(data.startDate).format('Do MMM, YYYY - h:mm a');
-            endDateMod = moment(data.endDate).format('Do MMM, YYYY - h:mm a');
-        }
-
-        $('#modal_name').text("新增事件");
-        $("[name='id']").val(null);
-        $("[name='viewEventName']").text(data.eventName);
-        $("[name='viewAllDay']").text(eventNameMod);
-        $("[name='viewEventDescription']").text(data.eventDescription ? data.eventDescription : '--');
-        $("[name='viewEventLocation']").text(data.eventLocation ? data.eventLocation : '--');
-
-        // 取得當前日期，並設置為 ISO 格式的日期字符串
-        const today = new Date().toISOString().slice(0, 10); // 格式為 YYYY-MM-DDTHH:mm
-        const now = new Date().toISOString().slice(11, 16); // 格式為 YYYY-MM-DDTHH:mm
-        $("[name='viewStartDate']").text(startDateMod);
-        $("[name='viewEndDate']").text(endDateMod);
-    }
-
-
-
-
-
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-        handleDistrictChange('all');
-    });
-
-    function handleDistrictChange(selectElement) {
-        // 取得選中的值
-        const selectedValue = selectElement.value;
-        var access_scope = selectedValue === 'all' ? 'all' : 'district';
+<script type="text/javascript">
+    $(document).ready(function() {
+        var today = new Date();
+        var week_date = [];
+        var calendarData;
+        var formattedEvents;
 
         $.ajax({
-            // 定義 API 路徑
-            url: '/xkRotaract/api/manage/calendar/list',
+            url: '/xkRotaract/api/manage/calendar/showEvo',
             method: 'POST',
             data: JSON.stringify({
-                    // 傳遞 JSON 格式的數據
-                    access_scope: access_scope,
-                    district_id: selectedValue
                 }),
             processData: false,
             contentType: 'application/json',
             success: function(response) {
                 console.log('AJAX 请求成功：', response);
 
-                // 將資料轉換為 FullCalendar 所需的格式
-                formattedEvents = response.map(function(event) {
-                    return {
-                        id: event.id,
-                        title: event.title,
-                        start: event.start,  // 移除不需要的時間部分
-                        end: event.end,
-                        className: event.className || "fc-event-primary",  // 如果 className 是 null, 則設置一個預設的 class
-                        description: event.description || '',  // 如果 description 缺失, 則設置為空字串
-                        location: event.location
-                    };
-                });
+                calendarData = response; // 将数据存储在全局变量中
                 initCalendarApp();
             },
             error: function(xhr, status, error) {
                 console.error('AJAX 请求失败：', error);
             }
         });
-    }
 
+        // Private functions
+        var initCalendarApp = function () {
+            $("#calendar").evoCalendar({
+                theme: 'Royal Navy', // 可选主题
+                language: 'tw', // 支持多语言
+                todayHighlight: true,
+
+                format: "MM dd, yyyy",
+                titleFormat: "MM",
+                firstDayOfWeek: 1,
+                calendarEvents: calendarData
+            });
+        }
+    });
 </script>
 <!--end::Page Custom Javascript-->
 <!--end::Javascript-->

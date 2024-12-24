@@ -24,6 +24,13 @@
             $('.control-add-input').show();
             $('.control-add-span').hide();
         });
+        $(document).on('click', '[data-kt-modal-action="cancel"]', function(e) {
+            e.preventDefault(); // 阻止默认行为（如 `<a>` 标签的跳转）
+            console.log('Cancel action triggered!');
+            // 在这里执行你的逻辑
+            $('.control-add-input').hide();
+            $('.control-add-span').show();
+        });
     </script>
 </th:block><!--</div>-->
 <!--js資源引入-->
@@ -275,7 +282,6 @@
                     <label for="sponsoringClub-input" class="fw-bold text-muted">
                         輔導社
                     </label>
-                    <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="還沒有內容。"></i>
                 </div>
                 <!--end::Label-->
                 <!--begin::Static and Input Text-->
@@ -409,6 +415,48 @@
                 <!--end::Static and Input Text-->
             </div>
             <!--end::Row with Input group-->
+            <!--begin::Row with Input group-->
+            <div class="row mb-7 g-4">
+                <!--begin::Label-->
+                <div class="col-lg-4 col-sm-12">
+                    <label for="serviceInstagram-input" class="fw-bold text-muted">
+                        Instagram
+                    </label>
+                </div>
+                <!--end::Label-->
+                <!--begin::Static and Input Text-->
+                <div class="col-lg-8 col-sm-12">
+                    <span class="fw-bolder fs-6 text-gray-800 control-add-span"
+                          th:text="${cmsClubInfo.infoOverview.serviceInstagram}"></span>
+                    <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
+                           id="serviceInstagram-input" placeholder="Instagram" style="display: none;"
+                           name="serviceInstagram" th:value="${cmsClubInfo.infoOverview.serviceInstagram}">
+                </div>
+                <!--end::Static and Input Text-->
+            </div>
+            <!--end::Row with Input group-->
+            <!--begin::Row with Input group-->
+            <div class="row mb-7 g-4">
+                <!--begin::Label-->
+                <div class="col-lg-4 col-sm-12">
+                    <label for="serviceLine-input" class="fw-bold text-muted">
+                        Line@
+                    </label>
+                    <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="會直接影響行事曆中聯絡方式。"></i>
+                </div>
+                <!--end::Label-->
+                <!--begin::Static and Input Text-->
+                <div class="col-lg-8 col-sm-12">
+                    <span class="fw-bolder fs-6 text-gray-800 control-add-span"
+                          th:text="${cmsClubInfo.infoOverview.serviceLine}"></span>
+                    <input type="text" class="form-control form-control-solid text-black mb-2 control-add-input"
+                           id="serviceLine-input" placeholder="通訊處" style="display: none;"
+                           name="serviceLine" th:value="${cmsClubInfo.infoOverview.serviceLine}">
+                </div>
+                <!--end::Static and Input Text-->
+            </div>
+            <!--end::Row with Input group-->
+
 
             <!--begin::Row with Input group-->
             <div class="row mb-7 g-4 control-add-input" style="display: none;">
