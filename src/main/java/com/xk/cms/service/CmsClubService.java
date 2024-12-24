@@ -26,4 +26,6 @@ public interface CmsClubService {
 
     void deleteByPrimaryKeys(String ids);
 
+    void uploadedImage(String id, byte[] bytes);
+
 }

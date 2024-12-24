@@ -24,4 +24,6 @@ public class CmsClubInfoHeader {
 
     private Double infoCompletionScore; // 資料完成度 (Information Completion Score)
 
+    private String clubLogoBase64; // 用于 Base64 编码的 Logo
+
 }

@@ -7,7 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,6 +40,12 @@ public class GlobalExceptionHandler {
         logger.error("An unexpected error occurred: ", ex);
         model.addAttribute("message", ex.getMessage());
         return "error/500";  // 返回自定义的 500 页面
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public String handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("message", "上传失败，文件大小超过限制！");
+        return "redirect:/upload-page"; // 替换为你的上传页面路径
     }
 
     /**

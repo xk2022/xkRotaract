@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,19 @@ public class CmsClubInfoServiceImpl implements CmsClubInfoService {
         CmsClubInfoResp result = new CmsClubInfoResp();
 
         CmsClubInfoHeader header = new CmsClubInfoHeader();
-        header.setClubLogo(dataMap.get("club_logo"));
+        // 转换 club_logo 为 Base64
+        if (StringUtils.isNotBlank(dataMap.get("club_logo"))) {
+            // 後續搬移至本地端路徑存放在club_logo
+            header.setClubLogo(dataMap.get("club_logo"));
+        } else {
+            if (ccEntity.getClubLogo() != null) {
+                // TODO 快速上傳Blob byte圖片暫存在DB，後續搬移到本地端，加速效能
+                String base64Logo = Base64.getEncoder().encodeToString(ccEntity.getClubLogo()); // 将二进制数据编码为 Base64
+//                byte[] logoBlob = Base64.getDecoder().decode(ccEntity.getClubLogo()); // 假设数据库中存储的是 Base64 编码的字符串
+//                String base64Logo = Base64.getEncoder().encodeToString(logoBlob);
+                header.setClubLogoBase64(base64Logo); // 设置为 Base64 字符串
+            }
+        }
 //        header.setClubName(dataMap.get("club_name"));
         header.setClubName(ccEntity.getName());
         header.setOrganizationDistrict(parentOrg.getName());
@@ -73,7 +86,6 @@ public class CmsClubInfoServiceImpl implements CmsClubInfoService {
 //        header.setInfoCompletionScore(Double.valueOf(dataList.size()/initKey.size()));
 //        header.setInfoCompletionScore(((double) dataList.size() / initKey.size())*100);
         header.setInfoCompletionScore(Math.round(((double) dataList.size() / initKey.size()) * 10000) / 100.0);
-
 
 
         CmsClubInfoOverview overview = new CmsClubInfoOverview();

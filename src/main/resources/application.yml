@@ -10,6 +10,10 @@ spring:
 #    active: prod
   application:
     name: xkRotaract
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
   thymeleaf:
     cache: false #开发阶段，建议关闭thymeleaf的缓存
     mode: HTML5 #使用遗留的html5以去掉对html标签的校验

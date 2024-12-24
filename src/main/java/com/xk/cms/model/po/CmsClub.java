@@ -14,6 +14,7 @@ import java.io.Serializable;
  *
  * @author yuan Created on 2024/09/18.
  * @author yuan Updated on 2024/11/15.
+ * @author yuan Updated on 2024/12/24. Add @Blob clubLogo
  */
 @Entity
 @Getter
@@ -35,6 +36,11 @@ public class CmsClub extends BaseEntity implements Serializable {
 
     @Comment("02_社團名稱（地區or社名）")
     private String name;
+
+    @Lob
+    @Column(name = "club_logo")
+    @Comment("03_社團LOGO")
+    private byte[] clubLogo;
 
     @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
     @Comment("91_狀態，表示是否有效或啟用")
