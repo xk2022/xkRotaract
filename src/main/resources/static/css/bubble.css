@@ -1,0 +1,84 @@
+/* styles.css */
+body {
+    margin: 0;
+    padding: 0;
+/*    overflow: hidden; */
+    display: flex;
+/*    justify-content: center;  */
+    align-items: center;
+    height: 100vh;
+}
+
+.bubble-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.bubble {
+    position: absolute;
+    bottom: -100px;
+    width: 5vw; /* 使用相對寬度，適應螢幕 */
+    height: 5vw;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: float 10s infinite ease-in-out;
+}
+/* 手機模式調整 */
+@media screen and (max-width: 768px) {
+    .bubble {
+        width: 10vw; /* 手機模式下的寬度 */
+        height: 10vw;
+    }
+}
+
+.bubble a {
+    display: block; /* 確保超連結覆蓋整個氣泡 */
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* 保持圓形 */
+    overflow: hidden; /* 防止 LOGO 超出範圍 */
+}
+
+.bubble img {
+    width: 70%; /* LOGO 占氣泡大小的比例 */
+    height: 70%;
+    object-fit: contain; /* 確保 LOGO 不變形 */
+    position: absolute;
+    top: 15%;
+    left: 15%;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) scale(0.8);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-80vh) scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-100vh) scale(0.6);
+        opacity: 0;
+    }
+}
+
+.bubble:nth-child(1) {
+    left: 20%;
+    animation-delay: 0s;
+    animation-duration: 8s;
+}
+
+.bubble:nth-child(2) {
+    left: 50%;
+    animation-delay: 2s;
+    animation-duration: 10s;
+}
+
+.bubble:nth-child(3) {
+    left: 70%;
+    animation-delay: 4s;
+    animation-duration: 12s;
+}

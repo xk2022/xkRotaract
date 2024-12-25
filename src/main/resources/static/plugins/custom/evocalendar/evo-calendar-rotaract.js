@@ -137,7 +137,6 @@
                 sun: _.initials.dates[_.options.language].daysShort[0],
                 sat: _.initials.dates[_.options.language].daysShort[6]
             }
-
             // Format Calendar Events into selected format
             if(_.options.calendarEvents != null) {
                 for(var i=0; i < _.options.calendarEvents.length; i++) {
@@ -150,32 +149,21 @@
                     }
                 }
             }
-
             // Global variables
             _.startingDay = null;
             _.monthLength = null;
             _.districtData = null;
             _.windowW = $(window).width();
-
-            // CURRENT
-            // 初始化當前日期配置
+            // CURRENT 初始化當前日期配置
             const today = new Date();
             const currentMonth = today.getMonth();
             const currentYear = today.getFullYear();
-            // 計算扶輪月邏輯
-//            const indexOfRotaryMonth = (currentMonth - 6 <= 0) ? currentMonth + 6 : currentMonth - 6;
             // 配置當前日期
             _.$current = {
                 month: isNaN(this.month) || this.month == null ? currentMonth : this.month,
                 year: isNaN(this.year) || this.year == null ? currentYear : this.year,
                 date: _.formatDate(new Date(currentYear, currentMonth, today.getDate()), _.options.format)
             };
-//            _.$current = {
-//                month: (isNaN(this.month) || this.month == null) ? new Date().getMonth() : this.month,
-//                year: (isNaN(this.year) || this.year == null) ? new Date().getFullYear() : this.year,
-//                date: _.formatDate(_.initials.dates[_.defaults.language].months[indexOfRotaryMonth]+' '+new Date().getDate()+' '+ new Date().getFullYear(), _.options.format)
-//            }
-
             // ACTIVE 原本邏輯運算用
             _.$activeBase = {
                 month: _.$current.month,
@@ -201,14 +189,12 @@
                 event_date: _.$current.date,
                 events: []
             }
-
             // LABELS
             _.$label = {
                 days: [],
                 months: _.initials.dates[_.defaults.language].months,
                 days_in_month: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
             }
-
             // HTML Markups (template)
             _.$markups = {
                 calendarHTML: '',
@@ -281,6 +267,7 @@
             }
         });
     };
+
     // 新增一個輔助方法來初始化側邊欄和事件列表狀態
     EvoCalendar.prototype.initializeSidebarAndEventList = function(isTabletOrMobile) {
         const _ = this;
@@ -308,7 +295,6 @@
             _.resize();
             return;
         }
-
         // --- BUILDING MARKUP BEGINS --- //
         const markup = `
             <!-- A 區塊 (5%) Header Section -->
@@ -416,13 +402,11 @@
         _.generateSidebarMonths();
         _.generateHeaderWeekdays();
         _.generateSidebarClubs();
-
         // Cache key DOM elements
         _.$elements.headbarEl = _.$elements.calendarEl.find('.calendar-headbar');
         _.$elements.sidebarEl = _.$elements.calendarEl.find('.calendar-sidebar');
         _.$elements.innerEl = _.$elements.calendarEl.find('.calendar-inner');
         _.$elements.eventEl = _.$elements.calendarEl.find('.calendar-events');
-
         // Build essential components (top)
         _.buildTheBones();
     };
@@ -463,7 +447,6 @@
             }
         });
 
-
         // Sidebar toggle controls
         const toggleSidebar = (selector, sidebarClass, middleClass, collapsedWidth, expandedWidth) => {
             safeAddEventListener(selector, 'click', function() {
@@ -481,7 +464,6 @@
         toggleSidebar('#toggleC', '.calendar-sidebar-left', '.calendar-middle', '0', '20%');
         toggleSidebar('#toggleE', '.calendar-sidebar-right', '.calendar-middle', '0', '20%');
         document.querySelector('#toggleE')?.click();
-
 
         // F and G Block toggle controls
         const calendarInner = document.querySelector('.calendar-inner');
@@ -527,15 +509,32 @@
         }
 
         // Year dropdown toggle for smaller screens
-        safeAddEventListener('.calendar-year', 'click', function() {
+        safeAddEventListener('.calendar-year', 'click', function (event) {
             if (_.windowW <= _.$breakpoints.tablet) {
                 const calendarMonths = document.querySelector('.calendar-months');
                 if (!calendarMonths) return;
+                // 检查点击是否在伪元素 `::after` 的范围内
+                const calendarYear = event.target.closest('.calendar-year');
+                if (!calendarYear) return;
 
-                calendarMonths.classList.toggle('active');
-                calendarMonths.style.maxHeight = calendarMonths.classList.contains('active')
-                    ? `${calendarMonths.scrollHeight}px`
-                    : '0';
+                const rect = calendarYear.getBoundingClientRect();
+                const clickX = event.clientX;
+                const clickY = event.clientY;
+                // 计算伪元素的区域
+                const afterFontSize = 20; // 与 CSS 的 font-size 保持一致
+                const afterMarginLeft = 5 * parseFloat(getComputedStyle(document.documentElement).fontSize); // 5vh 转换为像素
+                const afterStartX = rect.right - afterFontSize - afterMarginLeft;
+                const afterEndX = rect.right;
+                const afterStartY = rect.top;
+                const afterEndY = rect.bottom;
+
+                if (clickX >= afterStartX && clickX <= afterEndX && clickY >= afterStartY && clickY <= afterEndY) {
+                    // 点击在 `::after` 区域，触发侧边栏逻辑
+                    calendarMonths.classList.toggle('active');
+                    calendarMonths.style.maxHeight = calendarMonths.classList.contains('active')
+                        ? `${calendarMonths.scrollHeight}px`
+                        : '0';
+                }
             }
         });
     };
@@ -552,12 +551,10 @@
                 hideCallback();
             }
         };
-
         // Tablet and mobile view handling
         if (_.windowW <= _.$breakpoints.tablet) { // Tablet view
             _.toggleSidebar(false);
             _.toggleEventList(false);
-
             // Handle outside click events for tablets
             toggleElement(
                 _.windowW > _.$breakpoints.mobile,
@@ -734,7 +731,6 @@
     // (private) Helper to Generate Sidebar Clubs
     EvoCalendar.prototype.generateSidebarClubs = async function() {
         const _ = this;
-
         // 獲取 Sidebar 容器
         const container = document.querySelector('.calendar-sidebar-right .calendar-clubs');
         if (!container) {
@@ -832,8 +828,6 @@
         // 添加 `active-month` 樣式到當前月份
         months.filter(`[data-month-val="${_.$active.month}"]`).addClass('active-month');
     };
-
-
 
 
 
